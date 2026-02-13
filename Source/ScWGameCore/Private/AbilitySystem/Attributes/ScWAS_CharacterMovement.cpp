@@ -1,0 +1,135 @@
+// Scientific Ways
+
+#include "AbilitySystem/Attributes/ScWAS_CharacterMovement.h"
+
+UScWAS_CharacterMovement::UScWAS_CharacterMovement()
+{
+	InitMoveSpeedMul(1.0f);
+	InitMoveSpeedBase(600.0f);
+	InitMoveSpeedCrouchedBase(300.0f);
+	InitMoveSpeedMax(1200.0f);
+
+	InitMaxAcceleration(1800.0f);
+	InitBrakingDecelerationWalking(2400.0f);
+	InitGravityScale(1.0f);
+	InitAirControl(0.2f);
+	InitMass(80.0f);
+}
+
+//~ Begin Replication
+void UScWAS_CharacterMovement::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const // UObject
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, MaxWalkSpeed);
+	DOREPLIFETIME(ThisClass, MaxWalkSpeedCrouched);
+	DOREPLIFETIME(ThisClass, MaxAcceleration);
+	DOREPLIFETIME(ThisClass, BrakingDecelerationWalking);
+	DOREPLIFETIME(ThisClass, GravityScale);
+	DOREPLIFETIME(ThisClass, AirControl);
+	DOREPLIFETIME(ThisClass, Stamina);
+	DOREPLIFETIME(ThisClass, MaxStamina);
+	DOREPLIFETIME(ThisClass, Mass);
+}
+//~ End Replication
+
+//~ Begin Change
+void UScWAS_CharacterMovement::PreAttributeChange(const FGameplayAttribute& InAttribute, float& InOutNewValue) // UAttributeSet
+{
+	if (InAttribute == GetMaxWalkSpeedAttribute() || InAttribute == GetMaxWalkSpeedCrouchedAttribute())
+	{
+		InOutNewValue = FMath::Clamp(InOutNewValue, 0.0f, GetMoveSpeedMax());
+	}
+	else if (InAttribute == GetStaminaAttribute())
+	{
+		InOutNewValue = FMath::Clamp(InOutNewValue, 0.0f, GetMaxStamina());
+	}
+	else
+	{
+		Super::PreAttributeChange(InAttribute, InOutNewValue); // Default is InOutNewValue = FMath::Max(InOutNewValue, 0.0f)
+	}
+}
+
+void UScWAS_CharacterMovement::PostAttributeChange(const FGameplayAttribute& InAttribute, float InPrevValue, float InNewValue) // UAttributeSet
+{
+	Super::PostAttributeChange(InAttribute, InPrevValue, InNewValue);
+
+	if (InAttribute == GetMoveSpeedMulAttribute())
+	{
+		if (GetOwningActor()->HasAuthority())
+		{
+			SetMaxWalkSpeed(GetMoveSpeedBase() * InNewValue);
+			SetMaxWalkSpeedCrouched(GetMoveSpeedCrouchedBase() * InNewValue);
+		}
+	}
+	else if (InAttribute == GetMoveSpeedMaxAttribute())
+	{
+		if (GetOwningActor()->HasAuthority())
+		{
+			SetMaxWalkSpeed(GetMoveSpeedBase() * GetMoveSpeedMul());
+			SetMaxWalkSpeedCrouched(GetMoveSpeedCrouchedBase() * GetMoveSpeedMul());
+		}
+	}
+	else if (InAttribute == GetMoveSpeedBaseAttribute())
+	{
+		if (GetOwningActor()->HasAuthority())
+		{
+			SetMaxWalkSpeed(InNewValue * GetMoveSpeedMul());
+		}
+	}
+	else if (InAttribute == GetMoveSpeedCrouchedBaseAttribute())
+	{
+		if (GetOwningActor()->HasAuthority())
+		{
+			SetMaxWalkSpeedCrouched(InNewValue * GetMoveSpeedMul());
+		}
+	}
+}
+//~ End Change
+
+//~ Begin Replication
+void UScWAS_CharacterMovement::OnRep_Stamina(const FGameplayAttributeData& InPrevValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, Stamina, InPrevValue);
+}
+
+void UScWAS_CharacterMovement::OnRep_MaxStamina(const FGameplayAttributeData& InPrevValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, MaxStamina, InPrevValue);
+}
+
+void UScWAS_CharacterMovement::OnRep_MaxWalkSpeed(const FGameplayAttributeData& InPrevValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, MaxWalkSpeed, InPrevValue);
+}
+
+void UScWAS_CharacterMovement::OnRep_MaxWalkSpeedCrouched(const FGameplayAttributeData& InPrevValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, MaxWalkSpeedCrouched, InPrevValue);
+}
+
+void UScWAS_CharacterMovement::OnRep_MaxAcceleration(const FGameplayAttributeData& InPrevValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, MaxAcceleration, InPrevValue);
+}
+
+void UScWAS_CharacterMovement::OnRep_BrakingDecelerationWalking(const FGameplayAttributeData& InPrevValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, BrakingDecelerationWalking, InPrevValue);
+}
+
+void UScWAS_CharacterMovement::OnRep_GravityScale(const FGameplayAttributeData& InPrevValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, GravityScale, InPrevValue);
+}
+
+void UScWAS_CharacterMovement::OnRep_AirControl(const FGameplayAttributeData& InPrevValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, AirControl, InPrevValue);
+}
+
+void UScWAS_CharacterMovement::OnRep_Mass(const FGameplayAttributeData& InPrevValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, Mass, InPrevValue);
+}
+//~ End Replication

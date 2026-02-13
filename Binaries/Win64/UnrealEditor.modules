@@ -1,0 +1,17 @@
+{
+	"BuildId": "43139311",
+	"Modules": 
+	{
+		"AsyncMixin": "UnrealEditor-AsyncMixin.dll",
+		"CommonGame": "UnrealEditor-CommonGame.dll",
+		"CommonLoadingScreen": "UnrealEditor-CommonLoadingScreen.dll",
+		"CommonUser": "UnrealEditor-CommonUser.dll",
+		"GameSettings": "UnrealEditor-GameSettings.dll",
+		"GameSubtitles": "UnrealEditor-GameSubtitles.dll",
+		"GameplayMessageNodes": "UnrealEditor-GameplayMessageNodes.dll",
+		"GameplayMessageRuntime": "UnrealEditor-GameplayMessageRuntime.dll",
+		"ModularGameplayActors": "UnrealEditor-ModularGameplayActors.dll",
+		"ScWGameCore": "UnrealEditor-ScWGameCore.dll",
+		"ScWGameCoreEditor": "UnrealEditor-ScWGameCoreEditor.dll"
+	}
+}

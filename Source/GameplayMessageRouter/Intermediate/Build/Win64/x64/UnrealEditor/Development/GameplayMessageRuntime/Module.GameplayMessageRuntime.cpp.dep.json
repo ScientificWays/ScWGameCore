@@ -1,0 +1,35 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\gameplaymessageruntime\\module.gameplaymessageruntime.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\users\\zanayn\\documents\\github\\lyra\\intermediate\\build\\win64\\x64\\lyraeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.valexpapi.cpp20.h.pch",
+        "Includes": [
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\gameplaymessageruntime\\definitions.gameplaymessageruntime.h",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaymessageruntime\\uht\\gameplaymessageruntime.init.gen.cpp",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaymessageruntime\\uht\\gameplaymessagetypes2.gen.cpp",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\source\\gameplaymessageruntime\\public\\gameframework\\gameplaymessagetypes2.h",
+            "c:\\program files\\epic games\\ue_5.6\\engine\\source\\runtime\\gameplaytags\\classes\\gameplaytagcontainer.h",
+            "c:\\program files\\epic games\\ue_5.6\\engine\\source\\runtime\\core\\public\\misc\\comparisonutility.h",
+            "c:\\program files\\epic games\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaytags\\uht\\gameplaytagcontainer.generated.h",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaymessageruntime\\uht\\gameplaymessagetypes2.generated.h",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\gameplaymessageruntime\\permoduleinline.gen.cpp",
+            "c:\\program files\\epic games\\ue_5.6\\engine\\source\\runtime\\core\\public\\hal\\permoduleinline.inl",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\source\\gameplaymessageruntime\\private\\gameframework\\asyncaction_listenforgameplaymessage.cpp",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\source\\gameplaymessageruntime\\public\\gameframework\\asyncaction_listenforgameplaymessage.h",
+            "c:\\program files\\epic games\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\engine\\cancellableasyncaction.h",
+            "c:\\program files\\epic games\\ue_5.6\\engine\\source\\runtime\\engine\\classes\\kismet\\blueprintasyncactionbase.h",
+            "c:\\program files\\epic games\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\blueprintasyncactionbase.generated.h",
+            "c:\\program files\\epic games\\ue_5.6\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\cancellableasyncaction.generated.h",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\source\\gameplaymessageruntime\\public\\gameframework\\gameplaymessagesubsystem.h",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaymessageruntime\\uht\\gameplaymessagesubsystem.generated.h",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaymessageruntime\\uht\\asyncaction_listenforgameplaymessage.generated.h",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaymessageruntime\\uht\\asyncaction_listenforgameplaymessage.gen.cpp",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\source\\gameplaymessageruntime\\private\\gameframework\\gameplaymessageruntime.cpp",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\source\\gameplaymessageruntime\\private\\gameframework\\gameplaymessagesubsystem.cpp",
+            "c:\\users\\zanayn\\documents\\github\\lyra\\plugins\\gameplaymessagerouter\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaymessageruntime\\uht\\gameplaymessagesubsystem.gen.cpp"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
