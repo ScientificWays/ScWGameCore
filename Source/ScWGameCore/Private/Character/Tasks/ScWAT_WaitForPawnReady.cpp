@@ -32,7 +32,7 @@ void UScWAT_WaitForPawnReady::Activate() // UBlueprintAsyncActionBase
 
 void UScWAT_WaitForPawnReady::Cancel() // UCancellableAsyncAction
 {
-	OnCancelled.Broadcast(WatchedPawn);
+	OnFailed.Broadcast(WatchedPawn);
 	SetReadyToDestroy();
 }
 

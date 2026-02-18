@@ -85,7 +85,7 @@ void UScWPawnExtensionComponent::SetPawnData(const UScWPawnData* InPawnData)
 	{
 		return;
 	}
-	if (PawnData)
+	if (HasBegunPlay() && PawnData)
 	{
 		UE_LOG(LogScWGameCore, Error, TEXT("Trying to set PawnData [%s] on pawn [%s] that already has valid PawnData [%s]."), *GetNameSafe(InPawnData), *GetNameSafe(Pawn), *GetNameSafe(PawnData));
 		return;
@@ -140,6 +140,17 @@ void UScWPawnExtensionComponent::InitializeAbilitySystem(UScWAbilitySystemCompon
 	if (ensure(PawnData))
 	{
 		InASC->SetTagRelationshipMapping(PawnData->TagRelationshipMapping);
+
+		if (InOwnerActor->IsA(AAIController::StaticClass()))
+		{
+			for (const UScWAbilitySet* AbilitySet : PawnData->AbilitySets)
+			{
+				if (AbilitySet)
+				{
+					AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr, this);
+				}
+			}
+		}
 	}
 	OnAbilitySystemInitialized.Broadcast();
 }
@@ -289,6 +300,11 @@ void UScWPawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall(FSim
 	}
 }
 
+void UScWPawnExtensionComponent::OnAbilitySystemInitialized_UnregisterObject(const UObject* InObject)
+{
+	OnAbilitySystemInitialized.RemoveAll(InObject);
+}
+
 void UScWPawnExtensionComponent::OnAbilitySystemUninitialized_Register(FSimpleMulticastDelegate::FDelegate Delegate)
 {
 	if (!OnAbilitySystemUninitialized.IsBoundToObject(Delegate.GetUObject()))
@@ -297,3 +313,7 @@ void UScWPawnExtensionComponent::OnAbilitySystemUninitialized_Register(FSimpleMu
 	}
 }
 
+void UScWPawnExtensionComponent::OnAbilitySystemUninitialized_UnregisterObject(const UObject* InObject)
+{
+	OnAbilitySystemUninitialized.RemoveAll(InObject);
+}

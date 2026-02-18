@@ -34,7 +34,7 @@ void UScWAbilitySystemGlobals::GetOwnedGameplayTags(UObject* InTarget, FGameplay
 	}
 	else
 	{
-		ensure(false);
+		//ensure(false);
 		OutTagContainer.Reset();
 	}
 }
@@ -45,7 +45,7 @@ bool UScWAbilitySystemGlobals::TargetHasMatchingGameplayTag(UObject* InTarget, c
 	{
 		return TargetInterface->HasMatchingGameplayTag(InTag);
 	}
-	ensure(false);
+	//ensure(false);
 	return false;
 }
 
@@ -55,7 +55,7 @@ bool UScWAbilitySystemGlobals::TargetHasAllMatchingGameplayTags(UObject* InTarge
 	{
 		return TargetInterface->HasAllMatchingGameplayTags(InTagContainer);
 	}
-	ensure(false);
+	//ensure(false);
 	return false;
 }
 
@@ -65,7 +65,7 @@ bool UScWAbilitySystemGlobals::TargetHasAnyMatchingGameplayTags(UObject* InTarge
 	{
 		return TargetInterface->HasAnyMatchingGameplayTags(InTagContainer);
 	}
-	ensure(false);
+	//ensure(false);
 	return false;
 }
 

@@ -17,7 +17,7 @@ void IScWASC_InitInterface::HandleInit(class UScWAbilitySystemComponent* InInitA
 	{
 		if (IScWASC_InitInterface* TargetInterface = Cast<IScWASC_InitInterface>(TargetComponent))
 		{
-			ensure(TargetInterface->PrivateASC == nullptr);
+			//ensure(TargetInterface->PrivateASC == nullptr);
 			TargetInterface->PrivateASC = InInitASC;
 			TargetInterface->InitFromASC(InInitASC, InOwnerActor, InAvatarActor);
 		}

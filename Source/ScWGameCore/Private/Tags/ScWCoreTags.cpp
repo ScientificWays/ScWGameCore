@@ -109,16 +109,16 @@ namespace FScWCoreTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cheat_UnlimitedHealth, "Cheat.UnlimitedHealth", "[Native] UnlimitedHealth cheat is active on the owner.");
 
 	// Capability states
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_Dead, "State.Dead", "[Native] TODO: Add description");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_Dead_Started, "State.Dead.Started", "[Native] Owner is dead but not yet destroyed (most likely to be destroyed in the next tick).");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_Dead_Finished, "State.Dead.Finished", "[Native] TODO: Add description");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_Stunned, "State.Stunned", "[Native] TODO: Add description");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_Ragdoll, "State.Ragdoll", "[Native] TODO: Add description");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_Dead, "Character.State.Dead", "[Native] TODO: Add description");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_Dead_Started, "Character.State.Dead.Started", "[Native] Owner is dead but not yet destroyed (most likely to be destroyed in the next tick).");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_Dead_Finished, "Character.State.Dead.Finished", "[Native] TODO: Add description");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_Stunned, "Character.State.Stunned", "[Native] TODO: Add description");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_Ragdoll, "Character.State.Ragdoll", "[Native] TODO: Add description");
 
 	// Damage states
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_IgnoreAnyDamage, "State.IgnoreAnyDamage", "[Native] TODO: Add description");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_BlockAnyDamage, "State.BlockAnyDamage", "[Native] TODO: Add description");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_EvadeAnyDamage, "State.EvadeAnyDamage", "[Native] TODO: Add description");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_IgnoreAnyDamage, "Character.State.IgnoreAnyDamage", "[Native] TODO: Add description");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_BlockAnyDamage, "Character.State.BlockAnyDamage", "[Native] TODO: Add description");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Character_State_EvadeAnyDamage, "Character.State.EvadeAnyDamage", "[Native] TODO: Add description");
 
 	// Cues
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayCue_Damage_Impact, "GameplayCue.Damage.Impact", "[Native] TODO: Add description");

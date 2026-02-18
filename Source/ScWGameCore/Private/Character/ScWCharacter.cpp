@@ -2,6 +2,7 @@
 
 #include "Character/ScWCharacter.h"
 
+#include "AIController.h"
 //#include "AI/ScWAIController.h"
 
 #include "Tags/ScWCoreTags.h"
@@ -29,7 +30,7 @@ AScWCharacter::AScWCharacter(const FObjectInitializer& InObjectInitializer)
 	PrimaryActorTick.bCanEverTick = true;
 
 	//AIControllerClass = AScWAIController::StaticClass();
-	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	AutoPossessAI = EAutoPossessAI::Disabled;
 
 	PawnExtComponent = CreateDefaultSubobject<UScWPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 	PawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall(FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::OnAbilitySystemInitialized));
@@ -45,25 +46,38 @@ void AScWCharacter::PostInitializeComponents() // AActor
 {
 	Super::PostInitializeComponents();
 
-	ForEachComponent(false, [this](UActorComponent* InComponent)
-	{
-		if (UCameraComponent* SampleCameraComponent = Cast<UCameraComponent>(InComponent))
-		{
-			ensureReturn(CachedCameraComponent == nullptr);
-			CachedCameraComponent = SampleCameraComponent;
+	UWorld* World = GetWorld();
+	ensureReturn(World);
 
-			if (USpringArmComponent* SampleSpringArmComponent = Cast<USpringArmComponent>(CachedCameraComponent->GetAttachParent()))
+	if (World->IsGameWorld())
+	{
+		if (AAIController* OwnerAIController = GetController<AAIController>())
+		{
+			if (UScWAbilitySystemComponent* SubobjectASC = GetComponentByClass<UScWAbilitySystemComponent>())
 			{
-				ensureReturn(CachedCameraSpringArmComponent == nullptr);
-				CachedCameraSpringArmComponent = SampleSpringArmComponent;
+				PawnExtComponent->InitializeAbilitySystem(SubobjectASC, OwnerAIController);
 			}
 		}
-		else if (UScWCharacterMesh_FirstPerson* SampleFirstPersonMeshComponent = Cast<UScWCharacterMesh_FirstPerson>(InComponent))
+		ForEachComponent(false, [this](UActorComponent* InComponent)
 		{
-			ensureReturn(ScWFirstPersonCharacterMesh == nullptr);
-			ScWFirstPersonCharacterMesh = SampleFirstPersonMeshComponent;
-		}
-	});
+			if (UCameraComponent* SampleCameraComponent = Cast<UCameraComponent>(InComponent))
+			{
+				ensureReturn(CachedCameraComponent == nullptr);
+				CachedCameraComponent = SampleCameraComponent;
+
+				if (USpringArmComponent* SampleSpringArmComponent = Cast<USpringArmComponent>(CachedCameraComponent->GetAttachParent()))
+				{
+					ensureReturn(CachedCameraSpringArmComponent == nullptr);
+					CachedCameraSpringArmComponent = SampleSpringArmComponent;
+				}
+			}
+			else if (UScWCharacterMesh_FirstPerson* SampleFirstPersonMeshComponent = Cast<UScWCharacterMesh_FirstPerson>(InComponent))
+			{
+				ensureReturn(ScWFirstPersonCharacterMesh == nullptr);
+				ScWFirstPersonCharacterMesh = SampleFirstPersonMeshComponent;
+			}
+		});
+	}
 }
 
 void AScWCharacter::OnConstruction(const FTransform& InTransform) // AActor

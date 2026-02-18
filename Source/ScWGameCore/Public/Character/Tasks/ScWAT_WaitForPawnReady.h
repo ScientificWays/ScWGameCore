@@ -26,7 +26,7 @@ public:
 	FPawnSignature OnReady;
 
 	UPROPERTY(BlueprintAssignable)
-	FPawnSignature OnCancelled;
+	FPawnSignature OnFailed;
 
 	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"))
 	static MODULE_API UScWAT_WaitForPawnReady* WaitForPawnReady(APawn* InTargetPawn);

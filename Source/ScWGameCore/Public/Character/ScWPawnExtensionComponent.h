@@ -51,6 +51,8 @@ public:
 	}
 
 	/** Gets the pawn data, which is used to specify pawn properties in data */
+	const UScWPawnData* GetPawnData() const { return PawnData; }
+
 	template <class T>
 	const T* GetPawnData() const { return Cast<T>(PawnData); }
 
@@ -78,9 +80,11 @@ public:
 
 	/** Register with the OnAbilitySystemInitialized delegate and broadcast if our pawn has been registered with the ability system component */
 	MODULE_API void OnAbilitySystemInitialized_RegisterAndCall(FSimpleMulticastDelegate::FDelegate Delegate);
+	MODULE_API void OnAbilitySystemInitialized_UnregisterObject(const UObject* InObject);
 
 	/** Register with the OnAbilitySystemUninitialized delegate fired when our pawn is removed as the ability system's avatar actor */
 	MODULE_API void OnAbilitySystemUninitialized_Register(FSimpleMulticastDelegate::FDelegate Delegate);
+	MODULE_API void OnAbilitySystemUninitialized_UnregisterObject(const UObject* InObject);
 
 	MODULE_API FSimpleMulticastDelegate& GetOnAbilitySystemInitialized() { return OnAbilitySystemInitialized; }
 

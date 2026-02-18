@@ -23,7 +23,7 @@ class UScWAbilitySystemComponent : public UAbilitySystemComponent
 //~ Begin Statics
 public:
 
-	UFUNCTION(Category = "Statics", BlueprintCallable, BlueprintPure, meta = (DisplayName = "Try Get ScW Ability System Component from Actor"))
+	UFUNCTION(Category = "Statics", BlueprintCallable, BlueprintPure, meta = (DisplayName = "Get ScW Ability System Component from Actor"))
 	static MODULE_API UScWAbilitySystemComponent* TryGetFromActor(const AActor* InActor, bool bInTryFindComponentIfNoInterface = true);
 //~ End Statics
 
