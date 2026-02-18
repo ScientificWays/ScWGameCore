@@ -5,7 +5,6 @@
 		"AsyncMixin": "UnrealEditor-AsyncMixin.dll",
 		"CommonGame": "UnrealEditor-CommonGame.dll",
 		"CommonLoadingScreen": "UnrealEditor-CommonLoadingScreen.dll",
-		"CommonUser": "UnrealEditor-CommonUser.dll",
 		"GameSettings": "UnrealEditor-GameSettings.dll",
 		"GameSubtitles": "UnrealEditor-GameSubtitles.dll",
 		"GameplayMessageNodes": "UnrealEditor-GameplayMessageNodes.dll",

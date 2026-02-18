@@ -2,13 +2,15 @@
 
 #pragma once
 
-#include "ActiveGameplayEffectHandle.h"
+#include "ScWGameCore.h"
 
 #include "Engine/DataAsset.h"
-#include "AttributeSet.h"
-#include "GameplayTagContainer.h"
 
+#include "AttributeSet.h"
+#include "ScalableFloat.h"
+#include "GameplayTagContainer.h"
 #include "GameplayAbilitySpecHandle.h"
+#include "ActiveGameplayEffectHandle.h"
 
 #include "ScWAbilitySet.generated.h"
 
@@ -84,6 +86,8 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UAttributeSet> AttributeSet;
 
+	UPROPERTY(EditDefaultsOnly, meta = (ForceInlineRow))
+	TMap<FGameplayAttribute, FScalableFloat> InitData;
 };
 
 /**
@@ -102,9 +106,13 @@ public:
 	MODULE_API void AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle);
 	MODULE_API void AddAttributeSet(UAttributeSet* Set);
 
-	MODULE_API void TakeFromAbilitySystem(UScWAbilitySystemComponent* ScWASC);
+	MODULE_API void TakeFromAbilitySystem(UScWAbilitySystemComponent* InTargetASC);
 
 protected:
+
+	// Granted loose gameplay tags
+	UPROPERTY()
+	FGameplayTagContainer LooseGameplayTags;
 
 	// Handles to the granted abilities.
 	UPROPERTY()
@@ -121,11 +129,9 @@ protected:
 
 
 /**
- * UScWAbilitySet
- *
  *	Non-mutable data asset used to grant gameplay abilities and gameplay effects.
  */
-UCLASS(MinimalAPI, BlueprintType, Const)
+UCLASS(MinimalAPI, BlueprintType, Const, meta = (DisplayName = "[ScW] Ability Set"))
 class UScWAbilitySet : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
@@ -134,22 +140,30 @@ public:
 
 	UScWAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+#if WITH_EDITOR
+	virtual EDataValidationResult IsDataValid(FDataValidationContext& InContext) const override; // UObject
+#endif
+
 	// Grants the ability set to the specified ability system component.
 	// The returned handles can be used later to take away anything that was granted.
-	MODULE_API void GiveToAbilitySystem(UScWAbilitySystemComponent* ScWASC, FScWAbilitySet_GrantedHandles* OutGrantedHandles, UObject* SourceObject = nullptr) const;
+	MODULE_API void GiveToAbilitySystem(UScWAbilitySystemComponent* InTargetASC, FScWAbilitySet_GrantedHandles* OutGrantedHandles, UObject* InSourceObject = nullptr) const;
 
 protected:
 
-	// Gameplay abilities to grant when this ability set is granted.
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta=(TitleProperty=Ability))
+	// Loose gameplay tags to grant when this ability set is given.
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Tags")
+	FGameplayTagContainer GrantedLooseGameplayTags;
+
+	// Gameplay abilities to grant when this ability set is given.
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta = (TitleProperty=Ability))
 	TArray<FScWAbilitySet_GameplayAbility> GrantedGameplayAbilities;
 
-	// Gameplay effects to grant when this ability set is granted.
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta=(TitleProperty=GameplayEffect))
+	// Gameplay effects to grant when this ability set is given.
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta = (TitleProperty=GameplayEffect))
 	TArray<FScWAbilitySet_GameplayEffect> GrantedGameplayEffects;
 
-	// Attribute sets to grant when this ability set is granted.
-	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta=(TitleProperty=AttributeSet))
+	// Attribute sets to grant when this ability set is given.
+	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta = (TitleProperty=AttributeSet))
 	TArray<FScWAbilitySet_AttributeSet> GrantedAttributes;
 };
 

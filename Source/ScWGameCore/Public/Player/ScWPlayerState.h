@@ -82,11 +82,25 @@ public:
 	MODULE_API virtual void OnReactivated() override;
 	//~End of APlayerState interface
 
-	//~IScWTeamAgentInterface interface
-	MODULE_API virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override;
-	MODULE_API virtual FGenericTeamId GetGenericTeamId() const override;
-	MODULE_API virtual FOnScWTeamIndexChangedDelegate* GetOnTeamIndexChangedDelegate() override;
-	//~End of IScWTeamAgentInterface interface
+//~ Begin Team
+public:
+	MODULE_API virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override; // IGenericTeamAgentInterface
+	MODULE_API virtual FGenericTeamId GetGenericTeamId() const override; // IGenericTeamAgentInterface
+
+	MODULE_API virtual const FGameplayTag& GetTeamTag() const override { return TeamTag; } // IScWTeamAgentInterface
+	MODULE_API virtual void SetTeamTag(const FGameplayTag& InTeamTag) override; // IScWTeamAgentInterface
+	MODULE_API virtual FOnScWTeamIndexChangedDelegate* GetOnTeamIndexChangedDelegate() override; // IScWTeamAgentInterface
+protected:
+
+	UPROPERTY(Category = "Team", ReplicatedUsing = "OnRep_TeamTag", EditAnywhere, BlueprintReadOnly, meta = (Categories = "Team"))
+	FGameplayTag TeamTag;
+
+	UPROPERTY()
+	FOnScWTeamIndexChangedDelegate OnTeamChangedDelegate;
+
+	UFUNCTION()
+	MODULE_API void OnRep_TeamTag(FGameplayTag InPrevTeamTag);
+//~ End Team
 
 	MODULE_API void SetPlayerConnectionType(EScWPlayerConnectionType NewType);
 	EScWPlayerConnectionType GetPlayerConnectionType() const { return MyPlayerConnectionType; }
@@ -98,29 +112,22 @@ public:
 		return MySquadID;
 	}
 
-	/** Returns the Team ID of the team the player belongs to. */
-	UFUNCTION(BlueprintCallable)
-	int32 GetTeamId() const
-	{
-		return GenericTeamIdToInteger(MyTeamID);
-	}
-
 	MODULE_API void SetSquadID(int32 NewSquadID);
 
 	// Adds a specified number of stacks to the tag (does nothing if StackCount is below 1)
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = Teams)
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Stats")
 	MODULE_API void AddStatTagStack(FGameplayTag Tag, int32 StackCount);
 
 	// Removes a specified number of stacks from the tag (does nothing if StackCount is below 1)
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = Teams)
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Stats")
 	MODULE_API void RemoveStatTagStack(FGameplayTag Tag, int32 StackCount);
 
 	// Returns the stack count of the specified tag (or 0 if the tag is not present)
-	UFUNCTION(BlueprintCallable, Category = Teams)
+	UFUNCTION(BlueprintCallable, Category = "Stats")
 	MODULE_API int32 GetStatTagStackCount(FGameplayTag Tag) const;
 
 	// Returns true if there is at least one stack of the specified tag
-	UFUNCTION(BlueprintCallable, Category = Teams)
+	UFUNCTION(BlueprintCallable, Category = "Stats")
 	MODULE_API bool HasStatTag(FGameplayTag Tag) const;
 
 	// Send a message to just this player
@@ -162,12 +169,6 @@ private:
 	UPROPERTY(Replicated)
 	EScWPlayerConnectionType MyPlayerConnectionType;
 
-	UPROPERTY()
-	FOnScWTeamIndexChangedDelegate OnTeamChangedDelegate;
-
-	UPROPERTY(ReplicatedUsing = OnRep_MyTeamID)
-	FGenericTeamId MyTeamID;
-
 	UPROPERTY(ReplicatedUsing = OnRep_MySquadID)
 	int32 MySquadID;
 
@@ -178,9 +179,7 @@ private:
 	FRotator ReplicatedViewRotation;
 
 private:
-	UFUNCTION()
-	MODULE_API void OnRep_MyTeamID(FGenericTeamId OldTeamID);
-
+	
 	UFUNCTION()
 	MODULE_API void OnRep_MySquadID();
 };

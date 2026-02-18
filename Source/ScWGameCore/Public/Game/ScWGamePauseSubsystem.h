@@ -33,10 +33,10 @@ protected:
 //~ Begin Source Objects
 public:
 
-	UFUNCTION(Category = "Source Objects", BlueprintCallable)
+	UFUNCTION(Category = "Source Objects", BlueprintCallable, meta = (DefaultToSelf = "InSourceObject"))
 	MODULE_API void AddPauseSourceObject(UObject* InSourceObject);
 
-	UFUNCTION(Category = "Source Objects", BlueprintCallable)
+	UFUNCTION(Category = "Source Objects", BlueprintCallable, meta = (DefaultToSelf = "InSourceObject"))
 	MODULE_API void RemovePauseSourceObject(UObject* InSourceObject);
 
 protected:

@@ -45,7 +45,7 @@ class UScWAbilityTagRelationshipMapping : public UDataAsset
 
 private:
 	/** The list of relationships between different gameplay tags (which ones block or cancel others) */
-	UPROPERTY(EditAnywhere, Category = Ability, meta=(TitleProperty="AbilityTag"))
+	UPROPERTY(EditAnywhere, Category = Ability, meta = (TitleProperty="AbilityTag"))
 	TArray<FScWAbilityTagRelationship> AbilityTagRelationships;
 
 public:

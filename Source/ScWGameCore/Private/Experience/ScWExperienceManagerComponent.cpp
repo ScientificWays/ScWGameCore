@@ -56,7 +56,7 @@ UScWExperienceManagerComponent::UScWExperienceManagerComponent(const FObjectInit
 
 void UScWExperienceManagerComponent::SetCurrentExperience(FPrimaryAssetId ExperienceId)
 {
-	UAssetManager& AssetManager = UAssetManager::Get();
+	/*UAssetManager& AssetManager = UAssetManager::Get();
 	FSoftObjectPath AssetPath = AssetManager.GetPrimaryAssetPath(ExperienceId);
 	TSubclassOf<UScWExperience> AssetClass = Cast<UClass>(AssetPath.TryLoad());
 	check(AssetClass);
@@ -64,6 +64,14 @@ void UScWExperienceManagerComponent::SetCurrentExperience(FPrimaryAssetId Experi
 
 	check(Experience != nullptr);
 	check(CurrentExperience == nullptr);
+	CurrentExperience = Experience;
+	StartExperienceLoad();*/
+
+	// Sync load
+	const auto AssetPath = UAssetManager::Get().GetPrimaryAssetPath(ExperienceId);
+	const auto Experience = Cast<UScWExperience>(AssetPath.TryLoad());
+	check(Experience != nullptr);
+
 	CurrentExperience = Experience;
 	StartExperienceLoad();
 }

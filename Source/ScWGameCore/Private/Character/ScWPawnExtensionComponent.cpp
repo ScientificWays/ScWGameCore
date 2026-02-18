@@ -2,7 +2,7 @@
 
 #include "Character/ScWPawnExtensionComponent.h"
 
-#include "AbilitySystem/ScWCoreTags.h"
+#include "Tags/ScWCoreTags.h"
 #include "AbilitySystem/ScWAbilitySystemComponent.h"
 
 #include "Character/ScWPawnData.h"
@@ -81,20 +81,16 @@ void UScWPawnExtensionComponent::SetPawnData(const UScWPawnData* InPawnData)
 	check(InPawnData);
 
 	APawn* Pawn = GetPawnChecked<APawn>();
-
 	if (Pawn->GetLocalRole() != ROLE_Authority)
 	{
 		return;
 	}
-
 	if (PawnData)
 	{
 		UE_LOG(LogScWGameCore, Error, TEXT("Trying to set PawnData [%s] on pawn [%s] that already has valid PawnData [%s]."), *GetNameSafe(InPawnData), *GetNameSafe(Pawn), *GetNameSafe(PawnData));
 		return;
 	}
-
 	PawnData = InPawnData;
-
 	Pawn->ForceNetUpdate();
 
 	CheckDefaultInitialization();
@@ -115,13 +111,11 @@ void UScWPawnExtensionComponent::InitializeAbilitySystem(UScWAbilitySystemCompon
 		// The ability system component hasn't changed.
 		return;
 	}
-
 	if (AbilitySystemComponent)
 	{
 		// Clean up the old ability system component.
 		UninitializeAbilitySystem();
 	}
-
 	APawn* Pawn = GetPawnChecked<APawn>();
 	AActor* ExistingAvatar = InASC->GetAvatarActor();
 
@@ -135,12 +129,11 @@ void UScWPawnExtensionComponent::InitializeAbilitySystem(UScWAbilitySystemCompon
 		// This can happen on clients if they're lagged: their new pawn is spawned + possessed before the dead one is removed
 		ensure(!ExistingAvatar->HasAuthority());
 
-		if (UScWPawnExtensionComponent* OtherExtensionComponent = FindPawnExtensionComponent(ExistingAvatar))
+		if (UScWPawnExtensionComponent* OtherExtensionComponent = GetPawnExtensionComponent(ExistingAvatar))
 		{
 			OtherExtensionComponent->UninitializeAbilitySystem();
 		}
 	}
-
 	AbilitySystemComponent = InASC;
 	AbilitySystemComponent->InitAbilityActorInfo(InOwnerActor, Pawn);
 
@@ -148,7 +141,6 @@ void UScWPawnExtensionComponent::InitializeAbilitySystem(UScWAbilitySystemCompon
 	{
 		InASC->SetTagRelationshipMapping(PawnData->TagRelationshipMapping);
 	}
-
 	OnAbilitySystemInitialized.Broadcast();
 }
 
@@ -196,7 +188,6 @@ void UScWPawnExtensionComponent::HandleControllerChanged()
 			AbilitySystemComponent->RefreshAbilityActorInfo();
 		}
 	}
-
 	CheckDefaultInitialization();
 }
 
@@ -241,7 +232,6 @@ bool UScWPawnExtensionComponent::CanChangeInitState(UGameFrameworkComponentManag
 		{
 			return false;
 		}
-
 		const bool bHasAuthority = Pawn->HasAuthority();
 		const bool bIsLocallyControlled = Pawn->IsLocallyControlled();
 
@@ -253,7 +243,6 @@ bool UScWPawnExtensionComponent::CanChangeInitState(UGameFrameworkComponentManag
 				return false;
 			}
 		}
-
 		return true;
 	}
 	else if (CurrentState == FScWCoreTags::InitState_DataAvailable && DesiredState == FScWCoreTags::InitState_DataInitialized)
@@ -265,7 +254,6 @@ bool UScWPawnExtensionComponent::CanChangeInitState(UGameFrameworkComponentManag
 	{
 		return true;
 	}
-
 	return false;
 }
 
@@ -295,7 +283,6 @@ void UScWPawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall(FSim
 	{
 		OnAbilitySystemInitialized.Add(Delegate);
 	}
-
 	if (AbilitySystemComponent)
 	{
 		Delegate.Execute();

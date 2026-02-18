@@ -15,16 +15,16 @@ struct FReceivedDamageData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(Category = "Data", BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FHitResult HitResult = FHitResult();
 
-	UPROPERTY(Category = "Data", BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<const class UScWDamageType> DamageType = nullptr;
 
-	UPROPERTY(Category = "Data", BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<AActor> Source = nullptr;
 
-	UPROPERTY(Category = "Data", BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<AController> Instigator = nullptr;
 
 	FReceivedDamageData(const FHitResult& InHitResult = FHitResult(), const class UScWDamageType* InDamageType = nullptr, AActor* InSource = nullptr, AController* InInstigator = nullptr)
@@ -34,6 +34,27 @@ struct FReceivedDamageData
 	FString ToAnalyticsString() const;
 };
 
+USTRUCT(BlueprintType)
+struct FGameplayMessage_Damage
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UScWAttributeHealthComponent> HealthComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FReceivedDamageData DamageData;
+};
+
+USTRUCT(BlueprintType)
+struct FGameplayMessage_Died
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UScWAttributeHealthComponent> HealthComponent;
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDamageEventSignature, float, InDamage, const FReceivedDamageData&, InData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAccumulatedDamageResolveEventSignature, float, InDamage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputEventSignature, int32, InInputID);
@@ -41,7 +62,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputEventSignature, int32, InInput
 /**
  * 
  */
-UCLASS(MinimalAPI, Blueprintable, meta = (DisplayName = "[ScW] Attribute Health Component", BlueprintSpawnableComponent))
+UCLASS(MinimalAPI, Blueprintable, HideCategories = (Object, LOD, Lighting, Transform, Sockets, TextureStreaming), meta = (DisplayName = "[ScW] Attribute Health Component", BlueprintSpawnableComponent))
 class UScWAttributeHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -57,7 +78,19 @@ protected:
 	virtual void BeginPlay() override; // UActorComponent
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override; // UActorComponent
 //~ End Initialize
-	
+
+//~ Begin Statics
+public:
+
+	/** Returns the attribute health component if one exists on the specified actor. */
+	UFUNCTION(Category = "Statics", BlueprintPure)
+	static UScWAttributeHealthComponent* GetAttributeHealthComponent(const AActor* InActor)
+	{
+		ensureReturn(InActor, nullptr);
+		return InActor->FindComponentByClass<ThisClass>();
+	}
+//~ End Statics
+
 //~ Begin Ability System
 protected:
 	virtual void InitializeFromAbilitySystem();
@@ -72,13 +105,13 @@ public:
 	MODULE_API FORCEINLINE float GetHealth() const;
 
 	UFUNCTION(Category = "Attributes", BlueprintCallable)
-	MODULE_API FORCEINLINE float GetMaxHealth() const;
+	MODULE_API FORCEINLINE float GetHealthMax() const;
 
 	UFUNCTION(Category = "Attributes", BlueprintCallable)
 	MODULE_API FORCEINLINE float GetHealthNormalized() const;
 
 	UFUNCTION(Category = "Attributes", BlueprintCallable)
-	MODULE_API FORCEINLINE bool IsFullHealth(const bool bInCheckHasHealth) const;
+	MODULE_API FORCEINLINE bool IsFullHealth(const bool bInCheckHasHealth = true) const;
 
 	UFUNCTION(Category = "Attributes", BlueprintCallable)
 	MODULE_API void SetHealth(float InHealth);
@@ -90,21 +123,21 @@ public:
 	FAttributeChangedSignature OnHealthChanged;
 
 	UPROPERTY(Category = "Attributes", BlueprintAssignable)
-	FAttributeChangedSignature OnMaxHealthChanged;
+	FAttributeChangedSignature OnHealthMaxChanged;
 
 protected:
 	virtual void OnHealthAttributeChanged(const FOnAttributeChangeData& InData);
-	virtual void OnMaxHealthAttributeChanged(const FOnAttributeChangeData& InData);
+	virtual void OnHealthMaxAttributeChanged(const FOnAttributeChangeData& InData);
 	virtual void OnZeroHealth();
 
 	UPROPERTY(Category = "Attributes", EditAnywhere, BlueprintReadOnly)
 	FGameplayAttribute HealthAttribute;
 
 	UPROPERTY(Category = "Attributes", EditAnywhere, BlueprintReadOnly)
-	FGameplayAttribute MaxHealthAttribute;
+	FGameplayAttribute HealthMaxAttribute;
 
 	FDelegateHandle HealthChangedDelegateHandle;
-	FDelegateHandle MaxHealthChangedDelegateHandle;
+	FDelegateHandle HealthMaxChangedDelegateHandle;
 //~ End Attributes
 
 //~ Begin Damage
@@ -145,7 +178,7 @@ public:
 	UPROPERTY(Category = "Damage | Accumulated | Applied", BlueprintAssignable)
 	FAccumulatedDamageResolveEventSignature OnAccumulatedAppliedDamageResolved;
 
-	UPROPERTY(Category = "Damage | Accumulated | Applied", BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(Category = "Damage | Accumulated | Applied", EditAnywhere, BlueprintReadWrite)
 	float AccumulatedAppliedDamageResetTime;
 
 	UFUNCTION(Category = "Damage | Accumulated | Applied", BlueprintCallable)
@@ -177,8 +210,9 @@ protected:
 	UPROPERTY(Category = "Damage", BlueprintReadOnly)
 	float LastAppliedDamagePrevHealth;
 
+	// Object set as SourceObject in damage impact GameplayCue
 	UPROPERTY(Category = "Damage", BlueprintReadOnly, EditAnywhere)
-	float ExplosionStumbleMinDuration;
+	TObjectPtr<UObject> DamageImpactCuePayload;
 //~ End Damage
 
 //~ Begin Death

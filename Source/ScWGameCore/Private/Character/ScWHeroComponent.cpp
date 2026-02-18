@@ -2,7 +2,7 @@
 
 #include "Character/ScWHeroComponent.h"
 
-#include "AbilitySystem/ScWCoreTags.h"
+#include "Tags/ScWCoreTags.h"
 #include "AbilitySystem/ScWAbilitySystemComponent.h"
 
 #include "Player/ScWPlayerController.h"
@@ -153,14 +153,14 @@ void UScWHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Ma
 	{
 		APawn* Pawn = GetPawn<APawn>();
 		AScWPlayerState* OwnerPS = GetPlayerState<AScWPlayerState>();
+
 		if (!ensure(Pawn && OwnerPS))
 		{
 			return;
 		}
-
 		const UScWPawnData* PawnData = nullptr;
 
-		if (UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::FindPawnExtensionComponent(Pawn))
+		if (UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::GetPawnExtensionComponent(Pawn))
 		{
 			PawnData = PawnExtComp->GetPawnData<UScWPawnData>();
 
@@ -168,7 +168,6 @@ void UScWHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Ma
 			// The ability system component and attribute sets live on the player state.
 			PawnExtComp->InitializeAbilitySystem(OwnerPS->GetScWAbilitySystemComponent(), OwnerPS);
 		}
-
 		if (AScWPlayerController* OwnerPC = GetController<AScWPlayerController>())
 		{
 			if (Pawn->InputComponent != nullptr)
@@ -176,7 +175,6 @@ void UScWHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Ma
 				InitializePlayerInput(Pawn->InputComponent);
 			}
 		}
-
 		// Hook up the delegate for all pawns, in case we spectate later
 		/*if (PawnData)
 		{
@@ -248,7 +246,7 @@ void UScWHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompon
 
 	Subsystem->ClearAllMappings();
 
-	if (const UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::FindPawnExtensionComponent(Pawn))
+	if (const UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::GetPawnExtensionComponent(Pawn))
 	{
 		if (const UScWPawnData* PawnData = PawnExtComp->GetPawnData<UScWPawnData>())
 		{
@@ -323,7 +321,7 @@ void UScWHeroComponent::AddAdditionalInputConfig(const UScWInputConfig* InputCon
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 	check(Subsystem);
 
-	if (const UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::FindPawnExtensionComponent(Pawn))
+	if (const UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::GetPawnExtensionComponent(Pawn))
 	{
 		UScWInputComponent* ScWIC = Pawn->FindComponentByClass<UScWInputComponent>();
 		if (ensureMsgf(ScWIC, TEXT("Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. Change the input component to UScWInputComponent or a subclass of it.")))
@@ -347,7 +345,7 @@ void UScWHeroComponent::Input_AbilityTagPressed(FGameplayTag InTag)
 {
 	if (const APawn* Pawn = GetPawn<APawn>())
 	{
-		if (const UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::FindPawnExtensionComponent(Pawn))
+		if (const UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::GetPawnExtensionComponent(Pawn))
 		{
 			if (UScWAbilitySystemComponent* OwnerASC = PawnExtComp->GetScWAbilitySystemComponent())
 			{
@@ -364,7 +362,7 @@ void UScWHeroComponent::Input_AbilityTagReleased(FGameplayTag InTag)
 	{
 		return;
 	}
-	if (const UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::FindPawnExtensionComponent(Pawn))
+	if (const UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::GetPawnExtensionComponent(Pawn))
 	{
 		if (UScWAbilitySystemComponent* OwnerASC = PawnExtComp->GetScWAbilitySystemComponent())
 		{
@@ -373,33 +371,20 @@ void UScWHeroComponent::Input_AbilityTagReleased(FGameplayTag InTag)
 	}
 }
 
+FVector UScWHeroComponent::BP_GetMovementInputWorldDirection_Implementation(const FVector& InInputValue) const
+{
+	APawn* Pawn = GetPawn<APawn>();
+	ensureReturn(Pawn, FVector::ZeroVector);
+	return (Pawn->GetActorForwardVector() + Pawn->GetActorRightVector()) * InInputValue;
+}
+
 void UScWHeroComponent::Input_Movement(const FInputActionValue& InputActionValue)
 {
 	APawn* Pawn = GetPawn<APawn>();
-	AController* Controller = Pawn ? Pawn->GetController() : nullptr;
+	ensureReturn(Pawn);
 
-	// If the player has attempted to move again then cancel auto running
-	/*if (AScWPlayerController* OwnerController = Cast<AScWPlayerController>(Controller))
-	{
-		OwnerController->SetIsAutoRunning(false);
-	}*/
-	if (Controller)
-	{
-		const FVector2D Value = InputActionValue.Get<FVector2D>();
-		const FRotator MovementRotation(0.0f, Controller->GetControlRotation().Yaw, 0.0f);
-
-		if (Value.X != 0.0f)
-		{
-			const FVector MovementDirection = MovementRotation.RotateVector(FVector::RightVector);
-			Pawn->AddMovementInput(MovementDirection, Value.X);
-		}
-
-		if (Value.Y != 0.0f)
-		{
-			const FVector MovementDirection = MovementRotation.RotateVector(FVector::ForwardVector);
-			Pawn->AddMovementInput(MovementDirection, Value.Y);
-		}
-	}
+	const FVector InputValue = InputActionValue.Get<FVector>();
+	Pawn->AddMovementInput(BP_GetMovementInputWorldDirection(InputValue));
 }
 
 void UScWHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue)
@@ -478,7 +463,7 @@ TSubclassOf<UScWCameraMode> UScWHeroComponent::DetermineCameraMode() const
 		return nullptr;
 	}
 
-	if (UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::FindPawnExtensionComponent(Pawn))
+	if (UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::GetPawnExtensionComponent(Pawn))
 	{
 		if (const UScWPawnData* PawnData = PawnExtComp->GetPawnData<UScWPawnData>())
 		{

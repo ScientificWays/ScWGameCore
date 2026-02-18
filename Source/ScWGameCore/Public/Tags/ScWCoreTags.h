@@ -1,0 +1,121 @@
+// Scientific Ways
+
+#pragma once
+
+#include "ScWGameCore.h"
+
+#include "NativeGameplayTags.h"
+
+#define MODULE_API SCWGAMECORE_API
+
+namespace FScWCoreTags
+{
+	MODULE_API FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString = false);
+
+	// Object init states
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_Spawned);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_DataAvailable);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_DataInitialized);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_GameplayReady);
+
+	// Ability state events
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Event_Added);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Event_Removed);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Event_Activated);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Event_Commited);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Event_Failed);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Event_Ended);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Event_Ended_Cancelled);
+
+	// Ability activate failure modes
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ActivateFail_CanActivate);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ActivateFail_Cooldown);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ActivateFail_Cost);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ActivateFail_GameMode);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ActivateFail_TagsBlocked);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ActivateFail_TagsMissing);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ActivateFail_Networking);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ActivateFail_ActivationGroup);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_ActivateFail_OwnerDead);
+
+	// Ability general behaviors
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Behavior_IgnoreDeath);
+
+	// Character types
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_Type_Player);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_Type_NPC);
+
+	// Character movement
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_MovementFlag);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_MovementFlag_OrientRotationToMovement);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_MovementFlag_BlockOrientRotationToMovement);
+
+	// Character movement modes
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_MovementMode);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_MovementMode_None);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_MovementMode_Walking);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_MovementMode_Walking_Nav);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_MovementMode_Falling);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_MovementMode_Swimming);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_MovementMode_Flying);
+
+	// Character states | Capability
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_State_Dead);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_State_Dead_Started);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_State_Dead_Finished);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_State_Stunned);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_State_Ragdoll);
+
+	// Character states | Damage
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_State_IgnoreAnyDamage);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_State_BlockAnyDamage);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_State_EvadeAnyDamage);
+
+	// Input
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Input_Movement);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Input_Look);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Input_Look_Mouse);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Input_Look_Stick);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Input_Ability_Pressed);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Input_Ability_Released);
+
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Input_Block);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Input_Block_Movement);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Input_Block_Look);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Input_Block_Ability);
+
+	// Camera
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Camera_Type_FirstPerson);
+
+	// Collisions
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Collision);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Collision_None);
+
+	// Set by caller
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Duration);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(SetByCaller_Magnitude);
+
+	// Cheats
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_NoTarget);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_Invulnerable);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cheat_UnlimitedHealth);
+	
+	// Cues
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Damage_Impact);
+
+	// Teams
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Team_None);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Team_Player);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Team_Enemy);
+
+	// Messages
+	//MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayMessage_Pawn_Ready);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayMessage_Damage);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayMessage_Damage_Ignored);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayMessage_Damage_Blocked);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayMessage_Damage_Evaded);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayMessage_Damage_Applied);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayMessage_Died);
+}
+
+#undef MODULE_API

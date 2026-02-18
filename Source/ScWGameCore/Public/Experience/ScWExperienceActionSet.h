@@ -8,7 +8,7 @@
 class UGameFeatureAction;
 
 /**
- * Definition of a set of actions to perform as part of entering an experience
+ *	Definition of a set of actions to perform as part of entering an experience.
  */
 UCLASS(BlueprintType, NotBlueprintable)
 class UScWExperienceActionSet : public UPrimaryDataAsset

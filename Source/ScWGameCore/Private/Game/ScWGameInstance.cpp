@@ -2,6 +2,10 @@
 
 #include "Game/ScWGameInstance.h"
 
+#include "Tags/ScWCoreTags.h"
+
+#include "Components/GameFrameworkComponentManager.h"
+
 //#include "GameAnalytics.h"
 //#include "GameAnalyticsModule.h"
 
@@ -20,6 +24,16 @@ void UScWGameInstance::Init() // UGameInstance
 	{
 		BP_InitGameAnalytics();
 	}*/
+
+	// Register custom init states
+	UGameFrameworkComponentManager* ComponentManager = GetSubsystem<UGameFrameworkComponentManager>(this);
+	if (ensure(ComponentManager))
+	{
+		ComponentManager->RegisterInitState(FScWCoreTags::InitState_Spawned, false, FGameplayTag());
+		ComponentManager->RegisterInitState(FScWCoreTags::InitState_DataAvailable, false, FScWCoreTags::InitState_Spawned);
+		ComponentManager->RegisterInitState(FScWCoreTags::InitState_DataInitialized, false, FScWCoreTags::InitState_DataAvailable);
+		ComponentManager->RegisterInitState(FScWCoreTags::InitState_GameplayReady, false, FScWCoreTags::InitState_DataInitialized);
+	}
 }
 
 void UScWGameInstance::Shutdown() // UGameInstance

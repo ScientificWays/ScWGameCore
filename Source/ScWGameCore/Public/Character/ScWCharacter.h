@@ -134,19 +134,23 @@ protected:
 //~ End View
 
 //~ Begin Team
+public:
+	MODULE_API virtual FGenericTeamId GetGenericTeamId() const override; // IGenericTeamAgentInterface
+	MODULE_API virtual void SetGenericTeamId(const FGenericTeamId& InTeamID) override; // IGenericTeamAgentInterface
+
+	MODULE_API virtual const FGameplayTag& GetTeamTag() const override; // IScWTeamAgentInterface
+	MODULE_API virtual void SetTeamTag(const FGameplayTag& InTeamTag) override; // IScWTeamAgentInterface
+	MODULE_API virtual FOnScWTeamIndexChangedDelegate* GetOnTeamIndexChangedDelegate() override; // IScWTeamAgentInterface
 protected:
-	virtual FGenericTeamId GetGenericTeamId() const override; // IGenericTeamAgentInterface
-	virtual void SetGenericTeamId(const FGenericTeamId& InNewTeamID) override; // IGenericTeamAgentInterface
-	virtual FOnScWTeamIndexChangedDelegate* GetOnTeamIndexChangedDelegate() override; // IScWTeamAgentInterface
 
 	UFUNCTION()
-	void OnControllerChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam);
-
-	UPROPERTY(ReplicatedUsing = "OnRep_CurrentTeamID")
-	FGenericTeamId CurrentTeamID;
+	void OnControllerChangedTeam(UObject* TeamAgent, const FGameplayTag& InPrevTeamTag, const FGameplayTag& InNewTeamTag);
 
 	UPROPERTY()
 	FOnScWTeamIndexChangedDelegate OnTeamChangedDelegate;
+
+	/*UPROPERTY(ReplicatedUsing = "OnRep_CurrentTeamID")
+	FGenericTeamId CurrentTeamID;
 
 	UFUNCTION()
 	MODULE_API virtual void OnRep_CurrentTeamID(FGenericTeamId OldTeamID);
@@ -156,7 +160,7 @@ protected:
 	{
 		// This could be changed to return, e.g., OldTeamID if you want to keep it assigned afterwards, or return an ID for some neutral faction, or etc...
 		return FGenericTeamId::NoTeam;
-	}
+	}*/
 //~ End Team
 };
 

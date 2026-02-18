@@ -81,7 +81,7 @@ protected:
 
 	// Global game data asset to use.
 	UPROPERTY(Config)
-	TSoftObjectPtr<class UScWGameData> ScWGameDataPath;
+	TSoftObjectPtr<class UScWGameData> GameDataAsset;
 
 	// Loaded version of the game data
 	UPROPERTY(Transient)
@@ -89,7 +89,7 @@ protected:
 
 	// Pawn data used when spawning player pawns if there isn't one set on the player state.
 	UPROPERTY(Config)
-	TSoftObjectPtr<UScWPawnData> DefaultPawnData;
+	TSoftObjectPtr<UScWPawnData> DefaultPawnDataAsset;
 
 private:
 	// Flushes the StartupJobs array. Processes all startup work.

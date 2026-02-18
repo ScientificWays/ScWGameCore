@@ -20,7 +20,7 @@
 #include "Player/ScWPlayerState.h"
 #include "Player/ScWPlayerController.h"
 
-#include "Settings/ScWDeveloperSettings.h"
+#include "Development/ScWDeveloperSettings.h"
 
 #include "World/ScWWorldSettings.h"
 #include "World/ScWLevelScriptActor.h"
@@ -51,15 +51,14 @@ const UScWPawnData* AScWGameMode::GetPawnDataForController(const AController* In
 	// See if pawn data is already set on the player state
 	if (InController != nullptr)
 	{
-		if (const AScWPlayerState* ScWPS = InController->GetPlayerState<AScWPlayerState>())
+		if (const AScWPlayerState* TargetPlayerState = InController->GetPlayerState<AScWPlayerState>())
 		{
-			if (const UScWPawnData* PawnData = ScWPS->GetPawnData<UScWPawnData>())
+			if (const UScWPawnData* PawnData = TargetPlayerState->GetPawnData<UScWPawnData>())
 			{
 				return PawnData;
 			}
 		}
 	}
-
 	// If not, fall back to the the default for the current experience
 	check(GameState);
 	UScWExperienceManagerComponent* ExperienceComponent = GameState->FindComponentByClass<UScWExperienceManagerComponent>();
@@ -68,11 +67,10 @@ const UScWPawnData* AScWGameMode::GetPawnDataForController(const AController* In
 	if (ExperienceComponent->IsExperienceLoaded())
 	{
 		const UScWExperience* Experience = ExperienceComponent->GetCurrentExperienceChecked();
-		if (Experience->DefaultPawnData != nullptr)
+		if (Experience->DefaultPawnDataAsset != nullptr)
 		{
-			return Experience->DefaultPawnData;
+			return Experience->DefaultPawnDataAsset;
 		}
-
 		// Experience is loaded and there's still no pawn data, fall back to the default for now
 		return UScWAssetManager::Get().GetDefaultPawnData();
 	}
@@ -115,7 +113,7 @@ void AScWGameMode::HandleMatchAssignmentIfNotExpectingOne()
 		ExperienceId = GetDefault<UScWDeveloperSettings>()->ExperienceOverride;
 		ExperienceIdSource = TEXT("DeveloperSettings");
 	}
-	// see if the command line wants to set the experience
+	// See if the command line wants to set the experience
 	if (!ExperienceId.IsValid())
 	{
 		FString ExperienceFromCommandLine;
@@ -129,12 +127,12 @@ void AScWGameMode::HandleMatchAssignmentIfNotExpectingOne()
 			ExperienceIdSource = TEXT("CommandLine");
 		}
 	}
-	// see if the world settings has a default experience
+	// See if the world settings has a default experience
 	if (!ExperienceId.IsValid())
 	{
 		if (AScWWorldSettings* TypedWorldSettings = Cast<AScWWorldSettings>(GetWorldSettings()))
 		{
-			ExperienceId = TypedWorldSettings->GetDefaultGameplayExperience();
+			ExperienceId = TypedWorldSettings->GetDefaultExperience();
 			ExperienceIdSource = TEXT("WorldSettings");
 		}
 	}
@@ -326,30 +324,30 @@ bool AScWGameMode::IsExperienceLoaded() const
 
 UClass* AScWGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
-	/*if (const UScWPawnData* PawnData = GetPawnDataForController(InController))
+	if (const UScWPawnData* PawnData = GetPawnDataForController(InController))
 	{
 		if (PawnData->PawnClass)
 		{
 			return PawnData->PawnClass;
 		}
-	}*/
+	}
 	return Super::GetDefaultPawnClassForController_Implementation(InController);
 }
 
 APawn* AScWGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* InNewPlayer, const FTransform& InSpawnTransform)
 {
-	/*FActorSpawnParameters SpawnInfo;
+	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.Instigator = GetInstigator();
 	SpawnInfo.ObjectFlags |= RF_Transient;	// Never save the default player pawns into a map.
 	SpawnInfo.bDeferConstruction = true;
 
-	if (UClass* PawnClass = GetDefaultPawnClassForController(NewPlayer))
+	if (UClass* PawnClass = GetDefaultPawnClassForController(InNewPlayer))
 	{
-		if (APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(PawnClass, SpawnTransform, SpawnInfo))
+		if (APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(PawnClass, InSpawnTransform, SpawnInfo))
 		{
-			if (UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::FindPawnExtensionComponent(SpawnedPawn))
+			if (UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::GetPawnExtensionComponent(SpawnedPawn))
 			{
-				if (const UScWPawnData* PawnData = GetPawnDataForController(NewPlayer))
+				if (const UScWPawnData* PawnData = GetPawnDataForController(InNewPlayer))
 				{
 					PawnExtComp->SetPawnData(PawnData);
 				}
@@ -358,20 +356,18 @@ APawn* AScWGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* InN
 					UE_LOG(LogScWGameCore, Error, TEXT("Game mode was unable to set PawnData on the spawned pawn [%s]."), *GetNameSafe(SpawnedPawn));
 				}
 			}
-
-			SpawnedPawn->FinishSpawning(SpawnTransform);
-
+			//SpawnedPawn->FinishSpawning(InSpawnTransform);
 			return SpawnedPawn;
 		}
 		else
 		{
-			UE_LOG(LogScWGameCore, Error, TEXT("Game mode was unable to spawn Pawn of class [%s] at [%s]."), *GetNameSafe(PawnClass), *SpawnTransform.ToHumanReadableString());
+			UE_LOG(LogScWGameCore, Error, TEXT("Game mode was unable to spawn Pawn of class [%s] at [%s]."), *GetNameSafe(PawnClass), *InSpawnTransform.ToHumanReadableString());
 		}
 	}
 	else
 	{
 		UE_LOG(LogScWGameCore, Error, TEXT("Game mode was unable to spawn Pawn due to NULL pawn class."));
-	}*/
+	}
 	return Super::SpawnDefaultPawnAtTransform_Implementation(InNewPlayer, InSpawnTransform);
 }
 
@@ -381,13 +377,13 @@ bool AScWGameMode::ShouldSpawnAtStartSpot(AController* Player)
 	return false;
 }
 
-void AScWGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
+void AScWGameMode::HandleStartingNewPlayer_Implementation(APlayerController* InNewPlayer)
 {
 	// Delay starting new players until the experience has been loaded
 	// (players who log in prior to that will be started by OnExperienceLoaded)
 	if (IsExperienceLoaded())
 	{
-		Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+		Super::HandleStartingNewPlayer_Implementation(InNewPlayer);
 	}
 }
 
@@ -398,7 +394,7 @@ AActor* AScWGameMode::ChoosePlayerStart_Implementation(AController* InPlayer)
 		return PlayerSpawningComponent->ChoosePlayerStart(InPlayer);
 	}*/
 
-	// Pre-ScW implementation
+	// Old framework implementation
 	UWorld* World = GetWorld();
 	ensureReturn(World, nullptr);
 
@@ -418,13 +414,13 @@ AActor* AScWGameMode::ChoosePlayerStart_Implementation(AController* InPlayer)
 	return Super::ChoosePlayerStart_Implementation(InPlayer);
 }
 
-void AScWGameMode::FinishRestartPlayer(AController* NewPlayer, const FRotator& StartRotation)
+void AScWGameMode::FinishRestartPlayer(AController* InNewPlayer, const FRotator& StartRotation)
 {
 	/*if (UScWPlayerSpawningManagerComponent* PlayerSpawningComponent = GameState->FindComponentByClass<UScWPlayerSpawningManagerComponent>())
 	{
-		PlayerSpawningComponent->FinishRestartPlayer(NewPlayer, StartRotation);
+		PlayerSpawningComponent->FinishRestartPlayer(InNewPlayer, StartRotation);
 	}*/
-	Super::FinishRestartPlayer(NewPlayer, StartRotation);
+	Super::FinishRestartPlayer(InNewPlayer, StartRotation);
 }
 
 bool AScWGameMode::PlayerCanRestart_Implementation(APlayerController* InPlayerController)
@@ -496,33 +492,33 @@ bool AScWGameMode::UpdatePlayerStartSpot(AController* Player, const FString& Por
 	return true;
 }
 
-void AScWGameMode::FailedToRestartPlayer(AController* NewPlayer)
+void AScWGameMode::FailedToRestartPlayer(AController* InNewPlayer)
 {
-	Super::FailedToRestartPlayer(NewPlayer);
+	Super::FailedToRestartPlayer(InNewPlayer);
 
 	// If we tried to spawn a pawn and it failed, lets try again *note* check if there's actually a pawn class
 	// before we try this forever.
-	if (UClass* PawnClass = GetDefaultPawnClassForController(NewPlayer))
+	if (UClass* PawnClass = GetDefaultPawnClassForController(InNewPlayer))
 	{
-		if (APlayerController* NewPC = Cast<APlayerController>(NewPlayer))
+		if (APlayerController* NewPC = Cast<APlayerController>(InNewPlayer))
 		{
 			// If it's a player don't loop forever, maybe something changed and they can no longer restart if so stop trying.
 			if (PlayerCanRestart(NewPC))
 			{
-				RequestPlayerRestartNextFrame(NewPlayer, false);
+				RequestPlayerRestartNextFrame(InNewPlayer, false);
 			}
 			else
 			{
-				UE_LOG(LogScWGameCore, Verbose, TEXT("FailedToRestartPlayer(%s) and PlayerCanRestart returned false, so we're not going to try again."), *GetPathNameSafe(NewPlayer));
+				UE_LOG(LogScWGameCore, Verbose, TEXT("FailedToRestartPlayer(%s) and PlayerCanRestart returned false, so we're not going to try again."), *GetPathNameSafe(InNewPlayer));
 			}
 		}
 		else
 		{
-			RequestPlayerRestartNextFrame(NewPlayer, false);
+			RequestPlayerRestartNextFrame(InNewPlayer, false);
 		}
 	}
 	else
 	{
-		UE_LOG(LogScWGameCore, Verbose, TEXT("FailedToRestartPlayer(%s) but there's no pawn class so giving up."), *GetPathNameSafe(NewPlayer));
+		UE_LOG(LogScWGameCore, Verbose, TEXT("FailedToRestartPlayer(%s) but there's no pawn class so giving up."), *GetPathNameSafe(InNewPlayer));
 	}
 }

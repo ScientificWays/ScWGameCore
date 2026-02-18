@@ -13,7 +13,9 @@ class UTexture2D;
 class UUserWidget;
 struct FFrame;
 
-/** Description of settings used to display experiences in the UI and start a new session */
+/**
+ *	Description of settings used to display experiences in the UI and start a new session.
+ */
 UCLASS(BlueprintType)
 class UScWExperienceDescription : public UPrimaryDataAsset
 {

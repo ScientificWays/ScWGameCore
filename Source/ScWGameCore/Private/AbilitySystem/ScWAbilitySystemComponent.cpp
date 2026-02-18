@@ -2,8 +2,9 @@
 
 #include "AbilitySystem/ScWAbilitySystemComponent.h"
 
-#include "AbilitySystem/ScWCoreTags.h"
+#include "Tags/ScWCoreTags.h"
 #include "AbilitySystem/ScWASC_InitInterface.h"
+#include "AbilitySystem/ScWAbilitySystemGlobals.h"
 #include "AbilitySystem/ScWAbilityWorldSubsystem.h"
 #include "AbilitySystem/ScWAbilityTagRelationshipMapping.h"
 
@@ -40,8 +41,7 @@ void UScWAbilitySystemComponent::OnRegister() // UActorComponent
 {
 	Super::OnRegister();
 
-	RegisterGameplayTagEvent(FScWCoreTags::State_Stunned, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ThisClass::OnStunnedTagNumChanged);
-	RegisterGameplayTagEvent(FScWCoreTags::Input_Block, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ThisClass::OnInputBlockMovementTagNumChanged);
+	RegisterGameplayTagEvent(FScWCoreTags::Input_Block_Movement, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ThisClass::OnInputBlockMovementTagNumChanged);
 }
 
 void UScWAbilitySystemComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -553,7 +553,6 @@ void UScWAbilitySystemComponent::AddDynamicTagGameplayEffect(const FGameplayTag&
 		UE_LOG(LogScWGameCore, Warning, TEXT("AddDynamicTagGameplayEffect: Unable to find DynamicTagGameplayEffect [%s]."), *UScWGameData::Get().DynamicTagGameplayEffect.GetAssetName());
 		return;
 	}
-
 	const FGameplayEffectSpecHandle SpecHandle = MakeOutgoingSpec(DynamicTagGE, 1.0f, MakeEffectContext());
 	FGameplayEffectSpec* Spec = SpecHandle.Data.Get();
 
@@ -563,7 +562,6 @@ void UScWAbilitySystemComponent::AddDynamicTagGameplayEffect(const FGameplayTag&
 		return;
 	}
 	Spec->DynamicGrantedTags.AddTag(Tag);
-
 	ApplyGameplayEffectSpecToSelf(*Spec);
 }
 
@@ -583,32 +581,9 @@ void UScWAbilitySystemComponent::RemoveDynamicTagGameplayEffect(const FGameplayT
 //~ End Effects
 
 //~ Begin Tags
-void UScWAbilitySystemComponent::OnStunnedTagNumChanged(const FGameplayTag InCallbackTag, int32 InNewNum)
-{
-	if (InNewNum > 0)
-	{
-		static const FGameplayTagContainer CancelByStunnedTagContainer = FGameplayTagContainer(FScWCoreTags::Ability_CancelBy_Stunned);
-		CancelAbilities(&CancelByStunnedTagContainer);
-	}
-}
-
 void UScWAbilitySystemComponent::OnInputBlockMovementTagNumChanged(const FGameplayTag InCallbackTag, int32 InNewNum)
 {
-	APawn* AvatarPawn = Cast<APawn>(GetAvatarActor_Direct());
-	ensureReturn(AvatarPawn);
-
-	/*if (AScWPlayerController* OwnerPlayerController = AvatarPawn->GetController<AScWPlayerController>())
-	{
-		if (InNewNum > 0) // HasMatchingGameplayTag(FScWCoreTags::Input_Block_Movement)
-		{
-			OwnerPlayerController->AddMovementInputBlockSource(this);
-		}
-		else
-		{
-			OwnerPlayerController->RemoveMovementInputBlockSource(this);
-		}
-	}
-	else */if (AController* OwnerController = AvatarPawn->GetController())
+	if (AController* OwnerController = UScWAbilitySystemGlobals::GetControllerFromASC(this))
 	{
 		if (InNewNum > 0) // HasMatchingGameplayTag(FScWCoreTags::Input_Block_Movement)
 		{

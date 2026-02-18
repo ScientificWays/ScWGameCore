@@ -114,7 +114,7 @@ public:
 	EScWTargetingType TargetingType = EScWTargetingType::Normal;
 
 	/** Asset that gives us access to the float scalar value being used for sensitivty */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AssetBundles="Client,Server"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AssetBundles="Client,Server"))
 	TObjectPtr<const UScWAimSensitivityData> SensitivityLevelTable;
 
 protected:

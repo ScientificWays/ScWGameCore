@@ -1,4 +1,6 @@
-﻿#include "Customization/ScWGameFeatureListCustomization.h"
+﻿// Scientific Ways
+
+#include "Customization/ScWGameFeatureListCustomization.h"
 
 #include "DetailCategoryBuilder.h"
 #include "DetailLayoutBuilder.h"

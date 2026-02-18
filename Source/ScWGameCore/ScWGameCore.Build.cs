@@ -36,8 +36,6 @@ public class ScWGameCore : ModuleRules
 			"AsyncMixin",
 			"CommonGame",
 			"CommonLoadingScreen",
-			"GameplayMessageNodes",
-			"GameplayMessageRuntime",
 			"GameSettings",
 			"GameSubtitles",
 			"ModularGameplayActors",
@@ -63,7 +61,9 @@ public class ScWGameCore : ModuleRules
 			"EnhancedInput",
 
 			"CommonUI",
-			"CommonUser",
+			//"CommonUser",
+			"GameplayMessageNodes",
+			"GameplayMessageRuntime",
 		});
 		// Generate compile errors if using DrawDebug functions in test/shipping builds.
 		PublicDefinitions.Add("SHIPPING_DRAW_DEBUG_ERROR=1");

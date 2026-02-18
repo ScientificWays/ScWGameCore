@@ -1,5 +1,9 @@
-﻿#pragma once
+﻿// Scientific Ways
+
+#pragma once
+
 #include "CoreMinimal.h"
+
 #include "IDetailCustomization.h"
 
 class SCWGAMECOREEDITOR_API FScWGameFeatureListCustomization final : public IDetailCustomization

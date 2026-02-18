@@ -3,9 +3,9 @@
 #include "CommonGameInstance.h"
 
 #include "CommonLocalPlayer.h"
-#include "CommonSessionSubsystem.h"
+//#include "CommonSessionSubsystem.h"
 #include "CommonUISettings.h"
-#include "CommonUserSubsystem.h"
+//#include "CommonUserSubsystem.h"
 #include "GameUIManagerSubsystem.h"
 #include "ICommonUIModule.h"
 #include "LogCommonGame.h"
@@ -24,16 +24,16 @@ void UCommonGameInstance::HandleSystemMessage(FGameplayTag MessageType, FText Ti
 {
 	ULocalPlayer* FirstPlayer = GetFirstGamePlayer();
 	// Forward severe ones to the error dialog for the first player
-	if (FirstPlayer && MessageType.MatchesTag(FCommonUserTags::SystemMessage_Error))
+	/*if (FirstPlayer && MessageType.MatchesTag(FCommonUserTags::SystemMessage_Error))
 	{
 		if (UCommonMessagingSubsystem* Messaging = FirstPlayer->GetSubsystem<UCommonMessagingSubsystem>())
 		{
 			Messaging->ShowError(UCommonGameDialogDescriptor::CreateConfirmationOk(Title, Message));
 		}
-	}
+	}*/
 }
 
-void UCommonGameInstance::HandlePrivilegeChanged(const UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege, ECommonUserAvailability OldAvailability, ECommonUserAvailability NewAvailability)
+/*void UCommonGameInstance::HandlePrivilegeChanged(const UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege, ECommonUserAvailability OldAvailability, ECommonUserAvailability NewAvailability)
 {
 	// By default show errors and disconnect if play privilege for first player is lost
 	if (Privilege == ECommonUserPrivilege::CanPlay && OldAvailability == ECommonUserAvailability::NowAvailable && NewAvailability != ECommonUserAvailability::NowAvailable)
@@ -47,7 +47,7 @@ void UCommonGameInstance::HandlePrivilegeChanged(const UCommonUserInfo* UserInfo
 void UCommonGameInstance::HandlerUserInitialized(const UCommonUserInfo* UserInfo, bool bSuccess, FText Error, ECommonUserPrivilege RequestedPrivilege, ECommonUserOnlineContext OnlineContext)
 {
 	// Subclasses can override this
-}
+}*/
 
 int32 UCommonGameInstance::AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUserId UserId)
 {
@@ -59,10 +59,8 @@ int32 UCommonGameInstance::AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUser
 			UE_LOG(LogCommonGame, Log, TEXT("AddLocalPlayer: Set %s to Primary Player"), *NewPlayer->GetName());
 			PrimaryPlayer = NewPlayer;
 		}
-		
 		GetSubsystem<UGameUIManagerSubsystem>()->NotifyPlayerAdded(Cast<UCommonLocalPlayer>(NewPlayer));
 	}
-	
 	return ReturnVal;
 }
 
@@ -86,7 +84,7 @@ void UCommonGameInstance::Init()
 	// After subsystems are initialized, hook them together
 	FGameplayTagContainer PlatformTraits = ICommonUIModule::GetSettings().GetPlatformTraits();
 
-	UCommonUserSubsystem* UserSubsystem = GetSubsystem<UCommonUserSubsystem>();
+	/*UCommonUserSubsystem* UserSubsystem = GetSubsystem<UCommonUserSubsystem>();
 	if (ensure(UserSubsystem))
 	{
 		UserSubsystem->SetTraitTags(PlatformTraits);
@@ -94,16 +92,15 @@ void UCommonGameInstance::Init()
 		UserSubsystem->OnUserPrivilegeChanged.AddDynamic(this, &UCommonGameInstance::HandlePrivilegeChanged);
 		UserSubsystem->OnUserInitializeComplete.AddDynamic(this, &UCommonGameInstance::HandlerUserInitialized);
 	}
-
 	UCommonSessionSubsystem* SessionSubsystem = GetSubsystem<UCommonSessionSubsystem>();
 	if (ensure(SessionSubsystem))
 	{
 		SessionSubsystem->OnUserRequestedSessionEvent.AddUObject(this, &UCommonGameInstance::OnUserRequestedSession);
 		SessionSubsystem->OnDestroySessionRequestedEvent.AddUObject(this, &UCommonGameInstance::OnDestroySessionRequested);
-	}
+	}*/
 }
 
-void UCommonGameInstance::ResetUserAndSessionState()
+/*void UCommonGameInstance::ResetUserAndSessionState()
 {
 	UCommonUserSubsystem* UserSubsystem = GetSubsystem<UCommonUserSubsystem>();
 	if (ensure(UserSubsystem))
@@ -116,17 +113,17 @@ void UCommonGameInstance::ResetUserAndSessionState()
 	{
 		SessionSubsystem->CleanUpSessions();
 	}
-}
+}*/
 
 void UCommonGameInstance::ReturnToMainMenu()
 {
 	// By default when returning to main menu we should reset everything
-	ResetUserAndSessionState();
+	//ResetUserAndSessionState();
 
 	Super::ReturnToMainMenu();
 }
 
-void UCommonGameInstance::OnUserRequestedSession(const FPlatformUserId& PlatformUserId, UCommonSession_SearchResult* InRequestedSession, const FOnlineResultInformation& RequestedSessionResult)
+/*void UCommonGameInstance::OnUserRequestedSession(const FPlatformUserId& PlatformUserId, UCommonSession_SearchResult* InRequestedSession, const FOnlineResultInformation& RequestedSessionResult)
 {
 	if (InRequestedSession)
 	{
@@ -191,7 +188,7 @@ void UCommonGameInstance::ResetGameAndJoinRequestedSession()
 {
 	// Default behavior is to return to the main menu.  The game must call JoinRequestedSession when the game is in a ready state.
 	ReturnToMainMenu();
-}
+}*/
 
 
 //void UCommonGameInstance::OnPreLoadMap(const FString& MapName)

@@ -2,28 +2,27 @@
 
 #pragma once
 
-#include "Components/GameFrameworkInitStateInterface.h"
+#include "ScWGameCore.h"
+
 #include "Components/PawnComponent.h"
+#include "Components/GameFrameworkInitStateInterface.h"
 
 #include "ScWPawnExtensionComponent.generated.h"
 
 #define MODULE_API SCWGAMECORE_API
 
-namespace EEndPlayReason { enum Type : int; }
-
 class UGameFrameworkComponentManager;
 class UScWAbilitySystemComponent;
 class UScWPawnData;
-class UObject;
 struct FActorInitStateChangedParams;
 struct FFrame;
 struct FGameplayTag;
 
 /**
- * Component that adds functionality to all Pawn classes so it can be used for characters/vehicles/etc.
- * This coordinates the initialization of other components.
+ *	Component that adds functionality to all Pawn classes so it can be used for characters/vehicles/etc.
+ *	This coordinates the initialization of other components.
  */
-UCLASS(MinimalAPI)
+UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] Pawn Extension Component"))
 class UScWPawnExtensionComponent : public UPawnComponent, public IGameFrameworkInitStateInterface
 {
 	GENERATED_BODY()
@@ -44,8 +43,12 @@ public:
 	//~ End IGameFrameworkInitStateInterface interface
 
 	/** Returns the pawn extension component if one exists on the specified actor. */
-	UFUNCTION(BlueprintPure, Category = "ScW | Pawn")
-	static UScWPawnExtensionComponent* FindPawnExtensionComponent(const AActor* Actor) { return (Actor ? Actor->FindComponentByClass<UScWPawnExtensionComponent>() : nullptr); }
+	UFUNCTION(Category = "Statics", BlueprintPure)
+	static UScWPawnExtensionComponent* GetPawnExtensionComponent(const AActor* InActor)
+	{
+		ensureReturn(InActor, nullptr);
+		return InActor->FindComponentByClass<ThisClass>();
+	}
 
 	/** Gets the pawn data, which is used to specify pawn properties in data */
 	template <class T>
@@ -78,6 +81,8 @@ public:
 
 	/** Register with the OnAbilitySystemUninitialized delegate fired when our pawn is removed as the ability system's avatar actor */
 	MODULE_API void OnAbilitySystemUninitialized_Register(FSimpleMulticastDelegate::FDelegate Delegate);
+
+	MODULE_API FSimpleMulticastDelegate& GetOnAbilitySystemInitialized() { return OnAbilitySystemInitialized; }
 
 protected:
 

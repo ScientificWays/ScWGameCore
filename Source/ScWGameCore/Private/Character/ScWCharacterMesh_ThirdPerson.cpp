@@ -5,7 +5,7 @@
 #include "Animation/ScWAnimInstance_ThirdPerson.h"
 #include "Animation/ScWAnimationsFunctionLibrary.h"
 
-#include "AbilitySystem/ScWCoreTags.h"
+#include "Tags/ScWCoreTags.h"
 #include "AbilitySystem/ScWAbilitySystemComponent.h"
 #include "AbilitySystem/Attributes/ScWAS_CharacterMovement.h"
 
@@ -17,7 +17,7 @@ UScWCharacterMesh_ThirdPerson::UScWCharacterMesh_ThirdPerson()
 	FirstPersonPrimitiveType = EFirstPersonPrimitiveType::WorldSpaceRepresentation;
 	VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 
-	RagdollCollisionProfileName = TEXT("Ragdoll");
+	RagdollCollisionProfile.Name = TEXT("Ragdoll");
 }
 
 //~ Begin Initialize
@@ -91,7 +91,7 @@ void UScWCharacterMesh_ThirdPerson::OnMassAttributeChanged(const FOnAttributeCha
 void UScWCharacterMesh_ThirdPerson::BP_ActivateRagdoll_Implementation()
 {
 	SetSimulatePhysics(true);
-	SetCollisionProfileName(RagdollCollisionProfileName);
+	SetCollisionProfileName(RagdollCollisionProfile.Name);
 }
 
 void UScWCharacterMesh_ThirdPerson::HandleDamageApplied(float InDamage, const FReceivedDamageData& InData)

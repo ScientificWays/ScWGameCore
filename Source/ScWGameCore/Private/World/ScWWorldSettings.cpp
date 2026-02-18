@@ -16,17 +16,17 @@ AScWWorldSettings::AScWWorldSettings(const FObjectInitializer& InObjectInitializ
 
 }
 
-FPrimaryAssetId AScWWorldSettings::GetDefaultGameplayExperience() const
+FPrimaryAssetId AScWWorldSettings::GetDefaultExperience() const
 {
 	FPrimaryAssetId Result;
-	if (!DefaultGameplayExperience.IsNull())
+	if (!DefaultExperience.IsNull())
 	{
-		Result = UAssetManager::Get().GetPrimaryAssetIdForPath(DefaultGameplayExperience.ToSoftObjectPath());
+		Result = UAssetManager::Get().GetPrimaryAssetIdForPath(DefaultExperience.ToSoftObjectPath());
 
 		if (!Result.IsValid())
 		{
-			UE_LOG(LogScWGameCore, Error, TEXT("%s.DefaultGameplayExperience is %s but that failed to resolve into an asset ID (you might need to add a path to the Asset Rules in your game feature plugin or project settings"),
-				*GetPathNameSafe(this), *DefaultGameplayExperience.ToString());
+			UE_LOG(LogScWGameCore, Error, TEXT("%s.DefaultExperience is %s but that failed to resolve into an asset ID (you might need to add a path to the Asset Rules in your game feature plugin or project settings"),
+				*GetPathNameSafe(this), *DefaultExperience.ToString());
 		}
 	}
 	return Result;

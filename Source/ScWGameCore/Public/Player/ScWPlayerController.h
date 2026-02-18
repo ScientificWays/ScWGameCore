@@ -53,6 +53,9 @@ protected:
 	virtual void OnPlayerStateChanged(); // Called when the player state is set or cleared
 private:
 	void BroadcastOnPlayerStateChanged();
+
+	UPROPERTY()
+	TObjectPtr<APlayerState> LastSeenPlayerState;
 //~ End Player State
 
 //~ Begin Settings
@@ -74,16 +77,16 @@ protected:
 	
 //~ Begin Team
 public:
-	MODULE_API virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override; // IGenericTeamAgentInterface
 	MODULE_API virtual FGenericTeamId GetGenericTeamId() const override; // IGenericTeamAgentInterface
+	MODULE_API virtual void SetGenericTeamId(const FGenericTeamId& InTeamID) override; // IGenericTeamAgentInterface
+
+	MODULE_API virtual const FGameplayTag& GetTeamTag() const override; // IScWTeamAgentInterface
+	MODULE_API virtual void SetTeamTag(const FGameplayTag& InTeamTag) override; // IScWTeamAgentInterface
 	MODULE_API virtual FOnScWTeamIndexChangedDelegate* GetOnTeamIndexChangedDelegate() override; // IScWTeamAgentInterface
 private:
 
 	UFUNCTION()
-	void OnPlayerStateChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam);
-
-	UPROPERTY()
-	TObjectPtr<APlayerState> LastSeenPlayerState;
+	void OnPlayerStateChangedTeam(UObject* TeamAgent, const FGameplayTag& InPrevTeamTag, const FGameplayTag& InNewTeamTag);
 
 	UPROPERTY()
 	FOnScWTeamIndexChangedDelegate OnTeamChangedDelegate;

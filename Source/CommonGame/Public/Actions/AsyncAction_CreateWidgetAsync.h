@@ -29,7 +29,7 @@ class UAsyncAction_CreateWidgetAsync : public UCancellableAsyncAction
 public:
 	MODULE_API virtual void Cancel() override;
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, meta=(WorldContext = "WorldContextObject", BlueprintInternalUseOnly="true"))
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, meta = (WorldContext = "WorldContextObject", BlueprintInternalUseOnly="true"))
 	static MODULE_API UAsyncAction_CreateWidgetAsync* CreateWidgetAsync(UObject* WorldContextObject, TSoftClassPtr<UUserWidget> UserWidgetSoftClass, APlayerController* OwningPlayer, bool bSuspendInputUntilComplete = true);
 
 	MODULE_API virtual void Activate() override;

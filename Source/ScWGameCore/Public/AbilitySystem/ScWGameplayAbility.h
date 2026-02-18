@@ -72,9 +72,25 @@ enum class EScWAbilityActivationGroup : uint8
 	MAX	UMETA(Hidden)
 };
 
+USTRUCT(BlueprintType)
+struct FGameplayMessage_AbilityFailureSimple
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<APlayerController> PlayerController = nullptr;
+
+	UPROPERTY(BlueprintReadWrite)
+	FGameplayTagContainer FailureTags;
+
+	UPROPERTY(BlueprintReadWrite)
+	FText UserFacingReason;
+};
+
 /** Failure reason that can be used to play an animation montage when a failure occurs */
 USTRUCT(BlueprintType)
-struct FScWAbilityMontageFailureMessage
+struct FGameplayMessage_AbilityFailureMontage
 {
 	GENERATED_BODY()
 
@@ -94,6 +110,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UAnimMontage> FailureMontage = nullptr;
 };
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_ABILITY_SIMPLE_FAILURE_MESSAGE);
 
 /**
  *	The base gameplay ability class used in ScW framework.
@@ -149,34 +167,35 @@ protected:
 	MODULE_API void ScriptOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const;
 
 	//~UGameplayAbility interface
-	MODULE_API virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
+	MODULE_API virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
 	MODULE_API virtual void SetCanBeCanceled(bool bCanBeCanceled) override;
 	MODULE_API virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 	MODULE_API virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
-	MODULE_API virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-	MODULE_API virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
-	MODULE_API virtual bool CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
-	MODULE_API virtual void ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const override;
-	MODULE_API virtual FGameplayEffectContextHandle MakeEffectContext(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo) const override;
+	MODULE_API virtual void ActivateAbility(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	MODULE_API virtual bool CommitAbility(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) override;
+	MODULE_API virtual void EndAbility(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+	MODULE_API virtual bool CheckCost(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
+	MODULE_API virtual void ApplyCost(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const override;
+	MODULE_API virtual FGameplayEffectContextHandle MakeEffectContext(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo) const override;
 	MODULE_API virtual void ApplyAbilityTagsToGameplayEffectSpec(FGameplayEffectSpec& Spec, FGameplayAbilitySpec* AbilitySpec) const override;
 	MODULE_API virtual bool DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
 	//~End of UGameplayAbility interface
 
 	MODULE_API virtual void OnPawnAvatarSet();
 
-	//MODULE_API virtual void GetAbilitySource(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, float& OutSourceLevel, const IScWAbilitySourceInterface*& OutAbilitySource, AActor*& OutEffectCauser) const;
+	//MODULE_API virtual void GetAbilitySource(FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, float& OutSourceLevel, const IScWAbilitySourceInterface*& OutAbilitySource, AActor*& OutEffectCauser) const;
 
 	/** Called when this ability is granted to the ability system component. */
 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityAdded")
-	MODULE_API void K2_OnAbilityAdded();
+	MODULE_API void BP_OnAbilityAdded();
 
 	/** Called when this ability is removed from the ability system component. */
 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityRemoved")
-	MODULE_API void K2_OnAbilityRemoved();
+	MODULE_API void BP_OnAbilityRemoved();
 
 	/** Called when the ability system is initialized with a pawn avatar. */
 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnPawnAvatarSet")
-	MODULE_API void K2_OnPawnAvatarSet();
+	MODULE_API void BP_OnPawnAvatarSet();
 	
 	UFUNCTION(Category = "Input", BlueprintCallable, meta = (KeyWords = "IsInputPressed"))
 	MODULE_API bool IsAbilityInputPressed() const;
@@ -206,6 +225,16 @@ protected:
 	// If true, extra information should be logged when this ability is canceled. This is temporary, used for tracking a bug.
 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
 	bool bLogCancelation;
+
+//~ Begin Events
+public:
+
+	UFUNCTION(Category = "Events", BlueprintCallable, BlueprintPure = "false", meta = (AutoCreateRefTerm = "InEventTag"))
+	void SendAbilityEvent(const FGameplayTag& InEventTag) const;
+
+	UFUNCTION(Category = "Events", BlueprintNativeEvent, meta = (AutoCreateRefTerm = "InEventTag", DisplayName = "Make Ability Event Data"))
+	MODULE_API FGameplayEventData BP_MakeAbilityEventData(const FGameplayTag& InEventTag) const;
+//~ End Events
 };
 
 #undef MODULE_API

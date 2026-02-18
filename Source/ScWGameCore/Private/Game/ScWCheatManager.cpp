@@ -2,7 +2,7 @@
 
 #include "Game/ScWCheatManager.h"
 
-#include "AbilitySystem/ScWCoreTags.h"
+#include "Tags/ScWCoreTags.h"
 #include "AbilitySystem/ScWAbilitySystemComponent.h"
 
 #include "System/ScWGameData.h"
@@ -10,6 +10,10 @@
 
 #include "Player/ScWPlayerController.h"
 #include "Player/ScWDebugCameraController.h"
+
+//#include "System/ScWSystemStatics.h"
+
+#include "Development/ScWDeveloperSettings.h"
 
 #include "GameFramework/Pawn.h"
 #include "Engine/Engine.h"
@@ -19,8 +23,6 @@
 #include "AbilitySystemGlobals.h"
 #include "Damage/ScWAttributeHealthComponent.h"
 #include "Character/ScWPawnExtensionComponent.h"
-//#include "System/ScWSystemStatics.h"
-#include "Settings/ScWDeveloperSettings.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ScWCheatManager)
 
@@ -365,7 +367,7 @@ UScWAbilitySystemComponent* UScWCheatManager::GetPlayerAbilitySystemComponent() 
 {
 	if (AScWPlayerController* TargetPC = Cast<AScWPlayerController>(GetOuterAPlayerController()))
 	{
- 		if (const UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::FindPawnExtensionComponent(TargetPC->GetPawn()))
+ 		if (const UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::GetPawnExtensionComponent(TargetPC->GetPawn()))
 		{
 			if (PawnExtComp->HasReachedInitState(FScWCoreTags::InitState_GameplayReady))
 			{

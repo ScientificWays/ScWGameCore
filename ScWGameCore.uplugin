@@ -32,13 +32,8 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "CommonUser",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		},
-		{
 			"Name": "GameplayMessageNodes",
-			"Type": "Runtime",
+			"Type": "UncookedOnly",
 			"LoadingPhase": "Default"
 		},
 		{
@@ -70,6 +65,10 @@
 		},
 		{
 			"Name": "GameplayAbilities",
+			"Enabled": true
+		},
+		{
+			"Name": "GameplayTagsEditor",
 			"Enabled": true
 		},
 		{

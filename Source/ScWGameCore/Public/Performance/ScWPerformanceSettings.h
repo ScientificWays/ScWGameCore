@@ -42,7 +42,7 @@ struct FScWPerformanceStatGroup
 
 	// A query on platform traits to determine whether or not it will be possible
 	// to show a set of stats
-	UPROPERTY(EditAnywhere, meta=(Categories = "Input,Platform.Trait"))
+	UPROPERTY(EditAnywhere, meta = (Categories = "Input,Platform.Trait"))
 	FGameplayTagQuery VisibilityQuery;
 
 	// The set of stats to allow if the query passes
@@ -64,7 +64,7 @@ enum class EScWFramePacingMode : uint8
 	MobileStyle
 };
 
-UCLASS(config=Game, defaultconfig)
+UCLASS(MinimalAPI, Config = Game, DefaultConfig, meta = (DisplayName = "[ScW] Platform Specific Rendering Settings"))
 class UScWPlatformSpecificRenderingSettings : public UPlatformSettings
 {
 	GENERATED_BODY()
@@ -108,7 +108,7 @@ public:
 	// Potential frame rates to display for mobile
 	// Note: This is further limited by ScW.DeviceProfile.Mobile.MaxFrameRate from the
 	// platform-specific device profile and what the platform frame pacer reports as supported
-	UPROPERTY(EditAnywhere, Config, Category=VideoSettings, meta=(EditCondition="FramePacingMode==EScWFramePacingMode::MobileStyle", ForceUnits=Hz))
+	UPROPERTY(EditAnywhere, Config, Category=VideoSettings, meta = (EditCondition="FramePacingMode==EScWFramePacingMode::MobileStyle", ForceUnits=Hz))
 	TArray<int32> MobileFrameRateLimits;
 };
 
@@ -117,7 +117,7 @@ public:
 /**
  * Project-specific performance profile settings.
  */
-UCLASS(config=Game, defaultconfig, meta=(DisplayName="ScW Performance Settings"))
+UCLASS(MinimalAPI, Config = Game, DefaultConfig, meta = (DisplayName = "[ScW] Performance Settings"))
 class UScWPerformanceSettings : public UDeveloperSettingsBackedByCVars
 {
 	GENERATED_BODY()
@@ -134,7 +134,7 @@ private:
 public:
 	// The list of frame rates to allow users to choose from in the various
 	// "frame rate limit" video settings on desktop platforms
-	UPROPERTY(EditAnywhere, Config, Category=Performance, meta=(ForceUnits=Hz))
+	UPROPERTY(EditAnywhere, Config, Category=Performance, meta = (ForceUnits=Hz))
 	TArray<int32> DesktopFrameRateLimits;
 
 	// The list of performance stats that can be enabled in Options by the user

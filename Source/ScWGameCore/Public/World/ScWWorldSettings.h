@@ -9,7 +9,7 @@
 #define MODULE_API SCWGAMECORE_API
 
 /**
- * The default world settings object, used primarily to set the default gameplay experience to use when playing on this map
+ * The default world settings object, used primarily to set the default experience to use when playing on this map
  */
 UCLASS(MinimalAPI)
 class AScWWorldSettings : public AWorldSettings
@@ -26,12 +26,13 @@ public:
 
 public:
 	// Returns the default experience to use when a server opens this map if it is not overridden by the user-facing experience
-	MODULE_API FPrimaryAssetId GetDefaultGameplayExperience() const;
+	MODULE_API FPrimaryAssetId GetDefaultExperience() const;
 
 protected:
+
 	// The default experience to use when a server opens this map if it is not overridden by the user-facing experience
-	UPROPERTY(Category = "Game Mode", EditDefaultsOnly)
-	TSoftClassPtr<class UScWExperience> DefaultGameplayExperience;
+	UPROPERTY(Category = "GameMode", EditDefaultsOnly)
+	TSoftObjectPtr<class UScWExperience> DefaultExperience;
 
 public:
 

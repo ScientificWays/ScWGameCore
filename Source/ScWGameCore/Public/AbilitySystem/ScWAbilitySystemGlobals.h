@@ -15,10 +15,13 @@ struct FGameplayEffectContext;
 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FGameplayTagNumChangedEvent, const FGameplayTag, InTag, int32, InNewNum);
 
-UCLASS(Config = Game)
+UCLASS(Config = Game, meta = (DisplayName = "[ScW] Ability System Globals"))
 class UScWAbilitySystemGlobals : public UAbilitySystemGlobals
 {
 	GENERATED_UCLASS_BODY()
+
+	/** Gets the single instance of the globals object, will create it as necessary */
+	static ThisClass& Get() { return *Cast<ThisClass>(IGameplayAbilitiesModule::Get().GetAbilitySystemGlobals()); }
 
 //~ Begin Tags
 public:
@@ -60,6 +63,18 @@ public:
 
 	UFUNCTION(Category = "Tags", BlueprintCallable, meta = (CallableWithoutWorldContext))
 	static MODULE_API bool TargetHasAnyMatchingGameplayTags(UObject* InTarget, const FGameplayTagContainer& InTagContainer);
+
+	UFUNCTION(Category = "Tags", BlueprintCallable, meta = (CallableWithoutWorldContext, KeyWords = "IsPlayerCharacter", ExpandBoolAsExecs = "ReturnValue"))
+	static MODULE_API bool IsPlayerPawnType(UObject* InTarget);
+
+	UFUNCTION(Category = "Tags", BlueprintCallable, meta = (CallableWithoutWorldContext))
+	static MODULE_API const FGameplayTagContainer& GetIgnoreDamageTags() { return ThisClass::Get().IgnoreDamageTags; }
+
+protected:
+	virtual void InitGlobalTags() override; // UAbilitySystemGlobals
+
+	UPROPERTY()
+	FGameplayTagContainer IgnoreDamageTags;
 //~ End Tags
 
 //~ Begin Effects
@@ -104,6 +119,19 @@ public:
 	UFUNCTION(Category = "Abilities", BlueprintCallable, meta = (ReturnDisplayName = "Out Activations"))
 	static MODULE_API int32 SendGameplayEventToComponent(UAbilitySystemComponent* InTargetASC, const FGameplayTag& InEventTag, const FGameplayEventData& InEventData);
 //~ End Abilities
+	
+//~ Begin Actor Info
+public:
+
+	UFUNCTION(Category = "Actor Info", BlueprintCallable, BlueprintPure)
+	static MODULE_API APlayerController* GetPlayerControllerFromASC(UAbilitySystemComponent* InTargetASC);
+
+	UFUNCTION(Category = "Actor Info", BlueprintCallable, BlueprintPure)
+	static MODULE_API AController* GetControllerFromASC(UAbilitySystemComponent* InTargetASC);
+
+	UFUNCTION(Category = "Actor Info", BlueprintCallable, BlueprintPure)
+	static MODULE_API ACharacter* GetCharacterFromASC(UAbilitySystemComponent* InTargetASC);
+//~ End Actor Info
 };
 
 #undef MODULE_API

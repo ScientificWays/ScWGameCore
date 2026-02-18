@@ -4,7 +4,7 @@
 
 #include "System/ScWGameData.h"
 
-#include "AbilitySystem/ScWCoreTags.h"
+#include "Tags/ScWCoreTags.h"
 
 #include "Character/ScWPawnData.h"
 
@@ -36,7 +36,7 @@ static FAutoConsoleCommand CVarDumpLoadedAssets(
 
 UScWAssetManager::UScWAssetManager()
 {
-	DefaultPawnData = nullptr;
+	DefaultPawnDataAsset = nullptr;
 }
 
 UScWAssetManager& UScWAssetManager::Get()
@@ -100,7 +100,6 @@ void UScWAssetManager::DumpLoadedAssets()
 	{
 		UE_LOG(LogScWGameCore, Log, TEXT("  %s"), *GetNameSafe(LoadedAsset));
 	}
-
 	UE_LOG(LogScWGameCore, Log, TEXT("... %d assets in loaded pool"), Get().LoadedAssets.Num());
 	UE_LOG(LogScWGameCore, Log, TEXT("========== Finish Dumping Loaded Assets =========="));
 }
@@ -113,12 +112,10 @@ void UScWAssetManager::StartInitialLoading()
 	Super::StartInitialLoading();
 
 	STARTUP_JOB(InitializeGameplayCueManager());
-
 	{
 		// Load base game data asset
 		STARTUP_JOB_WEIGHTED(GetGameData(), 25.f);
 	}
-
 	// Run all the queued up startup jobs
 	DoAllStartupJobs();
 }
@@ -135,12 +132,12 @@ void UScWAssetManager::InitializeGameplayCueManager()
 
 const UScWGameData& UScWAssetManager::GetGameData()
 {
-	return GetOrLoadTypedGameData<UScWGameData>(ScWGameDataPath);
+	return GetOrLoadTypedGameData<UScWGameData>(GameDataAsset);
 }
 
 const UScWPawnData* UScWAssetManager::GetDefaultPawnData() const
 {
-	return GetAsset(DefaultPawnData);
+	return GetAsset(DefaultPawnDataAsset);
 }
 
 UPrimaryDataAsset* UScWAssetManager::LoadGameDataOfClass(TSubclassOf<UPrimaryDataAsset> DataClass, const TSoftObjectPtr<UPrimaryDataAsset>& DataClassPath, FPrimaryAssetType PrimaryAssetType)

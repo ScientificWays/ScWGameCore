@@ -7,7 +7,7 @@
 #include "ScWExperience.generated.h"
 
 /**
- *	Definition of an experience
+ *	Definition of an experience.
  */
 UCLASS(BlueprintType, Const)
 class UScWExperience : public UPrimaryDataAsset
@@ -37,7 +37,7 @@ public:
 	/** The default pawn class to spawn for players */
 	//@TODO: Make soft?
 	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
-	TObjectPtr<const class UScWPawnData> DefaultPawnData;
+	TObjectPtr<const class UScWPawnData> DefaultPawnDataAsset;
 
 	// List of actions to perform as this experience is loaded/activated/deactivated/unloaded
 	UPROPERTY(EditDefaultsOnly, Instanced, Category="Actions")

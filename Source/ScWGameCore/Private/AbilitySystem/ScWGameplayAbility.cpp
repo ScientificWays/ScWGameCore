@@ -7,13 +7,13 @@
 #include "AbilitySystemLog.h"
 
 #include "AbilitySystem/ScWAbilityCost.h"
-#include "AbilitySystem/ScWCoreTags.h"
+#include "Tags/ScWCoreTags.h"
 
-//#include "ScWAbilitySimpleFailureMessage.h"
-//#include "GameFramework/GameplayMessageSubsystem.h"
-
+#include "AbilitySystem/ScWAbilitySystemGlobals.h"
 #include "AbilitySystem/ScWGameplayEffectContext.h"
 //#include "AbilitySystem/ScWAbilitySourceInterface.h"
+
+#include "GameFramework/GameplayMessageSubsystem.h"
 
 #include "Utils/ScWUtils.h"
 
@@ -49,96 +49,72 @@ UScWGameplayAbility::UScWGameplayAbility(const FObjectInitializer& ObjectInitial
 
 UScWAbilitySystemComponent* UScWGameplayAbility::GetScWAbilitySystemComponentFromActorInfo() const
 {
-	return (CurrentActorInfo ? Cast<UScWAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent.Get()) : nullptr);
+	return (CurrentActorInfo ? Cast<UScWAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo()) : nullptr);
 }
 
 APlayerController* UScWGameplayAbility::GetPlayerControllerFromActorInfo() const
 {
-	return (CurrentActorInfo ? (CurrentActorInfo->PlayerController.Get()) : nullptr);
+	return UScWAbilitySystemGlobals::GetPlayerControllerFromASC(GetAbilitySystemComponentFromActorInfo());
 }
 
 AController* UScWGameplayAbility::GetControllerFromActorInfo() const
 {
-	if (CurrentActorInfo)
-	{
-		if (AController* PC = CurrentActorInfo->PlayerController.Get())
-		{
-			return PC;
-		}
-
-		// Look for a player controller or pawn in the owner chain.
-		AActor* TestActor = CurrentActorInfo->OwnerActor.Get();
-		while (TestActor)
-		{
-			if (AController* C = Cast<AController>(TestActor))
-			{
-				return C;
-			}
-
-			if (APawn* Pawn = Cast<APawn>(TestActor))
-			{
-				return Pawn->GetController();
-			}
-
-			TestActor = TestActor->GetOwner();
-		}
-	}
-
-	return nullptr;
+	return UScWAbilitySystemGlobals::GetControllerFromASC(GetAbilitySystemComponentFromActorInfo());
 }
 
 ACharacter* UScWGameplayAbility::GetCharacterFromActorInfo() const
 {
-	return (CurrentActorInfo ? Cast<ACharacter>(CurrentActorInfo->AvatarActor.Get()) : nullptr);
+	return UScWAbilitySystemGlobals::GetCharacterFromASC(GetAbilitySystemComponentFromActorInfo());
 }
 
 void UScWGameplayAbility::NativeOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const
 {
 	bool bSimpleFailureFound = false;
+
 	for (FGameplayTag Reason : FailedReason)
 	{
 		if (!bSimpleFailureFound)
 		{
 			if (const FText* pUserFacingMessage = FailureTagToUserFacingMessages.Find(Reason))
 			{
-				/*FScWAbilitySimpleFailureMessage Message;
+				FGameplayMessage_AbilityFailureSimple Message;
 				Message.PlayerController = GetActorInfo().PlayerController.Get();
 				Message.FailureTags = FailedReason;
 				Message.UserFacingReason = *pUserFacingMessage;
 
-				UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
-				MessageSystem.BroadcastMessage(TAG_ABILITY_SIMPLE_FAILURE_MESSAGE, Message);*/
+				UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(this);
+				MessageSystem.BroadcastMessage(TAG_ABILITY_SIMPLE_FAILURE_MESSAGE, Message);
 				bSimpleFailureFound = true;
 			}
 		}
-
 		if (UAnimMontage* pMontage = FailureTagToAnimMontage.FindRef(Reason))
 		{
-			FScWAbilityMontageFailureMessage Message;
+			FGameplayMessage_AbilityFailureMontage Message;
 			Message.PlayerController = GetActorInfo().PlayerController.Get();
 			Message.AvatarActor = GetActorInfo().AvatarActor.Get();
 			Message.FailureTags = FailedReason;
 			Message.FailureMontage = pMontage;
 
-			//UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
-			//MessageSystem.BroadcastMessage(TAG_ABILITY_PLAY_MONTAGE_FAILURE_MESSAGE, Message);
+			UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(this);
+			MessageSystem.BroadcastMessage(TAG_ABILITY_PLAY_MONTAGE_FAILURE_MESSAGE, Message);
 		}
 	}
+	SendAbilityEvent(FScWCoreTags::Ability_Event_Failed);
 }
 
-bool UScWGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+bool UScWGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
 {
 	if (!ActorInfo || !ActorInfo->AbilitySystemComponent.IsValid())
 	{
 		return false;
 	}
-	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
+	if (!Super::CanActivateAbility(InHandle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
 	{
 		return false;
 	}
 	//@TODO Possibly remove after setting up tag relationships
-	UScWAbilitySystemComponent* ScWASC = CastChecked<UScWAbilitySystemComponent>(ActorInfo->AbilitySystemComponent.Get());
-	if (ScWASC->IsActivationGroupBlocked(ActivationGroup))
+	UScWAbilitySystemComponent* OwnerASC = CastChecked<UScWAbilitySystemComponent>(ActorInfo->AbilitySystemComponent.Get());
+	if (OwnerASC->IsActivationGroupBlocked(ActivationGroup))
 	{
 		if (OptionalRelevantTags)
 		{
@@ -157,7 +133,6 @@ void UScWGameplayAbility::SetCanBeCanceled(bool bCanBeCanceled)
 		UE_LOG(LogScWGameCore, Error, TEXT("SetCanBeCanceled: Ability [%s] can not block canceling because its activation group is replaceable."), *GetName());
 		return;
 	}
-
 	Super::SetCanBeCanceled(bCanBeCanceled);
 }
 
@@ -165,33 +140,56 @@ void UScWGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorIn
 {
 	Super::OnGiveAbility(ActorInfo, Spec);
 
-	K2_OnAbilityAdded();
+	SendAbilityEvent(FScWCoreTags::Ability_Event_Added);
+	BP_OnAbilityAdded();
 
 	TryActivateAbilityOnSpawn(ActorInfo, Spec);
 }
 
 void UScWGameplayAbility::OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
-	K2_OnAbilityRemoved();
-
 	Super::OnRemoveAbility(ActorInfo, Spec);
+
+	SendAbilityEvent(FScWCoreTags::Ability_Event_Removed);
+	BP_OnAbilityRemoved();
 }
 
-void UScWGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void UScWGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	Super::ActivateAbility(InHandle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	SendAbilityEvent(FScWCoreTags::Ability_Event_Activated);
 }
 
-void UScWGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+bool UScWGameplayAbility::CommitAbility(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, FGameplayTagContainer* OptionalRelevantTags)
+{
+	if (Super::CommitAbility(InHandle, ActorInfo, ActivationInfo, OptionalRelevantTags))
+	{
+		SendAbilityEvent(FScWCoreTags::Ability_Event_Commited);
+		return true;
+	}
+	return false;
+}
+
+void UScWGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	//ClearCameraMode();
 
-	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	Super::EndAbility(InHandle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	if (bWasCancelled)
+	{
+		SendAbilityEvent(FScWCoreTags::Ability_Event_Ended_Cancelled);
+	}
+	else
+	{
+		SendAbilityEvent(FScWCoreTags::Ability_Event_Ended);
+	}
 }
 
-bool UScWGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, OUT FGameplayTagContainer* OptionalRelevantTags) const
+bool UScWGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, OUT FGameplayTagContainer* OptionalRelevantTags) const
 {
-	if (!Super::CheckCost(Handle, ActorInfo, OptionalRelevantTags) || !ActorInfo)
+	if (!Super::CheckCost(InHandle, ActorInfo, OptionalRelevantTags) || !ActorInfo)
 	{
 		return false;
 	}
@@ -200,7 +198,7 @@ bool UScWGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle, con
 	{
 		if (AdditionalCost != nullptr)
 		{
-			if (!AdditionalCost->CheckCost(this, Handle, ActorInfo, /*inout*/ OptionalRelevantTags))
+			if (!AdditionalCost->CheckCost(this, InHandle, ActorInfo, /*inout*/ OptionalRelevantTags))
 			{
 				return false;
 			}
@@ -209,9 +207,9 @@ bool UScWGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle, con
 	return true;
 }
 
-void UScWGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
+void UScWGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
 {
-	Super::ApplyCost(Handle, ActorInfo, ActivationInfo);
+	Super::ApplyCost(InHandle, ActorInfo, ActivationInfo);
 
 	check(ActorInfo);
 
@@ -223,7 +221,7 @@ void UScWGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle, con
 			if (UScWAbilitySystemComponent* ASC = Cast<UScWAbilitySystemComponent>(ActorInfo->AbilitySystemComponent.Get()))
 			{
 				FGameplayAbilityTargetDataHandle TargetData;
-				ASC->GetAbilityTargetData(Handle, ActivationInfo, TargetData);
+				ASC->GetAbilityTargetData(InHandle, ActivationInfo, TargetData);
 				for (int32 TargetDataIdx = 0; TargetDataIdx < TargetData.Data.Num(); ++TargetDataIdx)
 				{
 					if (UAbilitySystemBlueprintLibrary::TargetDataHasHitResult(TargetData, TargetDataIdx))
@@ -255,14 +253,14 @@ void UScWGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle, con
 					continue;
 				}
 			}
-			AdditionalCost->ApplyCost(this, Handle, ActorInfo, ActivationInfo);
+			AdditionalCost->ApplyCost(this, InHandle, ActorInfo, ActivationInfo);
 		}
 	}
 }
 
-FGameplayEffectContextHandle UScWGameplayAbility::MakeEffectContext(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo) const
+FGameplayEffectContextHandle UScWGameplayAbility::MakeEffectContext(const FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo) const
 {
-	FGameplayEffectContextHandle ContextHandle = Super::MakeEffectContext(Handle, ActorInfo);
+	FGameplayEffectContextHandle ContextHandle = Super::MakeEffectContext(InHandle, ActorInfo);
 
 	FScWGameplayEffectContext* EffectContext = FScWGameplayEffectContext::ExtractEffectContext(ContextHandle);
 	check(EffectContext);
@@ -272,9 +270,9 @@ FGameplayEffectContextHandle UScWGameplayAbility::MakeEffectContext(const FGamep
 	AActor* EffectCauser = nullptr;
 	//const IScWAbilitySourceInterface* AbilitySource = nullptr;
 	//float SourceLevel = 0.0f;
-	//GetAbilitySource(Handle, ActorInfo, OUT SourceLevel, OUT AbilitySource, OUT EffectCauser);
+	//GetAbilitySource(InHandle, ActorInfo, OUT SourceLevel, OUT AbilitySource, OUT EffectCauser);
 
-	UObject* SourceObject = GetSourceObject(Handle, ActorInfo);
+	UObject* SourceObject = GetSourceObject(InHandle, ActorInfo);
 
 	AActor* Instigator = ActorInfo ? ActorInfo->OwnerActor.Get() : nullptr;
 
@@ -314,8 +312,7 @@ bool UScWGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySystem
 	{
 		bBlocked = true;
 	}
-
-	const UScWAbilitySystemComponent* ScWASC = Cast<UScWAbilitySystemComponent>(&AbilitySystemComponent);
+	const UScWAbilitySystemComponent* OwnerASC = Cast<UScWAbilitySystemComponent>(&AbilitySystemComponent);
 	static FGameplayTagContainer AllRequiredTags;
 	static FGameplayTagContainer AllBlockedTags;
 
@@ -323,9 +320,9 @@ bool UScWGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySystem
 	AllBlockedTags = ActivationBlockedTags;
 
 	// Expand our ability tags to add additional required/blocked tags
-	if (ScWASC)
+	if (OwnerASC)
 	{
-		ScWASC->GetAdditionalActivationTagRequirements(GetAssetTags(), AllRequiredTags, AllBlockedTags);
+		OwnerASC->GetAdditionalActivationTagRequirements(GetAssetTags(), AllRequiredTags, AllBlockedTags);
 	}
 	// Check to see the required/blocked tags for this ability
 	if (AllBlockedTags.Num() || AllRequiredTags.Num())
@@ -337,7 +334,7 @@ bool UScWGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySystem
 
 		if (AbilitySystemComponentTags.HasAny(AllBlockedTags))
 		{
-			if (OptionalRelevantTags && AbilitySystemComponentTags.HasTag(FScWCoreTags::State_Dead))
+			if (OptionalRelevantTags && AbilitySystemComponentTags.HasTag(FScWCoreTags::Character_State_Dead))
 			{
 				// If player is dead and was rejected due to blocking tags, give that feedback
 				OptionalRelevantTags->AddTag(FScWCoreTags::Ability_ActivateFail_OwnerDead);
@@ -349,7 +346,6 @@ bool UScWGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySystem
 			bMissing = true;
 		}
 	}
-
 	if (SourceTags != nullptr)
 	{
 		if (SourceBlockedTags.Num() || SourceRequiredTags.Num())
@@ -401,10 +397,10 @@ bool UScWGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySystem
 
 void UScWGameplayAbility::OnPawnAvatarSet()
 {
-	K2_OnPawnAvatarSet();
+	BP_OnPawnAvatarSet();
 }
 
-/*void UScWGameplayAbility::GetAbilitySource(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, float& OutSourceLevel, const IScWAbilitySourceInterface*& OutAbilitySource, AActor*& OutEffectCauser) const
+/*void UScWGameplayAbility::GetAbilitySource(FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, float& OutSourceLevel, const IScWAbilitySourceInterface*& OutAbilitySource, AActor*& OutEffectCauser) const
 {
 	OutSourceLevel = 0.0f;
 	OutAbilitySource = nullptr;
@@ -413,7 +409,7 @@ void UScWGameplayAbility::OnPawnAvatarSet()
 	OutEffectCauser = ActorInfo->AvatarActor.Get();
 
 	// If we were added by something that's an ability info source, use it
-	UObject* SourceObject = GetSourceObject(Handle, ActorInfo);
+	UObject* SourceObject = GetSourceObject(InHandle, ActorInfo);
 
 	OutAbilitySource = Cast<IScWAbilitySourceInterface>(SourceObject);
 }*/
@@ -449,16 +445,14 @@ bool UScWGameplayAbility::CanChangeActivationGroup(EScWAbilityActivationGroup Ne
 	{
 		return false;
 	}
-
 	if (ActivationGroup == NewGroup)
 	{
 		return true;
 	}
+	UScWAbilitySystemComponent* OwnerASC = GetScWAbilitySystemComponentFromActorInfo();
+	check(OwnerASC);
 
-	UScWAbilitySystemComponent* ScWASC = GetScWAbilitySystemComponentFromActorInfo();
-	check(ScWASC);
-
-	if ((ActivationGroup != EScWAbilityActivationGroup::Exclusive_Blocking) && ScWASC->IsActivationGroupBlocked(NewGroup))
+	if ((ActivationGroup != EScWAbilityActivationGroup::Exclusive_Blocking) && OwnerASC->IsActivationGroupBlocked(NewGroup))
 	{
 		// This ability can't change groups if it's blocked (unless it is the one doing the blocking).
 		return false;
@@ -481,11 +475,11 @@ bool UScWGameplayAbility::ChangeActivationGroup(EScWAbilityActivationGroup NewGr
 	}
 	if (ActivationGroup != NewGroup)
 	{
-		UScWAbilitySystemComponent* ScWASC = GetScWAbilitySystemComponentFromActorInfo();
-		check(ScWASC);
+		UScWAbilitySystemComponent* OwnerASC = GetScWAbilitySystemComponentFromActorInfo();
+		check(OwnerASC);
 
-		ScWASC->RemoveAbilityFromActivationGroup(ActivationGroup, this);
-		ScWASC->AddAbilityToActivationGroup(NewGroup, this);
+		OwnerASC->RemoveAbilityFromActivationGroup(ActivationGroup, this);
+		OwnerASC->AddAbilityToActivationGroup(NewGroup, this);
 
 		ActivationGroup = NewGroup;
 	}
@@ -498,3 +492,31 @@ bool UScWGameplayAbility::IsAbilityInputPressed() const
 	ensureReturn(AbilitySpec, false);
 	return AbilitySpec->InputPressed;
 }
+
+//~ Begin Events
+void UScWGameplayAbility::SendAbilityEvent(const FGameplayTag& InEventTag) const
+{
+	ensureReturn(CurrentActorInfo);
+	UScWAbilitySystemComponent* OwnerASC = CastChecked<UScWAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent.Get());
+
+	FGameplayEventData EventData = BP_MakeAbilityEventData(InEventTag);
+
+	ensureReturn(OwnerASC);
+	OwnerASC->HandleGameplayEvent(InEventTag, &EventData);
+}
+
+FGameplayEventData UScWGameplayAbility::BP_MakeAbilityEventData_Implementation(const FGameplayTag& InEventTag) const
+{
+	FGameplayEventData OutData;
+	OutData.EventTag = InEventTag;
+
+	ensureReturn(CurrentActorInfo, OutData);
+
+	OutData.Instigator = CurrentActorInfo->OwnerActor.Get();
+	OutData.Target = CurrentActorInfo->AvatarActor.Get();
+	OutData.TargetTags = GetAssetTags();
+	OutData.OptionalObject = this;
+	OutData.ContextHandle = MakeEffectContext(CurrentSpecHandle, CurrentActorInfo);
+	return OutData;
+}
+//~ End Events

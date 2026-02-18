@@ -28,7 +28,7 @@ struct FInputActionValue;
  * Component that sets up input and camera handling for player controlled pawns (or bots that simulate players).
  * This depends on a PawnExtensionComponent to coordinate initialization.
  */
-UCLASS(MinimalAPI, Blueprintable, Meta=(BlueprintSpawnableComponent))
+UCLASS(MinimalAPI, Blueprintable, meta = (BlueprintSpawnableComponent, DisplayName = "[ScW] Hero Component"))
 class UScWHeroComponent : public UPawnComponent, public IGameFrameworkInitStateInterface
 {
 	GENERATED_BODY()
@@ -80,6 +80,9 @@ protected:
 
 	MODULE_API void Input_AbilityTagPressed(FGameplayTag InputTag);
 	MODULE_API void Input_AbilityTagReleased(FGameplayTag InputTag);
+
+	UFUNCTION(Category = "Input", BlueprintNativeEvent, BlueprintCallable, meta = (DisplayName = "Get Movement Input World Direction"))
+	MODULE_API FVector BP_GetMovementInputWorldDirection(const FVector& InInputValue) const;
 
 	MODULE_API void Input_Movement(const FInputActionValue& InputActionValue);
 	MODULE_API void Input_LookMouse(const FInputActionValue& InputActionValue);

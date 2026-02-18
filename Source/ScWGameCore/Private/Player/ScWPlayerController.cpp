@@ -2,7 +2,7 @@
 
 #include "Player/ScWPlayerController.h"
 
-#include "AbilitySystem/ScWCoreTags.h"
+#include "Tags/ScWCoreTags.h"
 #include "AbilitySystem/ScWAbilitySystemComponent.h"
 
 //#include "Game/ScWGameState.h"
@@ -15,7 +15,8 @@
 
 #include "Settings/ScWSettingsLocal.h"
 #include "Settings/ScWSettingsShared.h"
-#include "Settings/ScWDeveloperSettings.h"
+
+#include "Development/ScWDeveloperSettings.h"
 
 //#include "ReplaySubsystem.h"
 //#include "Replays/ScWReplaySubsystem.h"
@@ -161,29 +162,27 @@ void AScWPlayerController::BroadcastOnPlayerStateChanged()
 	OnPlayerStateChanged();
 
 	// Unbind from the old player state, if any
-	FGenericTeamId OldTeamID = FGenericTeamId::NoTeam;
+	FGameplayTag OldTeamTag;
 	if (LastSeenPlayerState != nullptr)
 	{
 		if (IScWTeamAgentInterface* PlayerStateTeamInterface = Cast<IScWTeamAgentInterface>(LastSeenPlayerState))
 		{
-			OldTeamID = PlayerStateTeamInterface->GetGenericTeamId();
+			OldTeamTag = PlayerStateTeamInterface->GetTeamTag();
 			PlayerStateTeamInterface->GetTeamChangedDelegateChecked().RemoveAll(this);
 		}
 	}
-
 	// Bind to the new player state, if any
-	FGenericTeamId NewTeamID = FGenericTeamId::NoTeam;
+	FGameplayTag NewTeamTag;
 	if (PlayerState != nullptr)
 	{
 		if (IScWTeamAgentInterface* PlayerStateTeamInterface = Cast<IScWTeamAgentInterface>(PlayerState))
 		{
-			NewTeamID = PlayerStateTeamInterface->GetGenericTeamId();
+			NewTeamTag = PlayerStateTeamInterface->GetTeamTag();
 			PlayerStateTeamInterface->GetTeamChangedDelegateChecked().AddDynamic(this, &ThisClass::OnPlayerStateChangedTeam);
 		}
 	}
-
 	// Broadcast the team change (if it really has)
-	ConditionalBroadcastTeamChanged(this, OldTeamID, NewTeamID);
+	ConditionalBroadcastTeamChanged(this, OldTeamTag, NewTeamTag);
 
 	LastSeenPlayerState = PlayerState;
 }
@@ -221,19 +220,26 @@ void AScWPlayerController::CalcCamera(float InDeltaSeconds, FMinimalViewInfo& In
 void AScWPlayerController::OnPossess(APawn* InPawn) // AController
 {
 	Super::OnPossess(InPawn);
-
-#if WITH_SERVER_CODE && WITH_EDITOR
-	if (GIsEditor && (InPawn != nullptr) && (GetPawn() == InPawn))
+	
+	if ((InPawn != nullptr) && (GetPawn() == InPawn))
 	{
-		for (const FScWCheatToRun& CheatRow : GetDefault<UScWDeveloperSettings>()->CheatsToRun)
+		if (!InPawn->HasActorBegunPlay())
 		{
-			if (CheatRow.Phase == ECheatExecutionTime::OnPlayerPawnPossession)
+			InPawn->FinishSpawning(FTransform::Identity, true);
+		}
+#if WITH_SERVER_CODE && WITH_EDITOR
+		if (GIsEditor)
+		{
+			for (const FScWCheatToRun& CheatRow : GetDefault<UScWDeveloperSettings>()->CheatsToRun)
 			{
-				ConsoleCommand(CheatRow.Cheat, /*bWriteToLog=*/ true);
+				if (CheatRow.Phase == ECheatExecutionTime::OnPlayerPawnPossession)
+				{
+					ConsoleCommand(CheatRow.Cheat, /*bWriteToLog=*/ true);
+				}
 			}
 		}
-	}
 #endif
+	}
 }
 
 void AScWPlayerController::OnUnPossess() // AController
@@ -261,28 +267,42 @@ void AScWPlayerController::PawnPendingDestroy(APawn* InPawn) // AController
 //~ End Pawn
 
 //~ Begin Team
-void AScWPlayerController::SetGenericTeamId(const FGenericTeamId& NewTeamID)
+FGenericTeamId AScWPlayerController::GetGenericTeamId() const // IGenericTeamAgentInterface
 {
-	UE_LOG(LogScWGameCore, Error, TEXT("You can't set the team ID on a player controller (%s); it's driven by the associated player state"), *GetPathNameSafe(this));
+	const IScWTeamAgentInterface* PlayerStateTeamInterface = Cast<IScWTeamAgentInterface>(PlayerState);
+	ensureReturn(PlayerStateTeamInterface, FGenericTeamId::NoTeam);
+	return PlayerStateTeamInterface->GetGenericTeamId();
 }
 
-FGenericTeamId AScWPlayerController::GetGenericTeamId() const
+void AScWPlayerController::SetGenericTeamId(const FGenericTeamId& InTeamID) // IGenericTeamAgentInterface
 {
-	if (const IScWTeamAgentInterface* PSWithTeamInterface = Cast<IScWTeamAgentInterface>(PlayerState))
-	{
-		return PSWithTeamInterface->GetGenericTeamId();
-	}
-	return FGenericTeamId::NoTeam;
+	IScWTeamAgentInterface* PlayerStateTeamInterface = Cast<IScWTeamAgentInterface>(PlayerState);
+	ensureReturn(PlayerStateTeamInterface);
+	PlayerStateTeamInterface->SetGenericTeamId(InTeamID);
 }
 
-FOnScWTeamIndexChangedDelegate* AScWPlayerController::GetOnTeamIndexChangedDelegate()
+const FGameplayTag& AScWPlayerController::GetTeamTag() const // IScWTeamAgentInterface
+{
+	const IScWTeamAgentInterface* PlayerStateTeamInterface = Cast<IScWTeamAgentInterface>(PlayerState);
+	ensureReturn(PlayerStateTeamInterface, IScWTeamAgentInterface::TeamNoneTag);
+	return PlayerStateTeamInterface->GetTeamTag();
+}
+
+void AScWPlayerController::SetTeamTag(const FGameplayTag& InTeamTag) // IScWTeamAgentInterface
+{
+	IScWTeamAgentInterface* PlayerStateTeamInterface = Cast<IScWTeamAgentInterface>(PlayerState);
+	ensureReturn(PlayerStateTeamInterface);
+	PlayerStateTeamInterface->SetTeamTag(InTeamTag);
+}
+
+FOnScWTeamIndexChangedDelegate* AScWPlayerController::GetOnTeamIndexChangedDelegate() // IScWTeamAgentInterface
 {
 	return &OnTeamChangedDelegate;
 }
 
-void AScWPlayerController::OnPlayerStateChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam)
+void AScWPlayerController::OnPlayerStateChangedTeam(UObject* TeamAgent, const FGameplayTag& InPrevTeamTag, const FGameplayTag& InNewTeamTag)
 {
-	ConditionalBroadcastTeamChanged(this, IntegerToGenericTeamId(OldTeam), IntegerToGenericTeamId(NewTeam));
+	ConditionalBroadcastTeamChanged(this, InPrevTeamTag, InNewTeamTag);
 }
 //~ End Team
 

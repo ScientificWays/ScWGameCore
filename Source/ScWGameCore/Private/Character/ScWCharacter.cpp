@@ -4,6 +4,7 @@
 
 //#include "AI/ScWAIController.h"
 
+#include "Tags/ScWCoreTags.h"
 #include "AbilitySystem/ScWAbilitySystemComponent.h"
 
 #include "Character/ScWPawnExtensionComponent.h"
@@ -43,8 +44,6 @@ AScWCharacter::AScWCharacter(const FObjectInitializer& InObjectInitializer)
 void AScWCharacter::PostInitializeComponents() // AActor
 {
 	Super::PostInitializeComponents();
-
-	//ensure((GetController() == nullptr) || (HasMatchingGameplayTag(FScWCoreTags::Pawn_Type_Player) == GetController()->IsPlayerController()));
 
 	ForEachComponent(false, [this](UActorComponent* InComponent)
 	{
@@ -101,7 +100,7 @@ void AScWCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	//DOREPLIFETIME_CONDITION(ThisClass, ReplicatedAcceleration, COND_SimulatedOnly);
-	DOREPLIFETIME(ThisClass, CurrentTeamID)
+	//DOREPLIFETIME(ThisClass, CurrentTeamID)
 }
 
 void AScWCharacter::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker)
@@ -255,7 +254,8 @@ void AScWCharacter::SpawnDefaultController() // APawn
 
 void AScWCharacter::PossessedBy(AController* NewController) // APawn
 {
-	const FGenericTeamId OldTeamID = CurrentTeamID;
+	//const FGenericTeamId OldTeamID = CurrentTeamID;
+	const FGameplayTag OldTeamTag = GetTeamTag();
 
 	Super::PossessedBy(NewController);
 
@@ -264,10 +264,11 @@ void AScWCharacter::PossessedBy(AController* NewController) // APawn
 	// Grab the current team ID and listen for future changes
 	if (IScWTeamAgentInterface* ControllerAsTeamProvider = Cast<IScWTeamAgentInterface>(NewController))
 	{
-		CurrentTeamID = ControllerAsTeamProvider->GetGenericTeamId();
+		//CurrentTeamID = ControllerAsTeamProvider->GetGenericTeamId();
 		ControllerAsTeamProvider->GetTeamChangedDelegateChecked().AddDynamic(this, &ThisClass::OnControllerChangedTeam);
 	}
-	ConditionalBroadcastTeamChanged(this, OldTeamID, CurrentTeamID);
+	//ConditionalBroadcastTeamChanged(this, OldTeamID, CurrentTeamID);
+	ConditionalBroadcastTeamChanged(this, OldTeamTag, GetTeamTag());
 }
 
 void AScWCharacter::UnPossessed() // APawn
@@ -275,7 +276,8 @@ void AScWCharacter::UnPossessed() // APawn
 	AController* const OldController = GetController();
 
 	// Stop listening for changes from the old controller
-	const FGenericTeamId OldTeamID = CurrentTeamID;
+	//const FGenericTeamId OldTeamID = CurrentTeamID;
+	const FGameplayTag OldTeamTag = GetTeamTag();
 	if (IScWTeamAgentInterface* ControllerAsTeamProvider = Cast<IScWTeamAgentInterface>(OldController))
 	{
 		ControllerAsTeamProvider->GetTeamChangedDelegateChecked().RemoveAll(this);
@@ -285,8 +287,9 @@ void AScWCharacter::UnPossessed() // APawn
 	PawnExtComponent->HandleControllerChanged();
 
 	// Determine what the new team ID should be afterwards
-	CurrentTeamID = DetermineNewTeamAfterPossessionEnds(OldTeamID);
-	ConditionalBroadcastTeamChanged(this, OldTeamID, CurrentTeamID);
+	//CurrentTeamID = DetermineNewTeamAfterPossessionEnds(OldTeamID);
+	//ConditionalBroadcastTeamChanged(this, OldTeamID, CurrentTeamID);
+	ConditionalBroadcastTeamChanged(this, OldTeamTag, GetTeamTag());
 }
 
 void AScWCharacter::NotifyControllerChanged() // APawn
@@ -332,17 +335,23 @@ bool AScWCharacter::HasActivePawnControlCameraComponent() const // AActor
 //~ Begin Team
 FGenericTeamId AScWCharacter::GetGenericTeamId() const // IGenericTeamAgentInterface
 {
-	return CurrentTeamID;
+	//return CurrentTeamID;
+	IScWTeamAgentInterface* ControllerTeamInterface = Cast<IScWTeamAgentInterface>(GetController());
+	ensureReturn(ControllerTeamInterface, FGenericTeamId::NoTeam);
+	return ControllerTeamInterface->GetGenericTeamId();
 }
 
-void AScWCharacter::SetGenericTeamId(const FGenericTeamId& NewTeamID) // IGenericTeamAgentInterface
+void AScWCharacter::SetGenericTeamId(const FGenericTeamId& InTeamID) // IGenericTeamAgentInterface
 {
-	if (GetController() == nullptr)
+	IScWTeamAgentInterface* ControllerTeamInterface = Cast<IScWTeamAgentInterface>(GetController());
+	ensureReturn(ControllerTeamInterface);
+	ControllerTeamInterface->SetGenericTeamId(InTeamID);
+	/*if (GetController() == nullptr)
 	{
 		if (HasAuthority())
 		{
 			const FGenericTeamId OldTeamID = CurrentTeamID;
-			CurrentTeamID = NewTeamID;
+			CurrentTeamID = InTeamID;
 			ConditionalBroadcastTeamChanged(this, OldTeamID, CurrentTeamID);
 		}
 		else
@@ -353,7 +362,24 @@ void AScWCharacter::SetGenericTeamId(const FGenericTeamId& NewTeamID) // IGeneri
 	else
 	{
 		UE_LOG(LogScWGameCore, Error, TEXT("You can't set the team ID on a possessed character (%s); it's driven by the associated controller"), *GetPathNameSafe(this));
+	}*/
+}
+
+const FGameplayTag& AScWCharacter::GetTeamTag() const // IScWTeamAgentInterface
+{
+	if (IScWTeamAgentInterface* ControllerTeamInterface = Cast<IScWTeamAgentInterface>(GetController()))
+	{
+		//ensureReturn(ControllerTeamInterface, IScWTeamAgentInterface::TeamNoneTag);
+		return ControllerTeamInterface->GetTeamTag();
 	}
+	return IScWTeamAgentInterface::TeamNoneTag;
+}
+
+void AScWCharacter::SetTeamTag(const FGameplayTag& InTeamTag) // IScWTeamAgentInterface
+{
+	IScWTeamAgentInterface* ControllerTeamInterface = Cast<IScWTeamAgentInterface>(GetController());
+	ensureReturn(ControllerTeamInterface);
+	ControllerTeamInterface->SetTeamTag(InTeamTag);
 }
 
 FOnScWTeamIndexChangedDelegate* AScWCharacter::GetOnTeamIndexChangedDelegate() // IScWTeamAgentInterface
@@ -361,15 +387,15 @@ FOnScWTeamIndexChangedDelegate* AScWCharacter::GetOnTeamIndexChangedDelegate() /
 	return &OnTeamChangedDelegate;
 }
 
-void AScWCharacter::OnControllerChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam)
+void AScWCharacter::OnControllerChangedTeam(UObject* TeamAgent, const FGameplayTag& InPrevTeamTag, const FGameplayTag& InNewTeamTag)
 {
-	const FGenericTeamId MyOldTeamID = CurrentTeamID;
-	CurrentTeamID = IntegerToGenericTeamId(NewTeam);
-	ConditionalBroadcastTeamChanged(this, MyOldTeamID, CurrentTeamID);
+	//const FGenericTeamId MyOldTeamID = CurrentTeamID;
+	//CurrentTeamID = IntegerToGenericTeamId(NewTeam);
+	ConditionalBroadcastTeamChanged(this, InPrevTeamTag, InNewTeamTag);
 }
 
-void AScWCharacter::OnRep_CurrentTeamID(FGenericTeamId OldTeamID)
+/*void AScWCharacter::OnRep_CurrentTeamID(FGenericTeamId OldTeamID)
 {
 	ConditionalBroadcastTeamChanged(this, OldTeamID, CurrentTeamID);
-}
+}*/
 //~ End Team

@@ -4,10 +4,11 @@
 
 #include "Player/ScWPlayerController.h"
 
+#include "AbilitySystem/ScWAbilitySet.h"
+#include "Tags/ScWCoreTags.h"
+#include "AbilitySystem/ScWAbilitySystemComponent.h"
 //#include "AbilitySystem/Attributes/ScWCombatSet.h"
 //#include "AbilitySystem/Attributes/ScWHealthSet.h"
-#include "AbilitySystem/ScWAbilitySet.h"
-#include "AbilitySystem/ScWAbilitySystemComponent.h"
 
 #include "Character/ScWPawnData.h"
 #include "Character/ScWPawnExtensionComponent.h"
@@ -17,6 +18,8 @@
 //@TODO: Would like to isolate this a bit better to get the pawn data in here without this having to know about other stuff
 #include "Game/ScWGameMode.h"
 //#include "Messages/ScWVerbMessage.h"
+
+#include "Team/ScWTeamSettings.h"
 
 //#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Components/GameFrameworkComponentManager.h"
@@ -36,13 +39,16 @@ AScWPlayerState::AScWPlayerState(const FObjectInitializer& InObjectInitializer)
 	// AbilitySystemComponent needs to be updated at a high frequency.
 	SetNetUpdateFrequency(100.0f);
 
-	MyTeamID = FGenericTeamId::NoTeam;
+	TeamTag = FScWCoreTags::Team_Player;
+
 	MySquadID = INDEX_NONE;
 }
 
 void AScWPlayerState::PreInitializeComponents()
 {
 	Super::PreInitializeComponents();
+
+	SetTeamTag(TeamTag);
 }
 
 void AScWPlayerState::Reset()
@@ -54,7 +60,7 @@ void AScWPlayerState::ClientInitialize(AController* C)
 {
 	Super::ClientInitialize(C);
 
-	if (UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::FindPawnExtensionComponent(GetPawn()))
+	if (UScWPawnExtensionComponent* PawnExtComp = UScWPawnExtensionComponent::GetPawnExtensionComponent(GetPawn()))
 	{
 		PawnExtComp->CheckDefaultInitialization();
 	}
@@ -124,7 +130,7 @@ void AScWPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, PawnData, SharedParams);
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, MyPlayerConnectionType, SharedParams);
-	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, MyTeamID, SharedParams);
+	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, TeamTag, SharedParams);
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, MySquadID, SharedParams);
 
 	SharedParams.Condition = ELifetimeCondition::COND_SkipOwner;
@@ -206,6 +212,7 @@ void AScWPlayerState::SetPawnData(const UScWPawnData* InPawnData)
 
 void AScWPlayerState::OnRep_PawnData()
 {
+
 }
 
 void AScWPlayerState::SetPlayerConnectionType(EScWPlayerConnectionType NewType)
@@ -224,15 +231,21 @@ void AScWPlayerState::SetSquadID(int32 NewSquadId)
 	}
 }
 
-void AScWPlayerState::SetGenericTeamId(const FGenericTeamId& NewTeamID)
+//~ Begin Team
+FGenericTeamId AScWPlayerState::GetGenericTeamId() const // IGenericTeamAgentInterface
+{
+	return GetDefault<UScWTeamSettings>()->GetGenericTeamIdFromTag(TeamTag);
+}
+
+void AScWPlayerState::SetGenericTeamId(const FGenericTeamId& NewTeamID) // IGenericTeamAgentInterface
 {
 	if (HasAuthority())
 	{
-		const FGenericTeamId OldTeamID = MyTeamID;
+		const FGameplayTag OldTeamTag = GetTeamTag();
 
-		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, MyTeamID, this);
-		MyTeamID = NewTeamID;
-		ConditionalBroadcastTeamChanged(this, OldTeamID, NewTeamID);
+		MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, TeamTag, this);
+		TeamTag = GetDefault<UScWTeamSettings>()->GetTagFromGenericTeamId(NewTeamID);
+		ConditionalBroadcastTeamChanged(this, OldTeamTag, TeamTag);
 	}
 	else
 	{
@@ -240,20 +253,22 @@ void AScWPlayerState::SetGenericTeamId(const FGenericTeamId& NewTeamID)
 	}
 }
 
-FGenericTeamId AScWPlayerState::GetGenericTeamId() const
+void AScWPlayerState::SetTeamTag(const FGameplayTag& InTeamTag)
 {
-	return MyTeamID;
+	TeamTag = InTeamTag;
+	SetGenericTeamId(GetDefault<UScWTeamSettings>()->GetGenericTeamIdFromTag(TeamTag));
 }
 
-FOnScWTeamIndexChangedDelegate* AScWPlayerState::GetOnTeamIndexChangedDelegate()
+FOnScWTeamIndexChangedDelegate* AScWPlayerState::GetOnTeamIndexChangedDelegate() // IScWTeamAgentInterface
 {
 	return &OnTeamChangedDelegate;
 }
 
-void AScWPlayerState::OnRep_MyTeamID(FGenericTeamId OldTeamID)
+void AScWPlayerState::OnRep_TeamTag(FGameplayTag InPrevTeamTag)
 {
-	ConditionalBroadcastTeamChanged(this, OldTeamID, MyTeamID);
+	ConditionalBroadcastTeamChanged(this, InPrevTeamTag, TeamTag);
 }
+//~ End Team
 
 void AScWPlayerState::OnRep_MySquadID()
 {

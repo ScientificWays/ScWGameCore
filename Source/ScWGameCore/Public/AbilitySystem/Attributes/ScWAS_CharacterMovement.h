@@ -32,49 +32,25 @@ protected:
 //~ Begin Attributes
 public:
 
-	UPROPERTY(ReplicatedUsing = "OnRep_Stamina", BlueprintReadOnly)
-	FGameplayAttributeData Stamina;
-	ATTRIBUTE_ACCESSORS(ThisClass, Stamina)
+	UPROPERTY(ReplicatedUsing = "OnRep_WalkSpeed", BlueprintReadOnly)
+	FGameplayAttributeData WalkSpeed;
+	ATTRIBUTE_ACCESSORS(ThisClass, WalkSpeed)
+		
+	UPROPERTY(ReplicatedUsing = "OnRep_WalkSpeedMax", BlueprintReadOnly)
+	FGameplayAttributeData WalkSpeedMax;
+	ATTRIBUTE_ACCESSORS(ThisClass, WalkSpeedMax)
 
-	UPROPERTY(ReplicatedUsing = "OnRep_MaxStamina", BlueprintReadOnly)
-	FGameplayAttributeData MaxStamina;
-	ATTRIBUTE_ACCESSORS(ThisClass, MaxStamina)
-
-	UPROPERTY(ReplicatedUsing = "OnRep_MaxWalkSpeed", BlueprintReadOnly)
-	FGameplayAttributeData MaxWalkSpeed;
-	ATTRIBUTE_ACCESSORS(ThisClass, MaxWalkSpeed)
-
-	UPROPERTY(ReplicatedUsing = "OnRep_MaxWalkSpeedCrouched", BlueprintReadOnly)
-	FGameplayAttributeData MaxWalkSpeedCrouched;
-	ATTRIBUTE_ACCESSORS(ThisClass, MaxWalkSpeedCrouched)
-
-	UPROPERTY(ReplicatedUsing = "OnRep_MaxAcceleration", BlueprintReadOnly)
-	FGameplayAttributeData MaxAcceleration;
-	ATTRIBUTE_ACCESSORS(ThisClass, MaxAcceleration)
+	UPROPERTY(ReplicatedUsing = "OnRep_WalkSpeedMulCrouched", BlueprintReadOnly)
+	FGameplayAttributeData WalkSpeedMulCrouched;
+	ATTRIBUTE_ACCESSORS(ThisClass, WalkSpeedMulCrouched)
+		
+	UPROPERTY(ReplicatedUsing = "OnRep_Acceleration", BlueprintReadOnly)
+	FGameplayAttributeData Acceleration;
+	ATTRIBUTE_ACCESSORS(ThisClass, Acceleration)
 
 	UPROPERTY(ReplicatedUsing = "OnRep_BrakingDecelerationWalking", BlueprintReadOnly)
 	FGameplayAttributeData BrakingDecelerationWalking;
 	ATTRIBUTE_ACCESSORS(ThisClass, BrakingDecelerationWalking)
-
-	/* Server-side */
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayAttributeData MoveSpeedMul;
-	ATTRIBUTE_ACCESSORS(ThisClass, MoveSpeedMul)
-
-	/* Server-side */
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayAttributeData MoveSpeedMax;
-	ATTRIBUTE_ACCESSORS(ThisClass, MoveSpeedMax)
-
-	/* Server-side */
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayAttributeData MoveSpeedBase;
-	ATTRIBUTE_ACCESSORS(ThisClass, MoveSpeedBase)
-
-	/* Server-side */
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayAttributeData MoveSpeedCrouchedBase;
-	ATTRIBUTE_ACCESSORS(ThisClass, MoveSpeedCrouchedBase)
 
 	UPROPERTY(ReplicatedUsing = "OnRep_GravityScale", BlueprintReadOnly)
 	FGameplayAttributeData GravityScale;
@@ -87,25 +63,26 @@ public:
 	UPROPERTY(ReplicatedUsing = "OnRep_Mass", BlueprintReadOnly)
 	FGameplayAttributeData Mass;
 	ATTRIBUTE_ACCESSORS(ThisClass, Mass)
+
+	UPROPERTY(ReplicatedUsing = "OnRep_RotationRateYaw", BlueprintReadOnly)
+	FGameplayAttributeData RotationRateYaw;
+	ATTRIBUTE_ACCESSORS(ThisClass, RotationRateYaw)
 //~ End Attributes
 
 //~ Begin Replication
 protected:
 
 	UFUNCTION()
-	virtual void OnRep_Stamina(const FGameplayAttributeData& InPrevValue);
+	virtual void OnRep_WalkSpeed(const FGameplayAttributeData& InPrevValue);
 
 	UFUNCTION()
-	virtual void OnRep_MaxStamina(const FGameplayAttributeData& InPrevValue);
+	virtual void OnRep_WalkSpeedMax(const FGameplayAttributeData& InPrevValue);
 
 	UFUNCTION()
-	virtual void OnRep_MaxWalkSpeed(const FGameplayAttributeData& InPrevValue);
+	virtual void OnRep_WalkSpeedMulCrouched(const FGameplayAttributeData& InPrevValue);
 
 	UFUNCTION()
-	virtual void OnRep_MaxWalkSpeedCrouched(const FGameplayAttributeData& InPrevValue);
-
-	UFUNCTION()
-	virtual void OnRep_MaxAcceleration(const FGameplayAttributeData& InPrevValue);
+	virtual void OnRep_Acceleration(const FGameplayAttributeData& InPrevValue);
 
 	UFUNCTION()
 	virtual void OnRep_BrakingDecelerationWalking(const FGameplayAttributeData& InPrevValue);
@@ -118,5 +95,8 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_Mass(const FGameplayAttributeData& InPrevValue);
+
+	UFUNCTION()
+	virtual void OnRep_RotationRateYaw(const FGameplayAttributeData& InPrevValue);
 //~ End Replication
 };

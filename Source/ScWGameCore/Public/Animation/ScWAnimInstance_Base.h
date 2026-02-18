@@ -35,6 +35,8 @@ protected:
 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override; // UObject
 #endif // WITH_EDITOR
 public:
+
+	UFUNCTION()
 	virtual void InitializeFromOwnerAbilitySystem(UAbilitySystemComponent* InASC);
 //~ End Initialize
 
@@ -42,7 +44,7 @@ public:
 protected:
 
 	UPROPERTY(Category = "Owner", BlueprintReadOnly)
-	TObjectPtr<class AScWCharacter> OwnerCharacter;
+	TObjectPtr<class ACharacter> OwnerCharacter;
 //~ End Owner
 	
 //~ Begin Static

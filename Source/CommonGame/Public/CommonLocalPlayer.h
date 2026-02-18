@@ -16,7 +16,7 @@ class UObject;
 class UPrimaryGameLayout;
 struct FSceneViewProjectionData;
 
-UCLASS(MinimalAPI, config=Engine, transient)
+UCLASS(MinimalAPI, Config = Engine, transient)
 class UCommonLocalPlayer : public ULocalPlayer
 {
 	GENERATED_BODY()

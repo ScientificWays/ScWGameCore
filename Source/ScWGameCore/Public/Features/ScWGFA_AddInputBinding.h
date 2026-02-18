@@ -37,7 +37,7 @@ public:
 #endif
 	//~ End UObject interface
 
-	UPROPERTY(EditAnywhere, Category="Input", meta=(AssetBundles="Client,Server"))
+	UPROPERTY(EditAnywhere, Category="Input", meta = (AssetBundles="Client,Server"))
 	TArray<TSoftObjectPtr<const UScWInputConfig>> InputConfigs;
 
 private:

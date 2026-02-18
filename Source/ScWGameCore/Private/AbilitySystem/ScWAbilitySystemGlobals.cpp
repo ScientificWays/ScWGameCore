@@ -2,7 +2,7 @@
 
 #include "AbilitySystem/ScWAbilitySystemGlobals.h"
 
-#include "AbilitySystem/ScWCoreTags.h"
+#include "Tags/ScWCoreTags.h"
 #include "AbilitySystem/ScWGameplayEffectContext.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ScWAbilitySystemGlobals)
@@ -12,8 +12,8 @@ struct FGameplayEffectContext;
 UScWAbilitySystemGlobals::UScWAbilitySystemGlobals(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	
 }
-
 
 //~ Begin Tags
 FDelegateHandle_BlueprintWrapper UScWAbilitySystemGlobals::RegisterGameplayTagEvent(UAbilitySystemComponent* InASC, FGameplayTagNumChangedEvent InEvent, FGameplayTag InTag, EGameplayTagEventType::Type InType)
@@ -34,6 +34,7 @@ void UScWAbilitySystemGlobals::GetOwnedGameplayTags(UObject* InTarget, FGameplay
 	}
 	else
 	{
+		ensure(false);
 		OutTagContainer.Reset();
 	}
 }
@@ -44,6 +45,7 @@ bool UScWAbilitySystemGlobals::TargetHasMatchingGameplayTag(UObject* InTarget, c
 	{
 		return TargetInterface->HasMatchingGameplayTag(InTag);
 	}
+	ensure(false);
 	return false;
 }
 
@@ -53,6 +55,7 @@ bool UScWAbilitySystemGlobals::TargetHasAllMatchingGameplayTags(UObject* InTarge
 	{
 		return TargetInterface->HasAllMatchingGameplayTags(InTagContainer);
 	}
+	ensure(false);
 	return false;
 }
 
@@ -62,7 +65,32 @@ bool UScWAbilitySystemGlobals::TargetHasAnyMatchingGameplayTags(UObject* InTarge
 	{
 		return TargetInterface->HasAnyMatchingGameplayTags(InTagContainer);
 	}
+	ensure(false);
 	return false;
+}
+
+bool UScWAbilitySystemGlobals::IsPlayerPawnType(UObject* InTarget)
+{
+	ensureReturn(InTarget, false);
+	return TargetHasMatchingGameplayTag(InTarget, FScWCoreTags::Character_Type_Player);
+}
+
+void UScWAbilitySystemGlobals::InitGlobalTags() // UAbilitySystemGlobals
+{
+	Super::InitGlobalTags();
+
+	UWorld* World = GetWorld();
+	if (World && World->IsGameWorld())
+	{
+		//ensure(ActivateFailIsDeadTag.IsValid());
+		ensure(ActivateFailCooldownTag.IsValid());
+		ensure(ActivateFailCostTag.IsValid());
+		ensure(ActivateFailTagsBlockedTag.IsValid());
+		ensure(ActivateFailTagsMissingTag.IsValid());
+		ensure(ActivateFailNetworkingTag.IsValid());
+	}
+	IgnoreDamageTags = FGameplayTagContainer(FScWCoreTags::Character_State_IgnoreAnyDamage);
+	IgnoreDamageTags.AddTag(FScWCoreTags::Cheat_Invulnerable);
 }
 //~ End Tags
 
@@ -108,3 +136,41 @@ int32 UScWAbilitySystemGlobals::SendGameplayEventToComponent(UAbilitySystemCompo
 	return InTargetASC->HandleGameplayEvent(InEventTag, &InEventData);
 }
 //~ End Abilities
+
+//~ Begin Actor Info
+APlayerController* UScWAbilitySystemGlobals::GetPlayerControllerFromASC(UAbilitySystemComponent* InTargetASC)
+{
+	ensureReturn(InTargetASC && InTargetASC->AbilityActorInfo, nullptr);
+	return InTargetASC->AbilityActorInfo->PlayerController.Get();
+}
+
+AController* UScWAbilitySystemGlobals::GetControllerFromASC(UAbilitySystemComponent* InTargetASC)
+{
+	ensureReturn(InTargetASC && InTargetASC->AbilityActorInfo, nullptr);
+	if (AController* PC = InTargetASC->AbilityActorInfo->PlayerController.Get())
+	{
+		return PC;
+	}
+	// Look for a player controller or pawn in the owner chain.
+	AActor* TestActor = InTargetASC->AbilityActorInfo->OwnerActor.Get();
+	while (TestActor)
+	{
+		if (AController* C = Cast<AController>(TestActor))
+		{
+			return C;
+		}
+		if (APawn* Pawn = Cast<APawn>(TestActor))
+		{
+			return Pawn->GetController();
+		}
+		TestActor = TestActor->GetOwner();
+	}
+	return nullptr;
+}
+
+ACharacter* UScWAbilitySystemGlobals::GetCharacterFromASC(UAbilitySystemComponent* InTargetASC)
+{
+	ensureReturn(InTargetASC && InTargetASC->AbilityActorInfo, nullptr);
+	return Cast<ACharacter>(InTargetASC->AbilityActorInfo->AvatarActor.Get());
+}
+//~ End Actor Info

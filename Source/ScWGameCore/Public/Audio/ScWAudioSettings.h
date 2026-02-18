@@ -27,7 +27,7 @@ struct FScWSubmixEffectChainMap
 /**
  * 
  */
-UCLASS(MinimalAPI, config = Game, defaultconfig, meta = (DisplayName = "ScWAudioSettings"))
+UCLASS(MinimalAPI, Config = Game, DefaultConfig, meta = (DisplayName = "[ScW] Audio Settings"))
 class UScWAudioSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()

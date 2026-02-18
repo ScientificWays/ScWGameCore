@@ -2,6 +2,8 @@
 
 #include "Player/ScWLocalPlayer.h"
 
+#include "Tags/ScWCoreTags.h"
+
 #include "Settings/ScWSettingsLocal.h"
 #include "Settings/ScWSettingsShared.h"
 
@@ -52,47 +54,64 @@ void UScWLocalPlayer::InitOnlineSession()
 void UScWLocalPlayer::OnPlayerControllerChanged(APlayerController* NewController)
 {
 	// Stop listening for changes from the old controller
-	FGenericTeamId OldTeamID = FGenericTeamId::NoTeam;
+	FGameplayTag OldTeamTag;
 	if (IScWTeamAgentInterface* ControllerAsTeamProvider = Cast<IScWTeamAgentInterface>(LastBoundPC.Get()))
 	{
-		OldTeamID = ControllerAsTeamProvider->GetGenericTeamId();
+		OldTeamTag = ControllerAsTeamProvider->GetTeamTag();
 		ControllerAsTeamProvider->GetTeamChangedDelegateChecked().RemoveAll(this);
 	}
-
 	// Grab the current team ID and listen for future changes
-	FGenericTeamId NewTeamID = FGenericTeamId::NoTeam;
+	FGameplayTag NewTeamTag;
 	if (IScWTeamAgentInterface* ControllerAsTeamProvider = Cast<IScWTeamAgentInterface>(NewController))
 	{
-		NewTeamID = ControllerAsTeamProvider->GetGenericTeamId();
+		NewTeamTag = ControllerAsTeamProvider->GetTeamTag();
 		ControllerAsTeamProvider->GetTeamChangedDelegateChecked().AddDynamic(this, &ThisClass::OnControllerChangedTeam);
 		LastBoundPC = NewController;
 	}
-
-	ConditionalBroadcastTeamChanged(this, OldTeamID, NewTeamID);
+	ConditionalBroadcastTeamChanged(this, OldTeamTag, NewTeamTag);
 }
 
-void UScWLocalPlayer::SetGenericTeamId(const FGenericTeamId& NewTeamID)
+//~ Begin Team
+FGenericTeamId UScWLocalPlayer::GetGenericTeamId() const // IGenericTeamAgentInterface
 {
-	ensureMsgf(false, TEXT("UScWLocalPlayer::SetGenericTeamId should never be called directly as the local player doesn't own team ID, it observes the team of its PlayerController"));
+	const IScWTeamAgentInterface* PlayerControllerTeamInterface = Cast<IScWTeamAgentInterface>(PlayerController);
+	ensureReturn(PlayerControllerTeamInterface, FGenericTeamId::NoTeam);
+	return PlayerControllerTeamInterface->GetGenericTeamId();
 }
 
-FGenericTeamId UScWLocalPlayer::GetGenericTeamId() const
+void UScWLocalPlayer::SetGenericTeamId(const FGenericTeamId& InTeamID) // IGenericTeamAgentInterface
 {
-	if (IScWTeamAgentInterface* ControllerAsTeamProvider = Cast<IScWTeamAgentInterface>(PlayerController))
-	{
-		return ControllerAsTeamProvider->GetGenericTeamId();
-	}
-	else
-	{
-		return FGenericTeamId::NoTeam;
-	}
+	IScWTeamAgentInterface* PlayerControllerTeamInterface = Cast<IScWTeamAgentInterface>(PlayerController);
+	ensureReturn(PlayerControllerTeamInterface);
+	PlayerControllerTeamInterface->SetGenericTeamId(InTeamID);
 }
 
-FOnScWTeamIndexChangedDelegate* UScWLocalPlayer::GetOnTeamIndexChangedDelegate()
+const FGameplayTag& UScWLocalPlayer::GetTeamTag() const // IScWTeamAgentInterface
+{
+	const IScWTeamAgentInterface* PlayerControllerTeamInterface = Cast<IScWTeamAgentInterface>(PlayerController);
+	ensureReturn(PlayerControllerTeamInterface, IScWTeamAgentInterface::TeamNoneTag);
+	return PlayerControllerTeamInterface->GetTeamTag();
+}
+
+void UScWLocalPlayer::SetTeamTag(const FGameplayTag& InTeamTag) // IScWTeamAgentInterface
+{
+	IScWTeamAgentInterface* PlayerControllerTeamInterface = Cast<IScWTeamAgentInterface>(PlayerController);
+	ensureReturn(PlayerControllerTeamInterface);
+	PlayerControllerTeamInterface->SetTeamTag(InTeamTag);
+}
+
+FOnScWTeamIndexChangedDelegate* UScWLocalPlayer::GetOnTeamIndexChangedDelegate() // IScWTeamAgentInterface
 {
 	return &OnTeamChangedDelegate;
 }
 
+void UScWLocalPlayer::OnControllerChangedTeam(UObject* TeamAgent, const FGameplayTag& InPrevTeamTag, const FGameplayTag& InNewTeamTag)
+{
+	ConditionalBroadcastTeamChanged(this, InPrevTeamTag, InNewTeamTag);
+}
+//~ End Team
+
+//~ Begin Settings
 UScWSettingsLocal* UScWLocalPlayer::GetLocalSettings() const
 {
 	return UScWSettingsLocal::Get();
@@ -155,11 +174,7 @@ void UScWLocalPlayer::OnCompletedAudioDeviceSwap(const FSwapAudioOutputResult& S
 {
 	if (SwapResult.Result == ESwapAudioOutputDeviceResultState::Failure)
 	{
+
 	}
 }
-
-void UScWLocalPlayer::OnControllerChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam)
-{
-	ConditionalBroadcastTeamChanged(this, IntegerToGenericTeamId(OldTeam), IntegerToGenericTeamId(NewTeam));
-}
-
+//~ End Settings

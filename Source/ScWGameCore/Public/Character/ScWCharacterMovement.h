@@ -60,27 +60,32 @@ protected:
 public:
 
 protected:
-	void OnMaxWalkSpeedAttributeChanged(const FOnAttributeChangeData& InData);
-	void OnMaxWalkSpeedCrouchedAttributeChanged(const FOnAttributeChangeData& InData);
-	void OnMaxAccelerationAttributeChanged(const FOnAttributeChangeData& InData);
+	void OnWalkSpeedAttributeChanged(const FOnAttributeChangeData& InData);
+	void OnWalkSpeedMulCrouchedAttributeChanged(const FOnAttributeChangeData& InData);
+	void OnAccelerationAttributeChanged(const FOnAttributeChangeData& InData);
 	void OnBrakingDecelerationWalkingAttributeChanged(const FOnAttributeChangeData& InData);
 	void OnGravityScaleAttributeChanged(const FOnAttributeChangeData& InData);
 	void OnAirControlAttributeChanged(const FOnAttributeChangeData& InData);
 	void OnMassAttributeChanged(const FOnAttributeChangeData& InData);
+	void OnRotationRateYawAttributeChanged(const FOnAttributeChangeData& InData);
 
-	FDelegateHandle MaxWalkSpeedChangedDelegateHandle;
-	FDelegateHandle MaxWalkSpeedCrouchedChangedDelegateHandle;
-	FDelegateHandle MaxAccelerationChangedDelegateHandle;
+	FDelegateHandle WalkSpeedChangedDelegateHandle;
+	FDelegateHandle WalkSpeedMulCrouchedChangedDelegateHandle;
+	FDelegateHandle AccelerationChangedDelegateHandle;
 	FDelegateHandle BrakingDecelerationWalkingChangedDelegateHandle;
 	FDelegateHandle GravityScaleChangedDelegateHandle;
 	FDelegateHandle AirControlChangedDelegateHandle;
 	FDelegateHandle MassChangedDelegateHandle;
+	FDelegateHandle RotationRateYawChangedDelegateHandle;
 //~ End Attributes
 
 //~ Begin Tags
 protected:
 	void OnMovementModeTagNumChanged(const FGameplayTag InCallbackTag, int32 InNewCount);
 	void UpdateCharacterMovementModeFromTags();
+
+	void OnMovementFlagTagNumChanged(const FGameplayTag InCallbackTag, int32 InNewCount);
+	void UpdateCharacterMovementFlagsFromTags();
 //~ End Tags
 
 //~ Begin Damage

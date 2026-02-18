@@ -134,7 +134,7 @@ protected:
 	MODULE_API virtual void NativeDestruct() override;
 
 	/** Whether or not this keybind widget is currently set to be a hold keybind */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Keybind Widget", meta=(ScriptName = "IsHoldKeybindValue"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Keybind Widget", meta = (ScriptName = "IsHoldKeybindValue"))
 	bool bIsHoldKeybind;
 
 	/**  */

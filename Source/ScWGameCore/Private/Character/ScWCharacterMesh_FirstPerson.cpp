@@ -5,7 +5,7 @@
 #include "Animation/ScWAnimInstance_FirstPerson.h"
 #include "Animation/ScWAnimationsFunctionLibrary.h"
 
-#include "AbilitySystem/ScWCoreTags.h"
+#include "Tags/ScWCoreTags.h"
 #include "AbilitySystem/ScWAbilitySystemComponent.h"
 
 #include "GameFramework/SpringArmComponent.h"
@@ -28,9 +28,9 @@ UScWCharacterMesh_FirstPerson::UScWCharacterMesh_FirstPerson()
 	DefaultSwayRotationSpeed = 30.0f;
 	DefaultSwayMaxDistance = 1.0f;
 
-	AimingSwaySpeed = 70.0f;
-	AimingSwayRotationSpeed = 50.0f;
-	AimingSwayMaxDistance = 0.2f;
+	//AimingSwaySpeed = 70.0f;
+	//AimingSwayRotationSpeed = 50.0f;
+	//AimingSwayMaxDistance = 0.2f;
 }
 
 //~ Begin Initialize
@@ -55,13 +55,13 @@ void UScWCharacterMesh_FirstPerson::UpdateSwaySpringArmComponent()
 		SwaySpringArmComponent->bEnableCameraRotationLag = true;
 		SwaySpringArmComponent->bUseCameraLagSubstepping = false;
 
-		if (InitASC->HasMatchingGameplayTag(FScWCoreTags::State_Aiming))
+		/*if (InitASC->HasMatchingGameplayTag(FScWCoreTags::Character_State_Aiming))
 		{
 			SwaySpringArmComponent->CameraLagSpeed = AimingSwaySpeed;
 			SwaySpringArmComponent->CameraRotationLagSpeed = AimingSwayRotationSpeed;
 			SwaySpringArmComponent->CameraLagMaxDistance = AimingSwayMaxDistance;
 		}
-		else
+		else*/
 		{
 			SwaySpringArmComponent->CameraLagSpeed = DefaultSwaySpeed;
 			SwaySpringArmComponent->CameraRotationLagSpeed = DefaultSwayRotationSpeed;
@@ -80,7 +80,7 @@ void UScWCharacterMesh_FirstPerson::InitFromASC(UScWAbilitySystemComponent* InIn
 	InInitASC->RegisterGameplayTagEvent(FScWCoreTags::Camera_Type_FirstPerson, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ThisClass::OnOwnerCameraTypeFirstPersonTagChanged);
 	OnOwnerCameraTypeFirstPersonTagChanged(FScWCoreTags::Camera_Type_FirstPerson, InInitASC->GetGameplayTagCount(FScWCoreTags::Camera_Type_FirstPerson));
 
-	InInitASC->RegisterGameplayTagEvent(FScWCoreTags::State_Aiming, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ThisClass::OnAimingTagChanged);
+	//InInitASC->RegisterGameplayTagEvent(FScWCoreTags::Character_State_Aiming, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ThisClass::OnAimingTagChanged);
 	UpdateSwaySpringArmComponent();
 
 	if (InInitASC->AbilityActorInfo.IsValid() && InInitASC->AbilityActorInfo->PlayerController.IsValid())
@@ -165,8 +165,8 @@ void UScWCharacterMesh_FirstPerson::OnOwnerCameraTypeFirstPersonTagChanged(const
 //~ End Camera
 
 //~ Begin Sway
-void UScWCharacterMesh_FirstPerson::OnAimingTagChanged(const FGameplayTag InCallbackTag, int32 InNewCount)
+/*void UScWCharacterMesh_FirstPerson::OnAimingTagChanged(const FGameplayTag InCallbackTag, int32 InNewCount)
 {
 	UpdateSwaySpringArmComponent();
-}
+}*/
 //~ End Sway

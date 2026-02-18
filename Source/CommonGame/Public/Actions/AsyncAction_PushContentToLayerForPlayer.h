@@ -29,7 +29,7 @@ class UAsyncAction_PushContentToLayerForPlayer : public UCancellableAsyncAction
 public:
 	MODULE_API virtual void Cancel() override;
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, meta=(WorldContext = "WorldContextObject", BlueprintInternalUseOnly="true"))
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, meta = (DefaultToSelf = "OwningPlayer", DisplayName = "Push Content to Layer for Player", BlueprintInternalUseOnly = "true"))
 	static MODULE_API UAsyncAction_PushContentToLayerForPlayer* PushContentToLayerForPlayer(APlayerController* OwningPlayer, UPARAM(meta = (AllowAbstract=false)) TSoftClassPtr<UCommonActivatableWidget> WidgetClass, UPARAM(meta = (Categories = "UI.Layer")) FGameplayTag LayerName, bool bSuspendInputUntilComplete = true);
 
 	MODULE_API virtual void Activate() override;

@@ -63,7 +63,7 @@ protected:
 
 //~ Begin Sway
 protected:
-	virtual void OnAimingTagChanged(const FGameplayTag InCallbackTag, int32 InNewCount);
+	///virtual void OnAimingTagChanged(const FGameplayTag InCallbackTag, int32 InNewCount);
 
 	UPROPERTY(Category = "Sway", EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class USpringArmComponent> SwaySpringArmComponent;
@@ -77,14 +77,14 @@ protected:
 	UPROPERTY(Category = "Sway", EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "SwaySpringArmComponent != nullptr", ClampMin = "0.0", UIMin = "0.0"))
 	float DefaultSwayMaxDistance;
 
-	UPROPERTY(Category = "Sway", EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "SwaySpringArmComponent != nullptr", ClampMin = "0.0", ClampMax = "1000.0", UIMin = "0.0", UIMax = "1000.0"))
-	float AimingSwaySpeed;
+	//UPROPERTY(Category = "Sway", EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "SwaySpringArmComponent != nullptr", ClampMin = "0.0", ClampMax = "1000.0", UIMin = "0.0", UIMax = "1000.0"))
+	//float AimingSwaySpeed;
 
-	UPROPERTY(Category = "Sway", EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "SwaySpringArmComponent != nullptr", ClampMin = "0.0", ClampMax = "1000.0", UIMin = "0.0", UIMax = "1000.0"))
-	float AimingSwayRotationSpeed;
+	//UPROPERTY(Category = "Sway", EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "SwaySpringArmComponent != nullptr", ClampMin = "0.0", ClampMax = "1000.0", UIMin = "0.0", UIMax = "1000.0"))
+	//float AimingSwayRotationSpeed;
 
-	UPROPERTY(Category = "Sway", EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "SwaySpringArmComponent != nullptr", ClampMin = "0.0", UIMin = "0.0"))
-	float AimingSwayMaxDistance;
+	//UPROPERTY(Category = "Sway", EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "SwaySpringArmComponent != nullptr", ClampMin = "0.0", UIMin = "0.0"))
+	//float AimingSwayMaxDistance;
 //~ End Sway
 };
 

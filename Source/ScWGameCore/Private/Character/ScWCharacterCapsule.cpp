@@ -2,7 +2,7 @@
 
 #include "Character/ScWCharacterCapsule.h"
 
-#include "AbilitySystem/ScWCoreTags.h"
+#include "Tags/ScWCoreTags.h"
 #include "AbilitySystem/ScWAbilitySystemComponent.h"
 
 UScWCharacterCapsule::UScWCharacterCapsule()
@@ -23,14 +23,17 @@ void UScWCharacterCapsule::InitFromASC(UScWAbilitySystemComponent* InInitASC, AA
 	{
 		InInitASC->RegisterGameplayTagEvent(SampleTagProfile.Key, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ThisClass::OnCollisionTagNumChanged);
 	}
-	//UpdateCollisionProfileFromTags();
+	UpdateCollisionProfileFromTags();
 }
 
 void UScWCharacterCapsule::BeginPlay() // UActorComponent
 {
 	DefaultCollisionProfileName = GetCollisionProfileName();
-	UpdateCollisionProfileFromTags();
 
+	if (UScWAbilitySystemComponent* InitASC = GetInitASC())
+	{
+		UpdateCollisionProfileFromTags();
+	}
 	Super::BeginPlay();
 }
 //~ End Initialize

@@ -42,6 +42,8 @@ public:
 //~ End Initialize
 
 //~ Begin Abilities
+public:
+
 	typedef TFunctionRef<bool(const class UScWGameplayAbility* ScWAbility, FGameplayAbilitySpecHandle Handle)> TShouldCancelAbilityFunc;
 	MODULE_API void CancelAbilitiesByFunc(TShouldCancelAbilityFunc ShouldCancelFunc, bool bReplicateCancelAbility);
 
@@ -117,15 +119,16 @@ protected:
 //~ Begin Effects
 public:
 	// Uses a gameplay effect to add the specified dynamic granted tag.
+	UFUNCTION(Category = "Effects", BlueprintCallable)
 	MODULE_API void AddDynamicTagGameplayEffect(const FGameplayTag& Tag);
 
 	// Removes all active instances of the gameplay effect that was used to add the specified dynamic granted tag.
+	UFUNCTION(Category = "Effects", BlueprintCallable)
 	MODULE_API void RemoveDynamicTagGameplayEffect(const FGameplayTag& Tag);
 //~ End Effects
 
 //~ Begin Tags
 protected:
-	virtual void OnStunnedTagNumChanged(const FGameplayTag InCallbackTag, int32 InNewCount);
 	virtual void OnInputBlockMovementTagNumChanged(const FGameplayTag InCallbackTag, int32 InNewCount);
 //~ End Tags
 };

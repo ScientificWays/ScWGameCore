@@ -64,7 +64,7 @@ public:
 	MODULE_API void BP_ActivateRagdoll();
 
 	UPROPERTY(Category = "Damage", EditAnywhere, BlueprintReadWrite)
-	FName RagdollCollisionProfileName;
+	FCollisionProfileName RagdollCollisionProfile;
 
 protected:
 

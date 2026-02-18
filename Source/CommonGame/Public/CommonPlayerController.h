@@ -11,7 +11,7 @@
 class APawn;
 class UObject;
 
-UCLASS(MinimalAPI, config=Game)
+UCLASS(MinimalAPI, Config = Game)
 class ACommonPlayerController : public AModularPlayerController
 {
 	GENERATED_BODY()

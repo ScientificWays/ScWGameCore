@@ -38,6 +38,8 @@
 #define ensureReturn(InCondition, ...) ensure(InCondition); if (!(InCondition)) return __VA_ARGS__;
 #define ensureGoto(InCondition, InLabel) ensure(InCondition); if (!(InCondition)) goto InLabel;
 
+#define ensureEndTaskReturn(InCondition, ...) ensure(InCondition); if (!(InCondition)) { EndTask(); return __VA_ARGS__; }
+
 #define IS_EDITOR_WORLD(...) (WITH_EDITOR && ((__VA_ARGS__ GetWorld()) && (__VA_ARGS__ GetWorld()->WorldType == EWorldType::Editor))) // Common check with compile-time optimization for non-editor builds
 
 #define TraceTypeQuery_Visibility				ETraceTypeQuery::TraceTypeQuery1

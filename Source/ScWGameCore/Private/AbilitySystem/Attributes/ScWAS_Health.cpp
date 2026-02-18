@@ -5,7 +5,7 @@
 UScWAS_Health::UScWAS_Health()
 {
 	InitHealth(100.0f);
-	InitMaxHealth(100.0f);
+	InitHealthMax(100.0f);
 }
 
 //~ Begin Replication
@@ -14,7 +14,7 @@ void UScWAS_Health::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME(ThisClass, Health);
-	DOREPLIFETIME(ThisClass, MaxHealth);
+	DOREPLIFETIME(ThisClass, HealthMax);
 }
 //~ End Replication
 
@@ -23,7 +23,7 @@ void UScWAS_Health::PreAttributeChange(const FGameplayAttribute& InAttribute, fl
 {
 	if (InAttribute == GetHealthAttribute())
 	{
-		InOutNewValue = FMath::Clamp(InOutNewValue, 0.0f, GetMaxHealth());
+		InOutNewValue = FMath::Clamp(InOutNewValue, 0.0f, GetHealthMax());
 	}
 	else
 	{
@@ -35,7 +35,7 @@ void UScWAS_Health::PostAttributeChange(const FGameplayAttribute& InAttribute, f
 {
 	Super::PostAttributeChange(InAttribute, InPrevValue, InNewValue);
 
-	if (InAttribute == GetMaxHealthAttribute())
+	if (InAttribute == GetHealthMaxAttribute())
 	{
 		if (InPrevValue == 0.0f || InNewValue == 0.0f || GetHealth() == 0.0f)
 		{
@@ -56,8 +56,8 @@ void UScWAS_Health::OnRep_Health(const FGameplayAttributeData& InPrevValue)
 }
 
 
-void UScWAS_Health::OnRep_MaxHealth(const FGameplayAttributeData& InPrevValue)
+void UScWAS_Health::OnRep_HealthMax(const FGameplayAttributeData& InPrevValue)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, MaxHealth, InPrevValue);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, HealthMax, InPrevValue);
 }
 //~ End Replication

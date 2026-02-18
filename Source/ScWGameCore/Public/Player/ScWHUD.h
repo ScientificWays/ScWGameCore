@@ -14,7 +14,7 @@
  * 
  *  This class exists primarily for debug rendering
  */
-UCLASS(Config = Game)
+UCLASS(Config = Game, meta = (DisplayName = "[ScW] HUD"))
 class AScWHUD : public AHUD
 {
 	GENERATED_BODY()

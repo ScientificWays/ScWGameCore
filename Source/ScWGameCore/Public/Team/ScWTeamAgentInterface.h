@@ -10,7 +10,7 @@
 
 template <typename InterfaceType> class TScriptInterface;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnScWTeamIndexChangedDelegate, UObject*, ObjectChangingTeam, int32, OldTeamID, int32, NewTeamID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnScWTeamIndexChangedDelegate, UObject*, ObjectChangingTeam, const FGameplayTag&, InPrevTeamTag, const FGameplayTag&, InNewTeamTag);
 
 inline int32 GenericTeamIdToInteger(FGenericTeamId ID)
 {
@@ -33,9 +33,17 @@ class IScWTeamAgentInterface : public IGenericTeamAgentInterface
 {
 	GENERATED_IINTERFACE_BODY()
 
+	static MODULE_API const FGameplayTag TeamNoneTag;
+
+	UFUNCTION(Category = "Team", BlueprintCallable)
+	MODULE_API virtual const FGameplayTag& GetTeamTag() const = 0;
+
+	UFUNCTION(Category = "Team", BlueprintCallable)
+	MODULE_API virtual void SetTeamTag(const FGameplayTag& InTeamTag) = 0;
+
 	virtual FOnScWTeamIndexChangedDelegate* GetOnTeamIndexChangedDelegate() { return nullptr; }
 
-	static MODULE_API void ConditionalBroadcastTeamChanged(TScriptInterface<IScWTeamAgentInterface> This, FGenericTeamId OldTeamID, FGenericTeamId NewTeamID);
+	static MODULE_API void ConditionalBroadcastTeamChanged(TScriptInterface<IScWTeamAgentInterface> This, const FGameplayTag& InPrevTeamTag, const FGameplayTag& InNewTeamTag);
 	
 	FOnScWTeamIndexChangedDelegate& GetTeamChangedDelegateChecked()
 	{

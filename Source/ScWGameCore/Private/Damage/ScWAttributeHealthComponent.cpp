@@ -2,7 +2,7 @@
 
 #include "Damage/ScWAttributeHealthComponent.h"
 
-#include "AbilitySystem/ScWCoreTags.h"
+#include "Tags/ScWCoreTags.h"
 #include "AbilitySystem/Attributes/ScWAS_Health.h"
 #include "AbilitySystem/ScWAbilitySystemGlobals.h"
 
@@ -14,6 +14,7 @@
 #include "System/ScWAssetManager.h"
 
 #include "Perception/AISenseConfig_Damage.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 
 UAbilitySystemComponent* FReceivedDamageData::TryGetAttackerASC() const
 {
@@ -51,7 +52,7 @@ FString FReceivedDamageData::ToAnalyticsString() const
 UScWAttributeHealthComponent::UScWAttributeHealthComponent()
 {
 	HealthAttribute = UScWAS_Health::GetHealthAttribute();
-	MaxHealthAttribute = UScWAS_Health::GetMaxHealthAttribute();
+	HealthMaxAttribute = UScWAS_Health::GetHealthMaxAttribute();
 
 	bEnableAccumulatedAppliedDamage = true;
 	AccumulatedAppliedDamageResetTime = 1.5f;
@@ -68,7 +69,7 @@ void UScWAttributeHealthComponent::OnRegister() // UActorComponent
 	AActor* OwnerActor = GetOwner();
 	check(OwnerActor);
 
-	UScWPawnExtensionComponent* OwnerPawnExtComponent = UScWPawnExtensionComponent::FindPawnExtensionComponent(OwnerActor);
+	UScWPawnExtensionComponent* OwnerPawnExtComponent = UScWPawnExtensionComponent::GetPawnExtensionComponent(OwnerActor);
 	ensureReturn(OwnerPawnExtComponent);
 
 	OwnerPawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall(FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::InitializeFromAbilitySystem));
@@ -115,18 +116,18 @@ void UScWAttributeHealthComponent::InitializeFromAbilitySystem()
 	ensureReturn(OwnerASC);
 
 	ensureReturn(OwnerASC->GetGameplayAttributeValueChangeDelegate(HealthAttribute).IsBoundToObject(this) == false);
-	ensureReturn(OwnerASC->GetGameplayAttributeValueChangeDelegate(MaxHealthAttribute).IsBoundToObject(this) == false);
+	ensureReturn(OwnerASC->GetGameplayAttributeValueChangeDelegate(HealthMaxAttribute).IsBoundToObject(this) == false);
 
 	HealthChangedDelegateHandle = OwnerASC->GetGameplayAttributeValueChangeDelegate(HealthAttribute).AddUObject(this, &ThisClass::OnHealthAttributeChanged);
-	MaxHealthChangedDelegateHandle = OwnerASC->GetGameplayAttributeValueChangeDelegate(MaxHealthAttribute).AddUObject(this, &ThisClass::OnMaxHealthAttributeChanged);
+	HealthMaxChangedDelegateHandle = OwnerASC->GetGameplayAttributeValueChangeDelegate(HealthMaxAttribute).AddUObject(this, &ThisClass::OnHealthMaxAttributeChanged);
 
 	// TEMP: Reset attributes to default values. Eventually this will be driven by a spread sheet.
-	OwnerASC->SetNumericAttributeBase(HealthAttribute, GetMaxHealth());
+	OwnerASC->SetNumericAttributeBase(HealthAttribute, GetHealthMax());
 
 	ClearGameplayTags();
 
 	OnHealthChanged.Broadcast(HealthAttribute, GetHealth(), GetHealth());
-	OnMaxHealthChanged.Broadcast(MaxHealthAttribute, GetMaxHealth(), GetMaxHealth());
+	OnHealthMaxChanged.Broadcast(HealthMaxAttribute, GetHealthMax(), GetHealthMax());
 }
 
 void UScWAttributeHealthComponent::UninitializeFromAbilitySystem()
@@ -137,7 +138,7 @@ void UScWAttributeHealthComponent::UninitializeFromAbilitySystem()
 	if (UAbilitySystemComponent* OwnerASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Owner))
 	{
 		OwnerASC->GetGameplayAttributeValueChangeDelegate(HealthAttribute).RemoveAll(this);
-		OwnerASC->GetGameplayAttributeValueChangeDelegate(MaxHealthAttribute).RemoveAll(this);
+		OwnerASC->GetGameplayAttributeValueChangeDelegate(HealthMaxAttribute).RemoveAll(this);
 	}
 	ClearGameplayTags();
 }
@@ -146,8 +147,8 @@ void UScWAttributeHealthComponent::ClearGameplayTags()
 {
 	if (UAbilitySystemComponent* OwnerASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner()))
 	{
-		OwnerASC->SetLooseGameplayTagCount(FScWCoreTags::State_Dead_Started, 0);
-		OwnerASC->SetLooseGameplayTagCount(FScWCoreTags::State_Dead_Finished, 0);
+		OwnerASC->SetLooseGameplayTagCount(FScWCoreTags::Character_State_Dead_Started, 0);
+		OwnerASC->SetLooseGameplayTagCount(FScWCoreTags::Character_State_Dead_Finished, 0);
 	}
 }
 //~ End Ability System
@@ -161,22 +162,22 @@ float UScWAttributeHealthComponent::GetHealth() const
 	return OwnerASC->GetGameplayAttributeValue(HealthAttribute, bFound);
 }
 
-float UScWAttributeHealthComponent::GetMaxHealth() const
+float UScWAttributeHealthComponent::GetHealthMax() const
 {
 	UAbilitySystemComponent* OwnerASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
 	ensureReturn(OwnerASC, 0.0f);
 	bool bFound;
-	return OwnerASC->GetGameplayAttributeValue(MaxHealthAttribute, bFound);
+	return OwnerASC->GetGameplayAttributeValue(HealthMaxAttribute, bFound);
 }
 
 float UScWAttributeHealthComponent::GetHealthNormalized() const
 {
-	return ((GetMaxHealth() > 0.0f) ? (GetHealth() / GetMaxHealth()) : 0.0f);
+	return ((GetHealthMax() > 0.0f) ? (GetHealth() / GetHealthMax()) : 0.0f);
 }
 
 bool UScWAttributeHealthComponent::IsFullHealth(const bool bInCheckHasHealth) const
 {
-	return (!bInCheckHasHealth || GetMaxHealth() > 0.0f) && GetHealth() == GetMaxHealth();
+	return (!bInCheckHasHealth || GetHealthMax() > 0.0f) && GetHealth() == GetHealthMax();
 }
 
 void UScWAttributeHealthComponent::SetHealth(float InHealth)
@@ -209,9 +210,9 @@ void UScWAttributeHealthComponent::OnHealthAttributeChanged(const FOnAttributeCh
 	}
 }
 
-void UScWAttributeHealthComponent::OnMaxHealthAttributeChanged(const FOnAttributeChangeData& InData)
+void UScWAttributeHealthComponent::OnHealthMaxAttributeChanged(const FOnAttributeChangeData& InData)
 {
-	OnMaxHealthChanged.Broadcast(InData.Attribute, InData.OldValue, InData.NewValue);
+	OnHealthMaxChanged.Broadcast(InData.Attribute, InData.OldValue, InData.NewValue);
 }
 
 void UScWAttributeHealthComponent::OnZeroHealth()
@@ -313,36 +314,39 @@ bool UScWAttributeHealthComponent::HandleTryReceiveDamage(float InDamage, const 
 	{
 		SourceLocation = OwnerActor->GetActorLocation();
 	}
-	UAISense_Damage::ReportDamageEvent(this, OwnerActor, InData.Instigator, InDamage, SourceLocation, InData.HitResult.Location);
+	FGameplayTag GameplayMessageTag;
 
-	if (OwnerASC->HasMatchingGameplayTag(FScWCoreTags::Cheat_Invulnerable))
-	{
-		return false;
-	}
-	else if (TryIgnoreDamage(InDamage, InData))
+	if (TryIgnoreDamage(InDamage, InData))
 	{
 		OnDamageIgnored.Broadcast(InDamage, InData);
-		return false;
+		GameplayMessageTag = FScWCoreTags::GameplayMessage_Damage_Ignored;
 	}
 	else if (TryBlockDamage(InDamage, InData))
 	{
 		OnDamageBlocked.Broadcast(InDamage, InData);
-		return false;
+		GameplayMessageTag = FScWCoreTags::GameplayMessage_Damage_Blocked;
 	}
 	else if (TryEvadeDamage(InDamage, InData))
 	{
 		OnDamageEvaded.Broadcast(InDamage, InData);
-		return false;
+		GameplayMessageTag = FScWCoreTags::GameplayMessage_Damage_Evaded;
 	}
 	else if (TryApplyDamage(InDamage, InData))
 	{
 		OnDamageApplied.Broadcast(InDamage, InData);
-		return true;
+		GameplayMessageTag = FScWCoreTags::GameplayMessage_Damage_Applied;
 	}
 	else
 	{
-		return false;
+		ensureReturn(false, false);
 	}
+	UGameplayMessageSubsystem& GameplayMessageSubsystem = UGameplayMessageSubsystem::Get(this);
+
+	FGameplayMessage_Damage DamageMessage = { this, InData };
+	GameplayMessageSubsystem.BroadcastMessage(GameplayMessageTag, DamageMessage);
+
+	UAISense_Damage::ReportDamageEvent(this, OwnerActor, InData.Instigator, InDamage, SourceLocation, InData.HitResult.Location);
+	return GameplayMessageTag == FScWCoreTags::GameplayMessage_Damage_Applied;
 }
 
 bool UScWAttributeHealthComponent::ShouldIgnoreAnyAttackFrom(AController* InInstigator) const
@@ -365,7 +369,7 @@ bool UScWAttributeHealthComponent::ShouldIgnoreAnyAttackFrom(AController* InInst
 			}
 		}
 	}
-	if (HasMatchingGameplayTag(FIDGameplayTags::State_Captured))
+	if (HasMatchingGameplayTag(FIDGameplayTags::Character_State_Captured))
 	{
 		if (ITeamInterface* PawnTeamInterface = Cast<ITeamInterface>(OwnerPawn))
 		{
@@ -390,7 +394,7 @@ bool UScWAttributeHealthComponent::TryIgnoreDamage(float& InOutAdjustedDamage, c
 	UAbilitySystemComponent* OwnerASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
 	check(OwnerASC);
 
-	if (OwnerASC->HasMatchingGameplayTag(FScWCoreTags::State_IgnoreAnyDamage))
+	if (OwnerASC->HasAnyMatchingGameplayTags(UScWAbilitySystemGlobals::GetIgnoreDamageTags()))
 	{
 		bIsIgnored = true;
 	}
@@ -429,7 +433,7 @@ bool UScWAttributeHealthComponent::TryBlockDamage(float& InOutAdjustedDamage, co
 	UAbilitySystemComponent* OwnerASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
 	check(OwnerASC);
 
-	if (OwnerASC->HasMatchingGameplayTag(FScWCoreTags::State_BlockAnyDamage))
+	if (OwnerASC->HasMatchingGameplayTag(FScWCoreTags::Character_State_BlockAnyDamage))
 	{
 		bIsBlocked = true;
 	}
@@ -465,7 +469,7 @@ bool UScWAttributeHealthComponent::TryEvadeDamage(float& InOutAdjustedDamage, co
 	UAbilitySystemComponent* OwnerASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
 	check(OwnerASC);
 
-	if (OwnerASC->HasMatchingGameplayTag(FScWCoreTags::State_EvadeAnyDamage))
+	if (OwnerASC->HasMatchingGameplayTag(FScWCoreTags::Character_State_EvadeAnyDamage))
 	{
 		bIsEvaded = true;
 	}
@@ -551,10 +555,12 @@ bool UScWAttributeHealthComponent::TryApplyDamage(float InDamage, const FReceive
 		FGameplayCueParameters ImpactCueParams = FGameplayCueParameters(OwnerASC->MakeEffectContext());
 		ImpactCueParams.Instigator = InData.Instigator ? InData.Instigator->GetPawn() : nullptr;
 		ImpactCueParams.EffectCauser = InData.Source;
+		ImpactCueParams.SourceObject = DamageImpactCuePayload;
 		ImpactCueParams.Location = InData.HitResult.ImpactPoint;
 		ImpactCueParams.Normal = InData.HitResult.ImpactNormal;
 		ImpactCueParams.RawMagnitude = InDamage;
-		ImpactCueParams.NormalizedMagnitude = FMath::Min(InDamage / GetMaxHealth(), 1.0f);
+		ImpactCueParams.AbilityLevel = FMath::RandRange(0, 1); // TODO: Add support for e.g. flip-flop
+		ImpactCueParams.NormalizedMagnitude = FMath::Min(InDamage / GetHealthMax(), 1.0f);
 		OwnerASC->ExecuteGameplayCue(FScWCoreTags::GameplayCue_Damage_Impact, ImpactCueParams);
 	}
 	return true;
@@ -593,6 +599,11 @@ void UScWAttributeHealthComponent::HandleDied()
 		ensure(false);
 	}
 	OnDied.Broadcast();
+
+	UGameplayMessageSubsystem& GameplayMessageSubsystem = UGameplayMessageSubsystem::Get(this);
+
+	FGameplayMessage_Died DiedMessage = { this };
+	GameplayMessageSubsystem.BroadcastMessage(FScWCoreTags::GameplayMessage_Died, DiedMessage);
 
 	if (bDestroyOwnerNextTickOnDeath)
 	{

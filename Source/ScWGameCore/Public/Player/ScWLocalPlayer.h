@@ -47,11 +47,30 @@ public:
 	MODULE_API virtual void InitOnlineSession() override;
 	//~End of ULocalPlayer interface
 
-	//~IScWTeamAgentInterface interface
-	MODULE_API virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override;
-	MODULE_API virtual FGenericTeamId GetGenericTeamId() const override;
-	MODULE_API virtual FOnScWTeamIndexChangedDelegate* GetOnTeamIndexChangedDelegate() override;
-	//~End of IScWTeamAgentInterface interface
+private:
+
+	UPROPERTY()
+	TWeakObjectPtr<APlayerController> LastBoundPC;
+	
+//~ Begin Team
+public:
+	MODULE_API virtual FGenericTeamId GetGenericTeamId() const override; // IGenericTeamAgentInterface
+	MODULE_API virtual void SetGenericTeamId(const FGenericTeamId& InTeamID) override; // IGenericTeamAgentInterface
+
+	MODULE_API virtual const FGameplayTag& GetTeamTag() const override; // IScWTeamAgentInterface
+	MODULE_API virtual void SetTeamTag(const FGameplayTag& InTeamTag) override; // IScWTeamAgentInterface
+	MODULE_API virtual FOnScWTeamIndexChangedDelegate* GetOnTeamIndexChangedDelegate() override; // IScWTeamAgentInterface
+private:
+
+	UFUNCTION()
+	void OnControllerChangedTeam(UObject* TeamAgent, const FGameplayTag& InPrevTeamTag, const FGameplayTag& InNewTeamTag);
+
+	UPROPERTY()
+	FOnScWTeamIndexChangedDelegate OnTeamChangedDelegate;
+//~ End Team
+
+//~ Begin Settings
+public:
 
 	/** Gets the local settings for this player, this is read from config files at process startup and is always valid */
 	UFUNCTION()
@@ -74,9 +93,6 @@ protected:
 
 	MODULE_API void OnPlayerControllerChanged(APlayerController* NewController);
 
-	UFUNCTION()
-	MODULE_API void OnControllerChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam);
-
 private:
 
 	UPROPERTY(Transient)
@@ -86,12 +102,7 @@ private:
 
 	UPROPERTY(Transient)
 	mutable TObjectPtr<const UInputMappingContext> InputMappingContext;
-
-	UPROPERTY()
-	FOnScWTeamIndexChangedDelegate OnTeamChangedDelegate;
-
-	UPROPERTY()
-	TWeakObjectPtr<APlayerController> LastBoundPC;
+//~ End Settings
 };
 
 #undef MODULE_API

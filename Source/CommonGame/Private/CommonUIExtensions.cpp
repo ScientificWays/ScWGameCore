@@ -3,53 +3,79 @@
 #include "CommonUIExtensions.h"
 
 #include "CommonInputSubsystem.h"
-#include "CommonInputTypeEnum.h"
 #include "CommonLocalPlayer.h"
 #include "Engine/GameInstance.h"
 #include "GameUIManagerSubsystem.h"
 #include "GameUIPolicy.h"
 #include "PrimaryGameLayout.h"
+
+#include "GameFramework/PlayerState.h"
+
+#include "Kismet/GameplayStatics.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CommonUIExtensions)
 
 int32 UCommonUIExtensions::InputSuspensions = 0;
 
-ECommonInputType UCommonUIExtensions::GetOwningPlayerInputType(const UUserWidget* WidgetContextObject)
+const ULocalPlayer* UCommonUIExtensions::GetLocalPlayerFromContext(const UObject* InPlayerContext)
 {
-	if (WidgetContextObject)
+	if (const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(InPlayerContext))
 	{
-		if (const UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(WidgetContextObject->GetOwningLocalPlayer()))
-		{
-			return InputSubsystem->GetCurrentInputType();
-		}
+		return LocalPlayer;
 	}
+	else if (const APlayerController* PlayerController = Cast<APlayerController>(InPlayerContext))
+	{
+		return PlayerController->GetLocalPlayer();
+	}
+	else if (const APlayerState* PlayerState = Cast<APlayerState>(InPlayerContext))
+	{
+		return GetLocalPlayerFromContext(PlayerState->GetOwningController());
+	}
+	else if (const APawn* Pawn = Cast<APawn>(InPlayerContext))
+	{
+		return GetLocalPlayerFromContext(Pawn->GetController());
+	}
+	else if (const UWidget* Widget = Cast<UWidget>(InPlayerContext))
+	{
+		return Widget->GetOwningLocalPlayer();
+	}
+	else if (const UActorComponent* ActorComponent = Cast<UActorComponent>(InPlayerContext))
+	{
+		return GetLocalPlayerFromContext(ActorComponent->GetOwner());
+	}
+	/*else if (const UObject* Outer = InPlayerContext->GetOuter())
+	{
+		return GetLocalPlayerFromContext(Outer);
+	}*/
+	else
+	{
+		return nullptr;
+	}
+}
 
+ECommonInputType UCommonUIExtensions::GetOwningPlayerInputType(const UObject* InPlayerContext)
+{
+	if (const UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(GetLocalPlayerFromContext(InPlayerContext)))
+	{
+		return InputSubsystem->GetCurrentInputType();
+	}
 	return ECommonInputType::Count;
 }
 
-bool UCommonUIExtensions::IsOwningPlayerUsingTouch(const UUserWidget* WidgetContextObject)
+ECommonInputType UCommonUIExtensions::SwitchOnPlayerInputType(const UObject* InPlayerContext)
 {
-	if (WidgetContextObject)
-	{
-		if (const UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(WidgetContextObject->GetOwningLocalPlayer()))
-		{
-			return InputSubsystem->GetCurrentInputType() == ECommonInputType::Touch;
-		}
-	}
-	return false;
+	return GetOwningPlayerInputType(InPlayerContext);
 }
 
-bool UCommonUIExtensions::IsOwningPlayerUsingGamepad(const UUserWidget* WidgetContextObject)
+bool UCommonUIExtensions::IsOwningPlayerUsingTouch(const UObject* InPlayerContext)
 {
-	if (WidgetContextObject)
-	{
-		if (const UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(WidgetContextObject->GetOwningLocalPlayer()))
-		{
-			return InputSubsystem->GetCurrentInputType() == ECommonInputType::Gamepad;
-		}
-	}
-	return false;
+	return GetOwningPlayerInputType(InPlayerContext) == ECommonInputType::Touch;
+}
+
+bool UCommonUIExtensions::IsOwningPlayerUsingGamepad(const UObject* InPlayerContext)
+{
+	return GetOwningPlayerInputType(InPlayerContext) == ECommonInputType::Gamepad;
 }
 
 UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(const ULocalPlayer* LocalPlayer, FGameplayTag LayerName, TSubclassOf<UCommonActivatableWidget> WidgetClass)
@@ -58,7 +84,6 @@ UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(cons
 	{
 		return nullptr;
 	}
-
 	if (UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
 	{
 		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
@@ -69,7 +94,6 @@ UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(cons
 			}
 		}
 	}
-
 	return nullptr;
 }
 
@@ -79,7 +103,6 @@ void UCommonUIExtensions::PushStreamedContentToLayer_ForPlayer(const ULocalPlaye
 	{
 		return;
 	}
-
 	if (UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
 	{
 		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
@@ -100,7 +123,6 @@ void UCommonUIExtensions::PopContentFromLayer(UCommonActivatableWidget* Activata
 		// Ignore request to pop an already deleted widget
 		return;
 	}
-
 	if (const ULocalPlayer* LocalPlayer = ActivatableWidget->GetOwningLocalPlayer())
 	{
 		if (const UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
@@ -122,7 +144,6 @@ ULocalPlayer* UCommonUIExtensions::GetLocalPlayerFromController(APlayerControlle
 	{
 		return Cast<ULocalPlayer>(PlayerController->Player);
 	}
-
 	return nullptr;
 }
 

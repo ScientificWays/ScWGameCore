@@ -33,14 +33,14 @@ public:
 	UFUNCTION()
 	MODULE_API virtual void HandleSystemMessage(FGameplayTag MessageType, FText Title, FText Message);
 
-	UFUNCTION()
-	MODULE_API virtual void HandlePrivilegeChanged(const UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege, ECommonUserAvailability OldAvailability, ECommonUserAvailability NewAvailability);
+	//UFUNCTION()
+	//MODULE_API virtual void HandlePrivilegeChanged(const UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege, ECommonUserAvailability OldAvailability, ECommonUserAvailability NewAvailability);
 
-	UFUNCTION()
-	MODULE_API virtual void HandlerUserInitialized(const UCommonUserInfo* UserInfo, bool bSuccess, FText Error, ECommonUserPrivilege RequestedPrivilege, ECommonUserOnlineContext OnlineContext);
+	//UFUNCTION()
+	//MODULE_API virtual void HandlerUserInitialized(const UCommonUserInfo* UserInfo, bool bSuccess, FText Error, ECommonUserPrivilege RequestedPrivilege, ECommonUserOnlineContext OnlineContext);
 
 	/** Call to reset user and session state, usually because a player has been disconnected */
-	MODULE_API virtual void ResetUserAndSessionState();
+	//MODULE_API virtual void ResetUserAndSessionState();
 
 	/**
 	 * Requested Session Flow
@@ -50,21 +50,21 @@ public:
 	 *   If not, cache the requested session and instruct the game to get into a state where the session can be joined (ResetGameAndJoinRequestedSession)
 	 */
 	/** Handles user accepting a session invite from an external source (for example, a platform overlay). Intended to be overridden per game. */
-	MODULE_API virtual void OnUserRequestedSession(const FPlatformUserId& PlatformUserId, UCommonSession_SearchResult* InRequestedSession, const FOnlineResultInformation& RequestedSessionResult);
+	//MODULE_API virtual void OnUserRequestedSession(const FPlatformUserId& PlatformUserId, UCommonSession_SearchResult* InRequestedSession, const FOnlineResultInformation& RequestedSessionResult);
 
 	/** Handles OSS request that the session be destroyed */
-	MODULE_API virtual void OnDestroySessionRequested(const FPlatformUserId& PlatformUserId, const FName& SessionName);
+	//MODULE_API virtual void OnDestroySessionRequested(const FPlatformUserId& PlatformUserId, const FName& SessionName);
 
 	/** Get the requested session */
-	UCommonSession_SearchResult* GetRequestedSession() const { return RequestedSession; }
+	//UCommonSession_SearchResult* GetRequestedSession() const { return RequestedSession; }
 	/** Set (or clear) the requested session. When this is set, the requested session flow begins. */
-	MODULE_API virtual void SetRequestedSession(UCommonSession_SearchResult* InRequestedSession);
+	//MODULE_API virtual void SetRequestedSession(UCommonSession_SearchResult* InRequestedSession);
 	/** Checks if the requested session can be joined. Can be overridden per game. */
-	MODULE_API virtual bool CanJoinRequestedSession() const;
+	//MODULE_API virtual bool CanJoinRequestedSession() const;
 	/** Join the requested session */
-	MODULE_API virtual void JoinRequestedSession();
+	//MODULE_API virtual void JoinRequestedSession();
 	/** Get the game into a state to join the requested session */
-	MODULE_API virtual void ResetGameAndJoinRequestedSession();
+	//MODULE_API virtual void ResetGameAndJoinRequestedSession();
 	
 	MODULE_API virtual int32 AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUserId UserId) override;
 	MODULE_API virtual bool RemoveLocalPlayer(ULocalPlayer* ExistingPlayer) override;
@@ -75,8 +75,8 @@ private:
 	/** This is the primary player*/
 	TWeakObjectPtr<ULocalPlayer> PrimaryPlayer;
 	/** Session the player has requested to join */
-	UPROPERTY()
-	TObjectPtr<UCommonSession_SearchResult> RequestedSession;
+	//UPROPERTY()
+	//TObjectPtr<UCommonSession_SearchResult> RequestedSession;
 };
 
 #undef MODULE_API

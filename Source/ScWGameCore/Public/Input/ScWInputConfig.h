@@ -33,7 +33,7 @@ public:
 /**
  *	Non-mutable data asset that contains input configuration properties.
  */
-UCLASS(BlueprintType, Const)
+UCLASS(BlueprintType, Const, meta = (DisplayName = "[ScW] Input Config"))
 class UScWInputConfig : public UDataAsset
 {
 	GENERATED_BODY()
@@ -42,10 +42,10 @@ public:
 
 	UScWInputConfig(const FObjectInitializer& ObjectInitializer);
 
-	UFUNCTION(BlueprintCallable, Category = "ScW|Pawn")
+	UFUNCTION(BlueprintCallable, Category = "Input Config")
 	const UInputAction* FindNativeInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
 
-	UFUNCTION(BlueprintCallable, Category = "ScW|Pawn")
+	UFUNCTION(BlueprintCallable, Category = "Input Config")
 	const UInputAction* FindAbilityInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
 
 public:

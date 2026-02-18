@@ -3,7 +3,7 @@
 #include "Animation/ScWAnimInstance_Base.h"
 
 #include "Character/ScWCharacter.h"
-#include "AbilitySystem/AsyncTask_WaitForAbilitySystem.h"
+#include "AbilitySystem/Tasks/ScWAT_WaitForAbilitySystem.h"
 
 #include "Misc/DataValidation.h"
 
@@ -44,11 +44,17 @@ void UScWAnimInstance_Base::NativeInitializeAnimation() // UAnimInstance
 {
 	Super::NativeInitializeAnimation();
 
-	AActor* OwningActor = GetOwningActor();
-	ensureReturn(OwningActor);
+	UWorld* World = GetWorld();
+	ensureReturn(World);
 
-	UAsyncTask_WaitForAbilitySystem* WaitForASC = UAsyncTask_WaitForAbilitySystem::WaitForAbilitySystem(OwningActor);
-	WaitForASC->OnFound.AddDynamic(this, &ThisClass::InitializeFromOwnerAbilitySystem);
+	if (World->IsGameWorld())
+	{
+		OwnerCharacter = Cast<ACharacter>(GetOwningActor());
+		ensureReturn(OwnerCharacter);
+
+		UScWAT_WaitForAbilitySystem* WaitForASC = UScWAT_WaitForAbilitySystem::WaitForAbilitySystem(OwnerCharacter);
+		WaitForASC->OnFound.AddDynamic(this, &ThisClass::InitializeFromOwnerAbilitySystem);
+	}
 }
 
 void UScWAnimInstance_Base::NativeUpdateAnimation(float InDeltaSeconds)

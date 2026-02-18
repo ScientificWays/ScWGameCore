@@ -51,7 +51,7 @@ public:
 
 protected:
 	/** The tooltip that should be associated with this action when displayed on the settings screen */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta=(AllowPrivateAccess=true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (AllowPrivateAccess=true))
 	FText Tooltip = FText::GetEmpty();
 };
 
