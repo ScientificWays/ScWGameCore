@@ -112,8 +112,8 @@ void UScWWorldAudioSubsystem::HandleStopAndDestroyAudioComponent(UAudioComponent
 	}
 	if (InAudioComponent)
 	{
-		AudioComponent->Stop();
-		AudioComponent->DestroyComponent();
+		InAudioComponent->Stop();
+		InAudioComponent->DestroyComponent();
 	}
 	if (AudioAutoRemoveTimeLeftMap.Contains(InAudioComponent))
 	{
