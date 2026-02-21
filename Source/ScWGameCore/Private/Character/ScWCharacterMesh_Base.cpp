@@ -31,9 +31,6 @@ void UScWCharacterMesh_Base::InitFromASC(UScWAbilitySystemComponent* InInitASC, 
 	//ensureReturn(InOwnerActor);
 	//ensureReturn(InAvatarActor);
 
-	if (UScWAnimInstance_Base* AnimInstance = Cast<UScWAnimInstance_Base>(GetAnimInstance()))
-	{
-		AnimInstance->InitializeFromOwnerAbilitySystem(InInitASC);
-	}
+	
 }
 //~ End Initialize

@@ -78,42 +78,68 @@ bool UCommonUIExtensions::IsOwningPlayerUsingGamepad(const UObject* InPlayerCont
 	return GetOwningPlayerInputType(InPlayerContext) == ECommonInputType::Gamepad;
 }
 
-UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(const ULocalPlayer* LocalPlayer, FGameplayTag LayerName, TSubclassOf<UCommonActivatableWidget> WidgetClass)
+UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(const ULocalPlayer* InLocalPlayer, FGameplayTag InLayerName, TSubclassOf<UCommonActivatableWidget> InWidgetClass)
 {
-	if (!ensure(LocalPlayer) || !ensure(WidgetClass != nullptr))
+	if (!ensure(InLocalPlayer) || !ensure(InWidgetClass != nullptr))
 	{
 		return nullptr;
 	}
-	if (UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
+	if (UGameUIManagerSubsystem* UIManager = InLocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
 	{
 		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
 		{
-			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
+			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(InLocalPlayer)))
 			{
-				return RootLayout->PushWidgetToLayerStack(LayerName, WidgetClass);
+				return RootLayout->PushWidgetToLayerStack<UCommonActivatableWidget>(InLayerName, InWidgetClass);
 			}
 		}
 	}
+	ensure(false);
 	return nullptr;
 }
 
-void UCommonUIExtensions::PushStreamedContentToLayer_ForPlayer(const ULocalPlayer* LocalPlayer, FGameplayTag LayerName, TSoftClassPtr<UCommonActivatableWidget> WidgetClass)
+/*UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayerAndInit_ForPlayer(const ULocalPlayer* InLocalPlayer, FGameplayTag InLayerName, TSubclassOf<UCommonActivatableWidget> InWidgetClass, FCommonUIInitInstanceSignature InInitInstanceFunc)
 {
-	if (!ensure(LocalPlayer) || !ensure(!WidgetClass.IsNull()))
+	if (!ensure(InLocalPlayer) || !ensure(InWidgetClass != nullptr))
 	{
-		return;
+		return nullptr;
 	}
-	if (UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
+	if (UGameUIManagerSubsystem* UIManager = InLocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
 	{
 		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
 		{
-			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
+			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(InLocalPlayer)))
 			{
-				const bool bSuspendInputUntilComplete = true;
-				RootLayout->PushWidgetToLayerStackAsync(LayerName, bSuspendInputUntilComplete, WidgetClass);
+				return RootLayout->PushWidgetToLayerStack<UCommonActivatableWidget>(InLayerName, InWidgetClass, [&InInitInstanceFunc](UCommonActivatableWidget& InWidget)
+				{
+					InInitInstanceFunc.ExecuteIfBound(&InWidget);
+				});
 			}
 		}
 	}
+	ensure(false);
+	return nullptr;
+}*/
+
+void UCommonUIExtensions::PushStreamedContentToLayer_ForPlayer(const ULocalPlayer* InLocalPlayer, FGameplayTag InLayerName, TSoftClassPtr<UCommonActivatableWidget> InWidgetClass)
+{
+	if (!ensure(InLocalPlayer) || !ensure(!InWidgetClass.IsNull()))
+	{
+		return;
+	}
+	if (UGameUIManagerSubsystem* UIManager = InLocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
+	{
+		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
+		{
+			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(InLocalPlayer)))
+			{
+				const bool bSuspendInputUntilComplete = true;
+				RootLayout->PushWidgetToLayerStackAsync(InLayerName, bSuspendInputUntilComplete, InWidgetClass);
+				return;
+			}
+		}
+	}
+	ensure(false);
 }
 
 void UCommonUIExtensions::PopContentFromLayer(UCommonActivatableWidget* ActivatableWidget)
@@ -132,10 +158,12 @@ void UCommonUIExtensions::PopContentFromLayer(UCommonActivatableWidget* Activata
 				if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
 				{
 					RootLayout->FindAndRemoveWidgetFromLayer(ActivatableWidget);
+					return;
 				}
 			}
 		}
 	}
+	ensure(false);
 }
 
 ULocalPlayer* UCommonUIExtensions::GetLocalPlayerFromController(APlayerController* PlayerController)
@@ -144,6 +172,7 @@ ULocalPlayer* UCommonUIExtensions::GetLocalPlayerFromController(APlayerControlle
 	{
 		return Cast<ULocalPlayer>(PlayerController->Player);
 	}
+	ensure(false);
 	return nullptr;
 }
 
@@ -152,9 +181,9 @@ FName UCommonUIExtensions::SuspendInputForPlayer(APlayerController* PlayerContro
 	return SuspendInputForPlayer(PlayerController ? PlayerController->GetLocalPlayer() : nullptr, SuspendReason);
 }
 
-FName UCommonUIExtensions::SuspendInputForPlayer(ULocalPlayer* LocalPlayer, FName SuspendReason)
+FName UCommonUIExtensions::SuspendInputForPlayer(ULocalPlayer* InLocalPlayer, FName SuspendReason)
 {
-	if (UCommonInputSubsystem* CommonInputSubsystem = UCommonInputSubsystem::Get(LocalPlayer))
+	if (UCommonInputSubsystem* CommonInputSubsystem = UCommonInputSubsystem::Get(InLocalPlayer))
 	{
 		InputSuspensions++;
 		FName SuspendToken = SuspendReason;
@@ -166,7 +195,7 @@ FName UCommonUIExtensions::SuspendInputForPlayer(ULocalPlayer* LocalPlayer, FNam
 
 		return SuspendToken;
 	}
-
+	ensure(false);
 	return NAME_None;
 }
 
@@ -175,18 +204,20 @@ void UCommonUIExtensions::ResumeInputForPlayer(APlayerController* PlayerControll
 	ResumeInputForPlayer(PlayerController ? PlayerController->GetLocalPlayer() : nullptr, SuspendToken);
 }
 
-void UCommonUIExtensions::ResumeInputForPlayer(ULocalPlayer* LocalPlayer, FName SuspendToken)
+void UCommonUIExtensions::ResumeInputForPlayer(ULocalPlayer* InLocalPlayer, FName SuspendToken)
 {
 	if (SuspendToken == NAME_None)
 	{
 		return;
 	}
-
-	if (UCommonInputSubsystem* CommonInputSubsystem = UCommonInputSubsystem::Get(LocalPlayer))
+	if (UCommonInputSubsystem* CommonInputSubsystem = UCommonInputSubsystem::Get(InLocalPlayer))
 	{
 		CommonInputSubsystem->SetInputTypeFilter(ECommonInputType::MouseAndKeyboard, SuspendToken, false);
 		CommonInputSubsystem->SetInputTypeFilter(ECommonInputType::Gamepad, SuspendToken, false);
 		CommonInputSubsystem->SetInputTypeFilter(ECommonInputType::Touch, SuspendToken, false);
+		return;
 	}
+	ensure(false);
+	return;
 }
 

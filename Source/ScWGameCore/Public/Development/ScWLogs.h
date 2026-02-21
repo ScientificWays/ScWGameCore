@@ -48,3 +48,4 @@ enum EBlueprintLogVerbosity : uint8
 DECLARE_LOG_CATEGORY_EXTERN(LogScWAbilitySystem, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogScWGameMode, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogScWWorld, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogScWPlayer, Log, All);

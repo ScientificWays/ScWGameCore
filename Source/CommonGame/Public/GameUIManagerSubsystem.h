@@ -21,7 +21,7 @@ class UObject;
  * If you just need the basic functionality you will start by sublcassing this
  * subsystem in your own game.
  */
-UCLASS(MinimalAPI, Abstract, config = Game)
+UCLASS(MinimalAPI, Abstract, Config = Game)
 class UGameUIManagerSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
@@ -47,7 +47,7 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UGameUIPolicy> CurrentPolicy = nullptr;
 
-	UPROPERTY(config, EditAnywhere)
+	UPROPERTY(Config, EditAnywhere)
 	TSoftClassPtr<UGameUIPolicy> DefaultUIPolicyClass;
 };
 

@@ -139,18 +139,7 @@ void UScWPawnExtensionComponent::InitializeAbilitySystem(UScWAbilitySystemCompon
 
 	if (ensure(PawnData))
 	{
-		InASC->SetTagRelationshipMapping(PawnData->TagRelationshipMapping);
-
-		if (InOwnerActor->IsA(AAIController::StaticClass()))
-		{
-			for (const UScWAbilitySet* AbilitySet : PawnData->AbilitySets)
-			{
-				if (AbilitySet)
-				{
-					AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr, this);
-				}
-			}
-		}
+		PawnData->InitializePawn(this);
 	}
 	OnAbilitySystemInitialized.Broadcast();
 }
@@ -164,6 +153,10 @@ void UScWPawnExtensionComponent::UninitializeAbilitySystem()
 	// Uninitialize the ASC if we're still the avatar actor (otherwise another pawn already did it when they became the avatar actor)
 	if (AbilitySystemComponent->GetAvatarActor() == GetOwner())
 	{
+		if (ensure(PawnData))
+		{
+			PawnData->UninitializePawn(this);
+		}
 		FGameplayTagContainer AbilityTypesToIgnore;
 		AbilityTypesToIgnore.AddTag(FScWCoreTags::Ability_Behavior_IgnoreDeath);
 

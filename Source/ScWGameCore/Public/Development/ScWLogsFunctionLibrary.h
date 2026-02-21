@@ -28,6 +28,9 @@ public:
 
 	UFUNCTION(Category = "Development", BlueprintCallable, meta = (CallableWithoutWorldContext, DefaultToSelf = "InContext", AutoCreateRefTerm = "InMessage", AdvancedDisplay = "3", DevelopmentOnly, DisplayName = "[ScW] Log World"))
 	static MODULE_API void Log_World(const UObject* InContext, const FString& InMessage, EBlueprintLogVerbosity InVerbosity = EBlueprintLogVerbosity::Log, bool bInPrintToLog = true, bool bInPrintToScreen = true, const FName InPrintToScreenKey = NAME_None);
+
+	UFUNCTION(Category = "Development", BlueprintCallable, meta = (CallableWithoutWorldContext, DefaultToSelf = "InContext", AutoCreateRefTerm = "InMessage", AdvancedDisplay = "3", DevelopmentOnly, DisplayName = "[ScW] Log Player"))
+	static MODULE_API void Log_Player(const UObject* InContext, const FString& InMessage, EBlueprintLogVerbosity InVerbosity = EBlueprintLogVerbosity::Log, bool bInPrintToLog = true, bool bInPrintToScreen = true, const FName InPrintToScreenKey = NAME_None);
 };
 
 #undef MODULE_API

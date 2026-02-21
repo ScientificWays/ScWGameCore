@@ -29,6 +29,7 @@ public:
 //~ Begin Initialize
 protected:
 	virtual void NativeInitializeAnimation() override; // UAnimInstance
+	virtual void NativeUninitializeAnimation() override; // UAnimInstance
 	virtual void NativeUpdateAnimation(float InDeltaSeconds) override; // UAnimInstance
 
 #if WITH_EDITOR
@@ -37,7 +38,7 @@ protected:
 public:
 
 	UFUNCTION()
-	virtual void InitializeFromOwnerAbilitySystem(UAbilitySystemComponent* InASC);
+	virtual void OnOwnerAbilitySystemInitialized();
 //~ End Initialize
 
 //~ Begin Owner

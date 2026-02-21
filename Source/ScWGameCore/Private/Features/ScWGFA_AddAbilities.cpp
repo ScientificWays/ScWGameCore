@@ -6,7 +6,7 @@
 #include "Components/GameFrameworkComponentManager.h"
 #include "AbilitySystem/ScWAbilitySystemComponent.h"
 #include "Engine/World.h"
-#include "Player/ScWPlayerState.h" //@TODO: For the fname
+#include "Character/ScWPawnData.h" //@TODO: For the fname
 #include "Features/ScWGFA_WorldActionBase.h"
 
 #if WITH_EDITOR
@@ -148,11 +148,11 @@ void UScWGFA_AddAbilities::HandleActorExtension(AActor* Actor, FName EventName, 
 	if (AbilitiesList.IsValidIndex(EntryIndex) && ActiveData)
 	{
 		const FGameFeatureAbilitiesEntry& Entry = AbilitiesList[EntryIndex];
-		if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionRemoved) || (EventName == UGameFrameworkComponentManager::NAME_ReceiverRemoved))
+		if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionRemoved) || (EventName == UGameFrameworkComponentManager::NAME_ReceiverRemoved) || (EventName == UScWPawnData::NAME_PawnDataUninitialized))
 		{
 			RemoveActorAbilities(Actor, *ActiveData);
 		}
-		else if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded) || (EventName == AScWPlayerState::NAME_PlayerAbilitiesReady))
+		else if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded) || (EventName == UScWPawnData::NAME_PawnDataInitialized))
 		{
 			AddActorAbilities(Actor, Entry, *ActiveData);
 		}

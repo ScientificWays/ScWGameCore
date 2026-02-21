@@ -22,9 +22,6 @@
 #include "Team/ScWTeamSettings.h"
 
 //#include "GameFramework/GameplayMessageSubsystem.h"
-#include "Components/GameFrameworkComponentManager.h"
-
-const FName AScWPlayerState::NAME_PlayerAbilitiesReady("PlayerAbilitiesReady");
 
 AScWPlayerState::AScWPlayerState(const FObjectInitializer& InObjectInitializer)
 {
@@ -197,15 +194,6 @@ void AScWPlayerState::SetPawnData(const UScWPawnData* InPawnData)
 	}
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, PawnData, this);
 	PawnData = InPawnData;
-
-	for (const UScWAbilitySet* AbilitySet : PawnData->AbilitySets)
-	{
-		if (AbilitySet)
-		{
-			AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr);
-		}
-	}
-	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, NAME_PlayerAbilitiesReady);
 
 	ForceNetUpdate();
 }

@@ -3,7 +3,7 @@
 #include "Animation/ScWAnimInstance_Base.h"
 
 #include "Character/ScWCharacter.h"
-#include "AbilitySystem/Tasks/ScWAT_WaitForAbilitySystem.h"
+#include "Character/ScWPawnExtensionComponent.h"
 
 #include "Misc/DataValidation.h"
 
@@ -52,8 +52,23 @@ void UScWAnimInstance_Base::NativeInitializeAnimation() // UAnimInstance
 		OwnerCharacter = Cast<ACharacter>(GetOwningActor());
 		ensureReturn(OwnerCharacter);
 
-		UScWAT_WaitForAbilitySystem* WaitForASC = UScWAT_WaitForAbilitySystem::WaitForAbilitySystem(OwnerCharacter);
-		WaitForASC->OnFound.AddDynamic(this, &ThisClass::InitializeFromOwnerAbilitySystem);
+		UScWPawnExtensionComponent* OwnerPawnExtComponent = UScWPawnExtensionComponent::GetPawnExtensionComponent(OwnerCharacter);
+		ensureReturn(OwnerPawnExtComponent);
+
+		OwnerPawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall(FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::OnOwnerAbilitySystemInitialized));
+	}
+}
+
+void UScWAnimInstance_Base::NativeUninitializeAnimation() // UAnimInstance
+{
+	Super::NativeUninitializeAnimation();
+
+	if (OwnerCharacter)
+	{
+		if (UScWPawnExtensionComponent* OwnerPawnExtComponent = UScWPawnExtensionComponent::GetPawnExtensionComponent(OwnerCharacter))
+		{
+			OwnerPawnExtComponent->OnAbilitySystemInitialized_UnregisterObject(this);
+		}
 	}
 }
 
@@ -71,10 +86,12 @@ void UScWAnimInstance_Base::NativeUpdateAnimation(float InDeltaSeconds)
 	GroundDistance = GroundInfo.GroundDistance;*/
 }
 
-void UScWAnimInstance_Base::InitializeFromOwnerAbilitySystem(UAbilitySystemComponent* InASC)
+void UScWAnimInstance_Base::OnOwnerAbilitySystemInitialized()
 {
-	ensureReturn(InASC);
-	GameplayTagPropertyMap.Initialize(this, InASC);
+	UScWPawnExtensionComponent* OwnerPawnExtComponent = UScWPawnExtensionComponent::GetPawnExtensionComponent(OwnerCharacter);
+	ensureReturn(OwnerPawnExtComponent);
+
+	GameplayTagPropertyMap.Initialize(this, OwnerPawnExtComponent->GetScWAbilitySystemComponent());
 }
 //~ End Initialize
 

@@ -48,10 +48,10 @@ public:
 	//MODULE_API void ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle);
 
 	/** Adds mode-specific input config */
-	MODULE_API void AddAdditionalInputConfig(const UScWInputConfig* InputConfig);
+	MODULE_API void AddAdditionalInputConfig(const UScWInputConfig* InInputConfig);
 
 	/** Removes a mode-specific input config if it has been added */
-	MODULE_API void RemoveAdditionalInputConfig(const UScWInputConfig* InputConfig);
+	MODULE_API void RemoveAdditionalInputConfig(const UScWInputConfig* InInputConfig);
 
 	/** True if this is controlled by a real player and has progressed far enough in initialization where additional input bindings can be added */
 	MODULE_API bool IsReadyToBindInputs() const;
@@ -91,6 +91,10 @@ protected:
 	//MODULE_API void Input_AutoRun(const FInputActionValue& InputActionValue);
 
 	//MODULE_API TSubclassOf<UScWCameraMode> DetermineCameraMode() const;
+
+	// Input configuration used by player controlled pawns to create input mappings and bind input actions.
+	UPROPERTY(Category = "Input", EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UScWInputConfig> PrimaryInputConfig;
 
 protected:
 	

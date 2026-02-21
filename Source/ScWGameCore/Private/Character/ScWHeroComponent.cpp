@@ -250,7 +250,7 @@ void UScWHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompon
 	{
 		if (const UScWPawnData* PawnData = PawnExtComp->GetPawnData<UScWPawnData>())
 		{
-			if (const UScWInputConfig* InputConfig = PawnData->InputConfig)
+			if ensure(PrimaryInputConfig)
 			{
 				for (const FInputMappingContextAndPriority& Mapping : DefaultInputMappings)
 				{
@@ -270,7 +270,6 @@ void UScWHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompon
 						}
 					}
 				}
-
 				// The ScW Input Component has some additional functions to map Gameplay Tags to an Input Action.
 				// If you want this functionality but still want to change your input component class, make it a subclass
 				// of the UScWInputComponent or modify this component accordingly.
@@ -278,18 +277,18 @@ void UScWHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompon
 				if (ensureMsgf(ScWIC, TEXT("Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. Change the input component to UScWInputComponent or a subclass of it.")))
 				{
 					// Add the key mappings that may have been set by the player
-					ScWIC->AddInputMappings(InputConfig, Subsystem);
+					ScWIC->AddInputMappings(PrimaryInputConfig, Subsystem);
 
 					// This is where we actually bind and input action to a gameplay tag, which means that Gameplay Ability Blueprints will
 					// be triggered directly by these input actions Triggered events. 
 					TArray<uint32> BindHandles;
-					ScWIC->BindAbilityActions(InputConfig, this, &ThisClass::Input_AbilityTagPressed, &ThisClass::Input_AbilityTagReleased, /*out*/ BindHandles);
+					ScWIC->BindAbilityActions(PrimaryInputConfig, this, &ThisClass::Input_AbilityTagPressed, &ThisClass::Input_AbilityTagReleased, /*out*/ BindHandles);
 
-					ScWIC->BindNativeAction(InputConfig, FScWCoreTags::Input_Movement, ETriggerEvent::Triggered, this, &ThisClass::Input_Movement, /*bLogIfNotFound=*/ false);
-					ScWIC->BindNativeAction(InputConfig, FScWCoreTags::Input_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse, /*bLogIfNotFound=*/ false);
-					ScWIC->BindNativeAction(InputConfig, FScWCoreTags::Input_Look_Stick, ETriggerEvent::Triggered, this, &ThisClass::Input_LookStick, /*bLogIfNotFound=*/ false);
-					//ScWIC->BindNativeAction(InputConfig, FScWCoreTags::Input_Crouch, ETriggerEvent::Triggered, this, &ThisClass::Input_Crouch, /*bLogIfNotFound=*/ false);
-					//ScWIC->BindNativeAction(InputConfig, FScWCoreTags::Input_AutoRun, ETriggerEvent::Triggered, this, &ThisClass::Input_AutoRun, /*bLogIfNotFound=*/ false);
+					ScWIC->BindNativeAction(PrimaryInputConfig, FScWCoreTags::Input_Movement, ETriggerEvent::Triggered, this, &ThisClass::Input_Movement, /*bLogIfNotFound=*/ false);
+					ScWIC->BindNativeAction(PrimaryInputConfig, FScWCoreTags::Input_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse, /*bLogIfNotFound=*/ false);
+					ScWIC->BindNativeAction(PrimaryInputConfig, FScWCoreTags::Input_Look_Stick, ETriggerEvent::Triggered, this, &ThisClass::Input_LookStick, /*bLogIfNotFound=*/ false);
+					//ScWIC->BindNativeAction(PrimaryInputConfig, FScWCoreTags::Input_Crouch, ETriggerEvent::Triggered, this, &ThisClass::Input_Crouch, /*bLogIfNotFound=*/ false);
+					//ScWIC->BindNativeAction(PrimaryInputConfig, FScWCoreTags::Input_AutoRun, ETriggerEvent::Triggered, this, &ThisClass::Input_AutoRun, /*bLogIfNotFound=*/ false);
 				}
 			}
 		}
@@ -302,7 +301,7 @@ void UScWHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompon
 	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(const_cast<APawn*>(Pawn), NAME_BindInputsNow);
 }
 
-void UScWHeroComponent::AddAdditionalInputConfig(const UScWInputConfig* InputConfig)
+void UScWHeroComponent::AddAdditionalInputConfig(const UScWInputConfig* InInputConfig)
 {
 	TArray<uint32> BindHandles;
 
@@ -326,12 +325,12 @@ void UScWHeroComponent::AddAdditionalInputConfig(const UScWInputConfig* InputCon
 		UScWInputComponent* ScWIC = Pawn->FindComponentByClass<UScWInputComponent>();
 		if (ensureMsgf(ScWIC, TEXT("Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. Change the input component to UScWInputComponent or a subclass of it.")))
 		{
-			ScWIC->BindAbilityActions(InputConfig, this, &ThisClass::Input_AbilityTagPressed, &ThisClass::Input_AbilityTagReleased, /*out*/ BindHandles);
+			ScWIC->BindAbilityActions(InInputConfig, this, &ThisClass::Input_AbilityTagPressed, &ThisClass::Input_AbilityTagReleased, /*out*/ BindHandles);
 		}
 	}
 }
 
-void UScWHeroComponent::RemoveAdditionalInputConfig(const UScWInputConfig* InputConfig)
+void UScWHeroComponent::RemoveAdditionalInputConfig(const UScWInputConfig* InInputConfig)
 {
 	//@TODO: Implement me!
 }

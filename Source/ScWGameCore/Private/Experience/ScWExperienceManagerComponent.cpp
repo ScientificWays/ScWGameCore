@@ -54,6 +54,11 @@ UScWExperienceManagerComponent::UScWExperienceManagerComponent(const FObjectInit
 	SetIsReplicatedByDefault(true);
 }
 
+#if WITH_EDITOR
+#include "Editor.h"
+#include "Misc/MessageDialog.h"
+#endif
+
 void UScWExperienceManagerComponent::SetCurrentExperience(FPrimaryAssetId ExperienceId)
 {
 	/*UAssetManager& AssetManager = UAssetManager::Get();
@@ -70,6 +75,17 @@ void UScWExperienceManagerComponent::SetCurrentExperience(FPrimaryAssetId Experi
 	// Sync load
 	const auto AssetPath = UAssetManager::Get().GetPrimaryAssetPath(ExperienceId);
 	const auto Experience = Cast<UScWExperience>(AssetPath.TryLoad());
+
+#if WITH_EDITOR
+	if (!Experience)
+	{
+		FMessageLog("PIE").Error()
+			->AddToken(FTextToken::Create(FText::FromString("Experience not found. Aborting PIE."))
+		);
+		GEditor->RequestEndPlayMap();
+		return;
+	}
+#endif
 	check(Experience != nullptr);
 
 	CurrentExperience = Experience;

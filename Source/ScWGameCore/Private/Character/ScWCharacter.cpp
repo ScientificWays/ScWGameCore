@@ -351,8 +351,8 @@ FGenericTeamId AScWCharacter::GetGenericTeamId() const // IGenericTeamAgentInter
 {
 	//return CurrentTeamID;
 	IScWTeamAgentInterface* ControllerTeamInterface = Cast<IScWTeamAgentInterface>(GetController());
-	ensureReturn(ControllerTeamInterface, FGenericTeamId::NoTeam);
-	return ControllerTeamInterface->GetGenericTeamId();
+	//ensureReturn(ControllerTeamInterface, FGenericTeamId::NoTeam);
+	return ControllerTeamInterface ? ControllerTeamInterface->GetGenericTeamId() : FGenericTeamId::NoTeam;
 }
 
 void AScWCharacter::SetGenericTeamId(const FGenericTeamId& InTeamID) // IGenericTeamAgentInterface

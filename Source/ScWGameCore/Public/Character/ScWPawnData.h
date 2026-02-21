@@ -9,8 +9,8 @@
 #define MODULE_API SCWGAMECORE_API
 
 class APawn;
-class UScWAbilitySet;
-class UScWAbilityTagRelationshipMapping;
+class UScWPawnDataFragment;
+class UScWPawnExtensionComponent;
 //class UScWCameraMode;
 class UScWInputConfig;
 class UObject;
@@ -24,6 +24,9 @@ class UScWPawnData : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
+
+	static MODULE_API const FName NAME_PawnDataInitialized;
+	static MODULE_API const FName NAME_PawnDataUninitialized;
 
 	MODULE_API UScWPawnData(const FObjectInitializer& ObjectInitializer);
 
@@ -40,20 +43,24 @@ public:
 public:
 
 	// Class to instantiate for this pawn (should usually derive from AScWPawn or AScWCharacter).
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pawn Data | Pawn")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pawn Data")
 	TSubclassOf<APawn> PawnClass;
 
-	// Ability sets to grant to this pawn's ability system.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pawn Data | Abilities")
-	TArray<TObjectPtr<UScWAbilitySet>> AbilitySets;
+	UFUNCTION(Category = "Pawn Data", BlueprintCallable, meta = (DeterminesOutputType = "InTypeClass"))
+	const UScWPawnDataFragment* GetFragmentByClass(TSubclassOf<UScWPawnDataFragment> InTypeClass) const;
 
-	// What mapping of ability tags to use for actions taking by this pawn
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pawn Data | Abilities")
-	TObjectPtr<UScWAbilityTagRelationshipMapping> TagRelationshipMapping;
+	template<class T>
+	const T* GetFragmentByClass() const
+	{
+		return Cast<T>(GetFragmentByClass(T::StaticClass()));
+	}
 
-	// Input configuration used by player controlled pawns to create input mappings and bind input actions.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pawn Data | Input")
-	TObjectPtr<UScWInputConfig> InputConfig;
+	void InitializePawn(UScWPawnExtensionComponent* InPawnExtComponent) const;
+	void UninitializePawn(UScWPawnExtensionComponent* InPawnExtComponent) const;
+
+	// Actors to spawn on the pawn when this is equipped
+	UPROPERTY(Category = "Pawn Data", EditDefaultsOnly, Instanced)
+	TArray<TObjectPtr<const UScWPawnDataFragment>> Fragments;
 
 	// Default camera mode used by player controlled pawns.
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pawn Data | Camera")

@@ -53,8 +53,6 @@ class AScWPlayerState : public AModularPlayerState, public IAbilitySystemInterfa
 
 public:
 
-	static MODULE_API const FName NAME_PlayerAbilitiesReady;
-
 	AScWPlayerState(const FObjectInitializer& InObjectInitializer);
 
 	UFUNCTION(BlueprintCallable, Category = "ScW|PlayerState")

@@ -9,7 +9,7 @@
 /**
  *	Definition of an experience.
  */
-UCLASS(BlueprintType, Const)
+UCLASS(BlueprintType, Const, meta = (DisplayName = "[ScW] Experience"))
 class UScWExperience : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
