@@ -69,5 +69,6 @@ LOG_BP_TEMPLATE(AbilitySystem, "AbilitySystem")
 LOG_BP_TEMPLATE(GameMode, "GameMode")
 LOG_BP_TEMPLATE(World, "World")
 LOG_BP_TEMPLATE(Player, "Player")
+LOG_BP_TEMPLATE(UI, "UI")
 
 //UE_ENABLE_OPTIMIZATION

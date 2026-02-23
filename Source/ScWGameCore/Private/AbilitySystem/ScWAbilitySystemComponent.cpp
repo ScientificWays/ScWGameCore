@@ -359,7 +359,6 @@ void UScWAbilitySystemComponent::NotifyAbilityFailed(const FGameplayAbilitySpecH
 			return;
 		}
 	}
-
 	HandleAbilityFailed(Ability, FailureReason);
 }
 

@@ -84,17 +84,19 @@ UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(cons
 	{
 		return nullptr;
 	}
-	if (UGameUIManagerSubsystem* UIManager = InLocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
+	UGameUIManagerSubsystem* UIManager = InLocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>();
+	if ensure(UIManager)
 	{
-		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
+		UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy();
+		if ensure(Policy)
 		{
-			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(InLocalPlayer)))
+			UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(InLocalPlayer));
+			if ensure(RootLayout)
 			{
 				return RootLayout->PushWidgetToLayerStack<UCommonActivatableWidget>(InLayerName, InWidgetClass);
 			}
 		}
 	}
-	ensure(false);
 	return nullptr;
 }
 

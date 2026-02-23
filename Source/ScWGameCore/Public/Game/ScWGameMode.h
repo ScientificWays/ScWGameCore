@@ -32,7 +32,7 @@ public:
 	MODULE_API const class UScWPawnData* GetPawnDataForController(const AController* InController) const;
 
 //~AGameModeBase interface
-	MODULE_API virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override; // AGameModeBase
+	MODULE_API virtual void InitGame(const FString& InMapName, const FString& InOptions, FString& InErrorMessage) override; // AGameModeBase
 	MODULE_API virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override; // AGameModeBase
 	MODULE_API virtual APawn* SpawnDefaultPawnAtTransform_Implementation(AController* InNewPlayer, const FTransform& InSpawnTransform) override; // AGameModeBase
 	MODULE_API virtual bool ShouldSpawnAtStartSpot(AController* Player) override; // AGameModeBase
@@ -44,7 +44,14 @@ public:
 	MODULE_API virtual bool UpdatePlayerStartSpot(AController* Player, const FString& Portal, FString& OutErrorMessage) override; // AGameModeBase
 	MODULE_API virtual void GenericPlayerInitialization(AController* NewPlayer) override; // AGameModeBase
 	MODULE_API virtual void FailedToRestartPlayer(AController* NewPlayer) override; // AGameModeBase
+	MODULE_API virtual void StartToLeaveMap() override; // AGameModeBase
 //~End of AGameModeBase interface
+
+	UFUNCTION(Category = "Initialize", BlueprintImplementableEvent, meta = (DisplayName = "Post Init Game"))
+	void BP_PostInitGame(const FString& InMapName, const FString& InOptions, const FString& InErrorMessage);
+
+	UFUNCTION(Category = "Initialize", BlueprintImplementableEvent, meta = (DisplayName = "Start to Leave Map"))
+	void BP_StartToLeaveMap();
 
 	// Restart (respawn) the specified player or bot next frame
 	// - If bForceReset is true, the controller will be reset this frame (abandoning the currently possessed pawn, if any)

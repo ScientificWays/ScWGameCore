@@ -78,12 +78,14 @@ const UScWPawnData* AScWGameMode::GetPawnDataForController(const AController* In
 	return nullptr;
 }
 
-void AScWGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+void AScWGameMode::InitGame(const FString& InMapName, const FString& InOptions, FString& InErrorMessage)
 {
-	Super::InitGame(MapName, Options, ErrorMessage);
+	Super::InitGame(InMapName, InOptions, InErrorMessage);
 
 	// Wait for the next frame to give time to initialize startup settings
 	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::HandleMatchAssignmentIfNotExpectingOne);
+
+	BP_PostInitGame(InMapName, InOptions, InErrorMessage);
 }
 
 void AScWGameMode::HandleMatchAssignmentIfNotExpectingOne()
@@ -322,7 +324,7 @@ bool AScWGameMode::IsExperienceLoaded() const
 	return ExperienceComponent->IsExperienceLoaded();
 }
 
-UClass* AScWGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
+UClass* AScWGameMode::GetDefaultPawnClassForController_Implementation(AController* InController) // AGameModeBase
 {
 	if (const UScWPawnData* PawnData = GetPawnDataForController(InController))
 	{
@@ -334,7 +336,7 @@ UClass* AScWGameMode::GetDefaultPawnClassForController_Implementation(AControlle
 	return Super::GetDefaultPawnClassForController_Implementation(InController);
 }
 
-APawn* AScWGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* InNewPlayer, const FTransform& InSpawnTransform)
+APawn* AScWGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* InNewPlayer, const FTransform& InSpawnTransform) // AGameModeBase
 {
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.Instigator = GetInstigator();
@@ -371,13 +373,13 @@ APawn* AScWGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* InN
 	return Super::SpawnDefaultPawnAtTransform_Implementation(InNewPlayer, InSpawnTransform);
 }
 
-bool AScWGameMode::ShouldSpawnAtStartSpot(AController* Player)
+bool AScWGameMode::ShouldSpawnAtStartSpot(AController* Player) // AGameModeBase
 {
 	// We never want to use the start spot, always use the spawn management component.
 	return false;
 }
 
-void AScWGameMode::HandleStartingNewPlayer_Implementation(APlayerController* InNewPlayer)
+void AScWGameMode::HandleStartingNewPlayer_Implementation(APlayerController* InNewPlayer) // AGameModeBase
 {
 	// Delay starting new players until the experience has been loaded
 	// (players who log in prior to that will be started by OnExperienceLoaded)
@@ -387,7 +389,7 @@ void AScWGameMode::HandleStartingNewPlayer_Implementation(APlayerController* InN
 	}
 }
 
-AActor* AScWGameMode::ChoosePlayerStart_Implementation(AController* InPlayer)
+AActor* AScWGameMode::ChoosePlayerStart_Implementation(AController* InPlayer) // AGameModeBase
 {
 	/*if (UScWPlayerSpawningManagerComponent* PlayerSpawningComponent = GameState->FindComponentByClass<UScWPlayerSpawningManagerComponent>())
 	{
@@ -414,7 +416,7 @@ AActor* AScWGameMode::ChoosePlayerStart_Implementation(AController* InPlayer)
 	return Super::ChoosePlayerStart_Implementation(InPlayer);
 }
 
-void AScWGameMode::FinishRestartPlayer(AController* InNewPlayer, const FRotator& StartRotation)
+void AScWGameMode::FinishRestartPlayer(AController* InNewPlayer, const FRotator& StartRotation) // AGameModeBase
 {
 	/*if (UScWPlayerSpawningManagerComponent* PlayerSpawningComponent = GameState->FindComponentByClass<UScWPlayerSpawningManagerComponent>())
 	{
@@ -423,12 +425,12 @@ void AScWGameMode::FinishRestartPlayer(AController* InNewPlayer, const FRotator&
 	Super::FinishRestartPlayer(InNewPlayer, StartRotation);
 }
 
-bool AScWGameMode::PlayerCanRestart_Implementation(APlayerController* InPlayerController)
+bool AScWGameMode::PlayerCanRestart_Implementation(APlayerController* InPlayerController) // AGameModeBase
 {
 	return ControllerCanRestart(InPlayerController);
 }
 
-bool AScWGameMode::ControllerCanRestart(AController* InController)
+bool AScWGameMode::ControllerCanRestart(AController* InController) // AGameModeBase
 {
 	if (APlayerController* PC = Cast<APlayerController>(InController))
 	{
@@ -452,7 +454,7 @@ bool AScWGameMode::ControllerCanRestart(AController* InController)
 	return true;
 }
 
-void AScWGameMode::InitGameState()
+void AScWGameMode::InitGameState() // AGameModeBase
 {
 	Super::InitGameState();
 
@@ -462,14 +464,14 @@ void AScWGameMode::InitGameState()
 	ExperienceComponent->CallOrRegister_OnExperienceLoaded(FOnScWExperienceLoaded::FDelegate::CreateUObject(this, &ThisClass::OnExperienceLoaded));
 }
 
-void AScWGameMode::GenericPlayerInitialization(AController* InNewPlayer)
+void AScWGameMode::GenericPlayerInitialization(AController* InNewPlayer) // AGameModeBase
 {
 	Super::GenericPlayerInitialization(InNewPlayer);
 
 	OnGameModePlayerInitialized.Broadcast(this, InNewPlayer);
 }
 
-void AScWGameMode::RequestPlayerRestartNextFrame(AController* Controller, bool bForceReset)
+void AScWGameMode::RequestPlayerRestartNextFrame(AController* Controller, bool bForceReset) // AGameModeBase
 {
 	if (bForceReset && (Controller != nullptr))
 	{
@@ -485,14 +487,14 @@ void AScWGameMode::RequestPlayerRestartNextFrame(AController* Controller, bool b
 	}*/
 }
 
-bool AScWGameMode::UpdatePlayerStartSpot(AController* Player, const FString& Portal, FString& OutErrorMessage)
+bool AScWGameMode::UpdatePlayerStartSpot(AController* Player, const FString& Portal, FString& OutErrorMessage) // AGameModeBase
 {
 	// Do nothing, we'll wait until PostLogin when we try to spawn the player for real.
 	// Doing anything right now is no good, systems like team assignment haven't even occurred yet.
 	return true;
 }
 
-void AScWGameMode::FailedToRestartPlayer(AController* InNewPlayer)
+void AScWGameMode::FailedToRestartPlayer(AController* InNewPlayer) // AGameModeBase
 {
 	Super::FailedToRestartPlayer(InNewPlayer);
 
@@ -521,4 +523,9 @@ void AScWGameMode::FailedToRestartPlayer(AController* InNewPlayer)
 	{
 		UE_LOG(LogScWGameCore, Verbose, TEXT("FailedToRestartPlayer(%s) but there's no pawn class so giving up."), *GetPathNameSafe(InNewPlayer));
 	}
+}
+
+void AScWGameMode::StartToLeaveMap() // AGameModeBase
+{
+	BP_StartToLeaveMap();
 }
