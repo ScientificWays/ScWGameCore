@@ -142,14 +142,15 @@ void UCommonUIExtensions::PushStreamedContentToLayer_ForPlayer(const ULocalPlaye
 	ensure(false);
 }
 
-void UCommonUIExtensions::PopContentFromLayer(UCommonActivatableWidget* ActivatableWidget)
+void UCommonUIExtensions::PopContentFromLayer(UCommonActivatableWidget* InActivatableWidget)
 {
-	if (!ActivatableWidget)
+	if (!InActivatableWidget)
 	{
 		// Ignore request to pop an already deleted widget
+		ensure(false);
 		return;
 	}
-	if (const ULocalPlayer* LocalPlayer = ActivatableWidget->GetOwningLocalPlayer())
+	if (const ULocalPlayer* LocalPlayer = InActivatableWidget->GetOwningLocalPlayer())
 	{
 		if (const UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
 		{
@@ -157,7 +158,7 @@ void UCommonUIExtensions::PopContentFromLayer(UCommonActivatableWidget* Activata
 			{
 				if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
 				{
-					RootLayout->FindAndRemoveWidgetFromLayer(ActivatableWidget);
+					RootLayout->FindAndRemoveWidgetFromLayer(InActivatableWidget);
 					return;
 				}
 			}

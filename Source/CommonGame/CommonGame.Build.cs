@@ -8,36 +8,32 @@ public class CommonGame : ModuleRules
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;				
 		
-		PublicDependencyModuleNames.AddRange(
-			new string[]
-			{
-				"Core",
-				"CoreUObject",
-				"InputCore",
-				"Engine",
-				"Slate",
-				"SlateCore",
-				"UMG",
-				"CommonInput",
-				"CommonUI",
-				//"CommonUser",
-				"GameplayTags",
-				"ModularGameplayActors",
-			}
-		);
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
+			"Core",
+			"CoreUObject",
+			"InputCore",
+			"Engine",
+			"Slate",
+			"SlateCore",
+			"UMG",
+			"CommonInput",
+			"CommonUI",
+			//"CommonUser",
+
+			"GameplayTags",
+			"ModularGameplayActors",
+        });
+		
+		PrivateDependencyModuleNames.AddRange(new string[]
+		{
 			
-		
-		PrivateDependencyModuleNames.AddRange(
-			new string[]
-			{
-			}
-		);
+		});
 		
 		
-		DynamicallyLoadedModuleNames.AddRange(
-			new string[]
-			{
-			}
-		);
+		DynamicallyLoadedModuleNames.AddRange(new string[]
+		{
+
+		});
 	}
 }

@@ -107,7 +107,6 @@ public:
 		{
 			return Layer->AddWidget<ActivatableWidgetT>(ActivatableWidgetClass, InitInstanceFunc);
 		}
-
 		return nullptr;
 	}
 
@@ -118,6 +117,7 @@ public:
 	MODULE_API UCommonActivatableWidgetContainerBase* GetLayerWidget(FGameplayTag LayerName);
 
 protected:
+
 	/** Register a layer that widgets can be pushed onto. */
 	UFUNCTION(BlueprintCallable, Category="Layer")
 	MODULE_API void RegisterLayer(UPARAM(meta = (Categories = "UI.Layer")) FGameplayTag LayerTag, UCommonActivatableWidgetContainerBase* LayerWidget);

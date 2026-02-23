@@ -55,8 +55,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext))
 	static MODULE_API void PushStreamedContentToLayer_ForPlayer(const ULocalPlayer* InLocalPlayer, UPARAM(meta = (Categories = "UI.Layer")) FGameplayTag InLayerName, UPARAM(meta = (AllowAbstract = false)) TSoftClassPtr<UCommonActivatableWidget> InWidgetClass);
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext))
-	static MODULE_API void PopContentFromLayer(UCommonActivatableWidget* ActivatableWidget);
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext, DefaultToSelf = "InActivatableWidget"))
+	static MODULE_API void PopContentFromLayer(UCommonActivatableWidget* InActivatableWidget);
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext))
 	static MODULE_API ULocalPlayer* GetLocalPlayerFromController(APlayerController* PlayerController);

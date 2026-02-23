@@ -13,7 +13,7 @@
 /**
  *
  */
-UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] World Audio Subsystem"))
+UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] World Audio Subsystem", KeyWords = "ScWSound"))
 class UScWWorldAudioSubsystem : public UTickableWorldSubsystem
 {
 	GENERATED_BODY()
