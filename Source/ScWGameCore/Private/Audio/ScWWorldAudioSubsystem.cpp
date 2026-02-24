@@ -31,11 +31,11 @@ void UScWWorldAudioSubsystem::Tick(float InDeltaSeconds) // UTickableWorldSubsys
 		{
 			if (SamplePair.Value > InDeltaSeconds)
 			{
-				ComponentsToRemove.Add(SamplePair.Key);
+				SamplePair.Value -= InDeltaSeconds;
 			}
 			else
 			{
-				SamplePair.Value -= InDeltaSeconds;
+				ComponentsToRemove.Add(SamplePair.Key);
 			}
 		}
 		for (UAudioComponent* SampleComponent : ComponentsToRemove)
