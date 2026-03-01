@@ -24,7 +24,7 @@ class UScWInputComponent : public UEnhancedInputComponent
 
 public:
 
-	UScWInputComponent(const FObjectInitializer& ObjectInitializer);
+	UScWInputComponent(const FObjectInitializer& InObjectInitializer);
 
 	void AddInputMappings(const UScWInputConfig* InputConfig, UEnhancedInputLocalPlayerSubsystem* InputSubsystem) const;
 	void RemoveInputMappings(const UScWInputConfig* InputConfig, UEnhancedInputLocalPlayerSubsystem* InputSubsystem) const;

@@ -73,7 +73,7 @@ enum class EScWAbilityActivationGroup : uint8
 };
 
 USTRUCT(BlueprintType)
-struct FGameplayMessage_AbilityFailureSimple
+struct FGameplayMessage_Ability_ActivateFail_UserFacingSimple
 {
 	GENERATED_BODY()
 
@@ -90,7 +90,7 @@ public:
 
 /** Failure reason that can be used to play an animation montage when a failure occurs */
 USTRUCT(BlueprintType)
-struct FGameplayMessage_AbilityFailureMontage
+struct FGameplayMessage_Ability_ActivateFail_PlayMontage
 {
 	GENERATED_BODY()
 
@@ -123,8 +123,22 @@ class UScWGameplayAbility : public UGameplayAbility
 
 	friend class UScWAbilitySystemComponent;
 public:
+	MODULE_API UScWGameplayAbility(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
-	MODULE_API UScWGameplayAbility(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UFUNCTION(BlueprintCallable, Category = "Tags")
+	const FGameplayTagContainer& GetCancelAbilitiesWithTag() const { return CancelAbilitiesWithTag; }
+
+	UFUNCTION(BlueprintCallable, Category = "Tags")
+	const FGameplayTagContainer& GetBlockAbilitiesWithTag() const { return BlockAbilitiesWithTag; }
+
+	UFUNCTION(BlueprintCallable, Category = "Tags")
+	const FGameplayTagContainer& GetActivationOwnedTags() const { return ActivationOwnedTags; }
+
+	UFUNCTION(BlueprintCallable, Category = "Tags")
+	const FGameplayTagContainer& GetActivationRequiredTags() const { return ActivationRequiredTags; }
+
+	UFUNCTION(BlueprintCallable, Category = "Tags")
+	const FGameplayTagContainer& GetActivationBlockedTags() const { return ActivationBlockedTags; }
 
 	UFUNCTION(BlueprintCallable, Category = "Actor Info")
 	MODULE_API UScWAbilitySystemComponent* GetScWAbilitySystemComponentFromActorInfo() const;

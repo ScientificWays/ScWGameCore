@@ -9,6 +9,8 @@
 
 #include "ScWInputConfig.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 class UInputAction;
 class UObject;
 struct FFrame;
@@ -33,20 +35,20 @@ public:
 /**
  *	Non-mutable data asset that contains input configuration properties.
  */
-UCLASS(BlueprintType, Const, meta = (DisplayName = "[ScW] Input Config"))
+UCLASS(MinimalAPI, BlueprintType, Const, meta = (DisplayName = "[ScW] Input Config"))
 class UScWInputConfig : public UDataAsset
 {
 	GENERATED_BODY()
 
 public:
 
-	UScWInputConfig(const FObjectInitializer& ObjectInitializer);
+	UScWInputConfig(const FObjectInitializer& InObjectInitializer);
 
 	UFUNCTION(BlueprintCallable, Category = "Input Config")
-	const UInputAction* FindNativeInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
+	MODULE_API const UInputAction* FindNativeInputActionForTag(const FGameplayTag& InputTag, bool bInLogIfNotFound = true) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Input Config")
-	const UInputAction* FindAbilityInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
+	MODULE_API const UInputAction* FindAbilityInputActionForTag(const FGameplayTag& InputTag, bool bInLogIfNotFound = true) const;
 
 public:
 	// List of input actions used by the owner.  These input actions are mapped to a gameplay tag and must be manually bound.
@@ -57,3 +59,5 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputAction"))
 	TArray<FScWInputAction> AbilityInputActions;
 };
+
+#undef MODULE_API

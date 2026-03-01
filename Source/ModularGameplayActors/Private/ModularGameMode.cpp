@@ -9,8 +9,8 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ModularGameMode)
 
-AModularGameModeBase::AModularGameModeBase(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+AModularGameModeBase::AModularGameModeBase(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 	GameStateClass = AModularGameStateBase::StaticClass();
 	PlayerControllerClass = AModularPlayerController::StaticClass();
@@ -18,8 +18,8 @@ AModularGameModeBase::AModularGameModeBase(const FObjectInitializer& ObjectIniti
 	DefaultPawnClass = AModularPawn::StaticClass();
 }
 
-AModularGameMode::AModularGameMode(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+AModularGameMode::AModularGameMode(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 	GameStateClass = AModularGameState::StaticClass();
 	PlayerControllerClass = AModularPlayerController::StaticClass();

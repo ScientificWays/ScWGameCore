@@ -23,7 +23,7 @@ class UScWGameplayCueManager : public UGameplayCueManager
 	GENERATED_BODY()
 
 public:
-	UScWGameplayCueManager(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UScWGameplayCueManager(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
 	static UScWGameplayCueManager* Get();
 

@@ -45,7 +45,7 @@ public:
 	static MODULE_API UPrimaryGameLayout* GetPrimaryGameLayout(ULocalPlayer* LocalPlayer);
 
 public:
-	MODULE_API UPrimaryGameLayout(const FObjectInitializer& ObjectInitializer);
+	MODULE_API UPrimaryGameLayout(const FObjectInitializer& InObjectInitializer);
 
 	/** A dormant root layout is collapsed and responds only to persistent actions registered by the owning player */
 	MODULE_API void SetIsDormant(bool Dormant);

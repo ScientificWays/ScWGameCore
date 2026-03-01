@@ -15,8 +15,8 @@
 
 #define LOCTEXT_NAMESPACE "GameSetting"
 
-UGameSettingListView::UGameSettingListView(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UGameSettingListView::UGameSettingListView(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 }
 

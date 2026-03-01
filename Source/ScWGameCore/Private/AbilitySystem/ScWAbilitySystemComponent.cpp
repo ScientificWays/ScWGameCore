@@ -21,8 +21,8 @@ UScWAbilitySystemComponent* UScWAbilitySystemComponent::TryGetFromActor(const AA
 //~ End Statics
 
 //~ Begin Initialize
-UScWAbilitySystemComponent::UScWAbilitySystemComponent(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UScWAbilitySystemComponent::UScWAbilitySystemComponent(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 	InputPressedSpecHandles.Reset();
 	InputReleasedSpecHandles.Reset();

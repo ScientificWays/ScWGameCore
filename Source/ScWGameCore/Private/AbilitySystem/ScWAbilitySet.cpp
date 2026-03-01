@@ -71,8 +71,8 @@ void FScWAbilitySet_GrantedHandles::TakeFromAbilitySystem(UScWAbilitySystemCompo
 	GrantedAttributeSets.Reset();
 }
 
-UScWAbilitySet::UScWAbilitySet(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UScWAbilitySet::UScWAbilitySet(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 }
 

@@ -29,7 +29,7 @@ public:
 
 //~ Begin Initialize
 public:
-	MODULE_API UScWAbilitySystemComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	MODULE_API UScWAbilitySystemComponent(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 protected:
 	MODULE_API virtual void OnRegister() override; // UActorComponent
 	MODULE_API virtual void BeginPlay() override; // UActorComponent

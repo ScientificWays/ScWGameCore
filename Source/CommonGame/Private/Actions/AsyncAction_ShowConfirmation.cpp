@@ -8,8 +8,8 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AsyncAction_ShowConfirmation)
 
-UAsyncAction_ShowConfirmation::UAsyncAction_ShowConfirmation(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UAsyncAction_ShowConfirmation::UAsyncAction_ShowConfirmation(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 }
 

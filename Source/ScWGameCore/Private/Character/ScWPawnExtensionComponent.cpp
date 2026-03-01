@@ -22,8 +22,8 @@ class UActorComponent;
 
 const FName UScWPawnExtensionComponent::NAME_ActorFeatureName("PawnExtension");
 
-UScWPawnExtensionComponent::UScWPawnExtensionComponent(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UScWPawnExtensionComponent::UScWPawnExtensionComponent(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 	PrimaryComponentTick.bCanEverTick = false;

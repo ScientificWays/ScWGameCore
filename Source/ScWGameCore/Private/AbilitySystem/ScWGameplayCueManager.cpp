@@ -51,8 +51,8 @@ struct FGameplayCueTagThreadSynchronizeGraphTask : public FAsyncGraphTaskBase
 
 //////////////////////////////////////////////////////////////////////
 
-UScWGameplayCueManager::UScWGameplayCueManager(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UScWGameplayCueManager::UScWGameplayCueManager(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 }
 

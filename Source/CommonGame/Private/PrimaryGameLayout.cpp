@@ -49,8 +49,8 @@ class UObject;
 	return nullptr;
 }
 
-UPrimaryGameLayout::UPrimaryGameLayout(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UPrimaryGameLayout::UPrimaryGameLayout(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 }
 

@@ -27,7 +27,7 @@ class UCommonGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
-	MODULE_API UCommonGameInstance(const FObjectInitializer& ObjectInitializer);
+	MODULE_API UCommonGameInstance(const FObjectInitializer& InObjectInitializer);
 	
 	/** Handles errors/warnings from CommonUser, can be overridden per game */
 	UFUNCTION()

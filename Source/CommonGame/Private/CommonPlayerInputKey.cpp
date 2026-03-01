@@ -94,8 +94,8 @@ FVector2D FMeasuredText::UpdateTextSize(const FSlateFontInfo &InFontInfo, float 
 	return CachedTextSize;
 }
 
-UCommonPlayerInputKey::UCommonPlayerInputKey(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UCommonPlayerInputKey::UCommonPlayerInputKey(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 	, BoundKeyFallback(EKeys::Invalid)
 	, InputTypeOverride(ECommonInputType::Count)
 {

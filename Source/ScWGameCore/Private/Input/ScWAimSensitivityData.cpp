@@ -6,8 +6,8 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ScWAimSensitivityData)
 
-UScWAimSensitivityData::UScWAimSensitivityData(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UScWAimSensitivityData::UScWAimSensitivityData(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 	SensitivityMap =
 	{

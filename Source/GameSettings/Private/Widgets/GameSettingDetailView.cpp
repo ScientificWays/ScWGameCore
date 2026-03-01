@@ -17,8 +17,8 @@
 
 #define LOCTEXT_NAMESPACE "GameSetting"
 
-UGameSettingDetailView::UGameSettingDetailView(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UGameSettingDetailView::UGameSettingDetailView(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 	, ExtensionWidgetPool(*this)
 {
 }

@@ -8,8 +8,8 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ScWTeamAgentInterface)
 
-UScWTeamAgentInterface::UScWTeamAgentInterface(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UScWTeamAgentInterface::UScWTeamAgentInterface(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 
 }

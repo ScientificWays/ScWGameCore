@@ -23,7 +23,7 @@ class UGameSettingListView : public UListView
 	GENERATED_BODY()
 
 public:
-	MODULE_API UGameSettingListView(const FObjectInitializer& ObjectInitializer);
+	MODULE_API UGameSettingListView(const FObjectInitializer& InObjectInitializer);
 
 	MODULE_API void AddNameOverride(const FName& DevName, const FText& OverrideName);
 

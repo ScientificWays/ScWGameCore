@@ -130,6 +130,8 @@ namespace FScWCoreTags
 
 	// Messages
 	//UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayMessage_Pawn_Ready, "GameplayMessage.Pawn.Ready", "[Native] TODO: Add description");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayMessage_Ability_ActivateFail_PlayMontage, "GameplayMessage.Ability.ActivateFail.PlayMontage", "[Native] TODO: Add description");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayMessage_Ability_ActivateFail_UserFacingSimple, "GameplayMessage.Ability.ActivateFail.UserFacingSimple", "[Native] TODO: Add description");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayMessage_Damage, "GameplayMessage.Damage", "[Native] TODO: Add description");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayMessage_Damage_Ignored, "GameplayMessage.Damage.Ignored", "[Native] TODO: Add description");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayMessage_Damage_Blocked, "GameplayMessage.Damage.Blocked", "[Native] TODO: Add description");

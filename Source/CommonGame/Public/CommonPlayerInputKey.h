@@ -55,7 +55,7 @@ class UCommonPlayerInputKey : public UCommonUserWidget
 	GENERATED_BODY()
 
 public:
-	MODULE_API UCommonPlayerInputKey(const FObjectInitializer& ObjectInitializer);
+	MODULE_API UCommonPlayerInputKey(const FObjectInitializer& InObjectInitializer);
 
 	/** Update the key and associated display based on our current Boundaction */
 	UFUNCTION(BlueprintCallable, Category = "Keybind Widget")

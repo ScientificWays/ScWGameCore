@@ -30,10 +30,10 @@ protected:
 //~ Begin Profiles
 public:
 
-	UPROPERTY(Category = "Profiles", EditAnywhere, BlueprintReadWrite)
-	TMap<FGameplayTag, FName> TagCollisionProfileNameMap;
+	UPROPERTY(Category = "Profiles", EditAnywhere, BlueprintReadWrite, meta = (Categories = "Collision"))
+	TMap<FGameplayTag, FCollisionProfileName> TagCollisionProfileNameMap;
 
-	UPROPERTY()
+	UPROPERTY(Transient)
 	FName DefaultCollisionProfileName;
 //~ End Profiles
 

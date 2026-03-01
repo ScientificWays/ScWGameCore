@@ -9,8 +9,8 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(MediaSubtitlesPlayer)
 
-UMediaSubtitlesPlayer::UMediaSubtitlesPlayer(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UMediaSubtitlesPlayer::UMediaSubtitlesPlayer(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 	, MediaPlayer(nullptr)
 	, bEnabled(false)
 {

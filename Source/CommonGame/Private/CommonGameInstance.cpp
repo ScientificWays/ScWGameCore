@@ -14,8 +14,8 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CommonGameInstance)
 
-UCommonGameInstance::UCommonGameInstance(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UCommonGameInstance::UCommonGameInstance(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 
 }

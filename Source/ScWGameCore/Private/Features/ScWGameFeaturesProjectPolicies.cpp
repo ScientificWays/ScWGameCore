@@ -6,8 +6,8 @@
 #include "GameFeatureData.h"
 #include "GameplayCueSet.h"
 
-UScWGameFeaturesProjectPolicies::UScWGameFeaturesProjectPolicies(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UScWGameFeaturesProjectPolicies::UScWGameFeaturesProjectPolicies(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 }
 

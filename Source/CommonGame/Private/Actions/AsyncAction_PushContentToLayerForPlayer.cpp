@@ -9,12 +9,13 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AsyncAction_PushContentToLayerForPlayer)
 
-UAsyncAction_PushContentToLayerForPlayer::UAsyncAction_PushContentToLayerForPlayer(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UAsyncAction_PushContentToLayerForPlayer::UAsyncAction_PushContentToLayerForPlayer(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
+
 }
 
-UAsyncAction_PushContentToLayerForPlayer* UAsyncAction_PushContentToLayerForPlayer::PushContentToLayerForPlayer(APlayerController* InOwningPlayer, TSoftClassPtr<UCommonActivatableWidget> InWidgetClass, FGameplayTag InLayerName, bool bSuspendInputUntilComplete)
+UAsyncAction_PushContentToLayerForPlayer* UAsyncAction_PushContentToLayerForPlayer::PushContentToLayerForPlayer(APlayerController* InOwningPlayer, TSoftClassPtr<UCommonActivatableWidget> InWidgetClass, FGameplayTag InLayerTag, bool bInSuspendInputUntilComplete)
 {
 	if (InWidgetClass.IsNull())
 	{
@@ -27,13 +28,12 @@ UAsyncAction_PushContentToLayerForPlayer* UAsyncAction_PushContentToLayerForPlay
 		UAsyncAction_PushContentToLayerForPlayer* Action = NewObject<UAsyncAction_PushContentToLayerForPlayer>();
 		Action->WidgetClass = InWidgetClass;
 		Action->OwningPlayerPtr = InOwningPlayer;
-		Action->LayerName = InLayerName;
-		Action->bSuspendInputUntilComplete = bSuspendInputUntilComplete;
+		Action->LayerTag = InLayerTag;
+		Action->bSuspendInputUntilComplete = bInSuspendInputUntilComplete;
 		Action->RegisterWithGameInstance(World);
 
 		return Action;
 	}
-
 	return nullptr;
 }
 
@@ -53,7 +53,7 @@ void UAsyncAction_PushContentToLayerForPlayer::Activate()
 	if (UPrimaryGameLayout* RootLayout = UPrimaryGameLayout::GetPrimaryGameLayout(OwningPlayerPtr.Get()))
 	{
 		TWeakObjectPtr<UAsyncAction_PushContentToLayerForPlayer> WeakThis = this;
-		StreamingHandle = RootLayout->PushWidgetToLayerStackAsync<UCommonActivatableWidget>(LayerName, bSuspendInputUntilComplete, WidgetClass, [this, WeakThis](EAsyncWidgetLayerState State, UCommonActivatableWidget* Widget) {
+		StreamingHandle = RootLayout->PushWidgetToLayerStackAsync<UCommonActivatableWidget>(LayerTag, bSuspendInputUntilComplete, WidgetClass, [this, WeakThis](EAsyncWidgetLayerState State, UCommonActivatableWidget* Widget) {
 			if (WeakThis.IsValid())
 			{
 				switch (State)

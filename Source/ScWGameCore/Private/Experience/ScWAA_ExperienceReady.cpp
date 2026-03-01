@@ -24,7 +24,6 @@ UScWAA_ExperienceReady* UScWAA_ExperienceReady::WaitForExperienceReady(UObject* 
 		Action->WorldPtr = World;
 		Action->RegisterWithGameInstance(World);
 	}
-
 	return Action;
 }
 
@@ -54,7 +53,6 @@ void UScWAA_ExperienceReady::Step1_HandleGameStateSet(AGameStateBase* GameState)
 	{
 		World->GameStateSetEvent.RemoveAll(this);
 	}
-
 	Step2_ListenToExperienceLoading(GameState);
 }
 
@@ -89,7 +87,6 @@ void UScWAA_ExperienceReady::Step3_HandleExperienceLoaded(const UScWExperience* 
 void UScWAA_ExperienceReady::Step4_BroadcastReady()
 {
 	OnReady.Broadcast();
-
 	SetReadyToDestroy();
 }
 

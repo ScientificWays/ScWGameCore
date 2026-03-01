@@ -10,8 +10,8 @@
 /////////////////////////////////////////////////////
 // UGameResponsivePanelSlot
 
-UGameResponsivePanelSlot::UGameResponsivePanelSlot(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UGameResponsivePanelSlot::UGameResponsivePanelSlot(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 	Slot = nullptr;
 }

@@ -5,6 +5,8 @@
 #include "Character/ScWPawnDataFragment.h"
 #include "Character/ScWPawnExtensionComponent.h"
 
+#include "AbilitySystem/ScWAbilitySystemComponent.h"
+
 #include "Components/GameFrameworkComponentManager.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ScWPawnData)
@@ -12,33 +14,35 @@
 const FName UScWPawnData::NAME_PawnDataInitialized("PawnDataInitialized");
 const FName UScWPawnData::NAME_PawnDataUninitialized("PawnDataUninitialized");
 
-UScWPawnData::UScWPawnData(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UScWPawnData::UScWPawnData(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 	
 }
 
 APawn* UScWPawnData::SpawnPawnActorAndInitWithPawnData(
 	const UObject* InWCO,
+	const UScWPawnData* InPawnData,
 	const FTransform& InTransform,
 	AActor* InOwner,
 	APawn* InInstigator,
 	ESpawnActorCollisionHandlingMethod InCollisionHandlingOverride,
 	ESpawnActorScaleMethod InTransformScaleMethod
-) const
+)
 {
-	ensureReturn(PawnClass, nullptr);
+	ensureReturn(InPawnData, nullptr);
+	ensureReturn(InPawnData->PawnClass, nullptr);
 	ensureReturn(InWCO, nullptr);
 
 	UWorld* World = InWCO->GetWorld();
 	ensureReturn(World, nullptr);
 
-	APawn* OutPawn = World->SpawnActorDeferred<APawn>(PawnClass, InTransform, InOwner, InInstigator, InCollisionHandlingOverride, InTransformScaleMethod);
+	APawn* OutPawn = World->SpawnActorDeferred<APawn>(InPawnData->PawnClass, InTransform, InOwner, InInstigator, InCollisionHandlingOverride, InTransformScaleMethod);
 	ensureReturn(OutPawn, nullptr);
 
 	UScWPawnExtensionComponent* PawnExtComponent = UScWPawnExtensionComponent::GetPawnExtensionComponent(OutPawn);
 	ensureReturn(PawnExtComponent, nullptr);
-	PawnExtComponent->SetPawnData(this);
+	PawnExtComponent->SetPawnData(InPawnData);
 
 	OutPawn->FinishSpawning(InTransform);
 	return OutPawn;

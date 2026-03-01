@@ -28,17 +28,18 @@ public:
 	static MODULE_API const FName NAME_PawnDataInitialized;
 	static MODULE_API const FName NAME_PawnDataUninitialized;
 
-	MODULE_API UScWPawnData(const FObjectInitializer& ObjectInitializer);
+	MODULE_API UScWPawnData(const FObjectInitializer& InObjectInitializer);
 
 	UFUNCTION(Category = "Spawning", BlueprintCallable, BlueprintPure = "false", meta = (WorldContext = "InWCO", KeyWords = "SpawnActor, CreateActor, CreatePawn"))
-	MODULE_API APawn* SpawnPawnActorAndInitWithPawnData(
+	static MODULE_API APawn* SpawnPawnActorAndInitWithPawnData(
 		const UObject* InWCO,
+		const UScWPawnData* InPawnData,
 		const FTransform& InTransform,
 		AActor* InOwner = nullptr,
 		APawn* InInstigator = nullptr,
 		ESpawnActorCollisionHandlingMethod InCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::Undefined,
 		ESpawnActorScaleMethod InTransformScaleMethod = ESpawnActorScaleMethod::MultiplyWithRoot
-	) const;
+	);
 
 public:
 

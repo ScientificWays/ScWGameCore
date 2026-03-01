@@ -78,7 +78,7 @@ bool UCommonUIExtensions::IsOwningPlayerUsingGamepad(const UObject* InPlayerCont
 	return GetOwningPlayerInputType(InPlayerContext) == ECommonInputType::Gamepad;
 }
 
-UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(const ULocalPlayer* InLocalPlayer, FGameplayTag InLayerName, TSubclassOf<UCommonActivatableWidget> InWidgetClass)
+UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(const ULocalPlayer* InLocalPlayer, FGameplayTag InLayerTag, TSubclassOf<UCommonActivatableWidget> InWidgetClass)
 {
 	if (!ensure(InLocalPlayer) || !ensure(InWidgetClass != nullptr))
 	{
@@ -93,14 +93,23 @@ UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(cons
 			UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(InLocalPlayer));
 			if ensure(RootLayout)
 			{
-				return RootLayout->PushWidgetToLayerStack<UCommonActivatableWidget>(InLayerName, InWidgetClass);
+				return RootLayout->PushWidgetToLayerStack<UCommonActivatableWidget>(InLayerTag, InWidgetClass);
 			}
 		}
 	}
 	return nullptr;
 }
 
-/*UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayerAndInit_ForPlayer(const ULocalPlayer* InLocalPlayer, FGameplayTag InLayerName, TSubclassOf<UCommonActivatableWidget> InWidgetClass, FCommonUIInitInstanceSignature InInitInstanceFunc)
+UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayerByIndex(UObject* InWCO, int32 InIndex, FGameplayTag InLayerTag, TSubclassOf<UCommonActivatableWidget> InWidgetClass)
+{
+	return ThisClass::PushContentToLayer_ForPlayer(
+		GetLocalPlayerFromController(UGameplayStatics::GetPlayerController(InWCO, InIndex)),
+		InLayerTag,
+		InWidgetClass
+	);
+}
+
+/*UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayerAndInit_ForPlayer(const ULocalPlayer* InLocalPlayer, FGameplayTag InLayerTag, TSubclassOf<UCommonActivatableWidget> InWidgetClass, FCommonUIInitInstanceSignature InInitInstanceFunc)
 {
 	if (!ensure(InLocalPlayer) || !ensure(InWidgetClass != nullptr))
 	{
@@ -112,7 +121,7 @@ UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(cons
 		{
 			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(InLocalPlayer)))
 			{
-				return RootLayout->PushWidgetToLayerStack<UCommonActivatableWidget>(InLayerName, InWidgetClass, [&InInitInstanceFunc](UCommonActivatableWidget& InWidget)
+				return RootLayout->PushWidgetToLayerStack<UCommonActivatableWidget>(InLayerTag, InWidgetClass, [&InInitInstanceFunc](UCommonActivatableWidget& InWidget)
 				{
 					InInitInstanceFunc.ExecuteIfBound(&InWidget);
 				});
@@ -123,7 +132,7 @@ UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(cons
 	return nullptr;
 }*/
 
-void UCommonUIExtensions::PushStreamedContentToLayer_ForPlayer(const ULocalPlayer* InLocalPlayer, FGameplayTag InLayerName, TSoftClassPtr<UCommonActivatableWidget> InWidgetClass)
+void UCommonUIExtensions::PushStreamedContentToLayer_ForPlayer(const ULocalPlayer* InLocalPlayer, FGameplayTag InLayerTag, TSoftClassPtr<UCommonActivatableWidget> InWidgetClass)
 {
 	if (!ensure(InLocalPlayer) || !ensure(!InWidgetClass.IsNull()))
 	{
@@ -136,7 +145,7 @@ void UCommonUIExtensions::PushStreamedContentToLayer_ForPlayer(const ULocalPlaye
 			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(InLocalPlayer)))
 			{
 				const bool bSuspendInputUntilComplete = true;
-				RootLayout->PushWidgetToLayerStackAsync(InLayerName, bSuspendInputUntilComplete, InWidgetClass);
+				RootLayout->PushWidgetToLayerStackAsync(InLayerTag, bSuspendInputUntilComplete, InWidgetClass);
 				return;
 			}
 		}

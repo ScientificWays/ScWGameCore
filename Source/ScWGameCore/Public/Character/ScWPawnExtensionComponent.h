@@ -29,7 +29,7 @@ class UScWPawnExtensionComponent : public UPawnComponent, public IGameFrameworkI
 
 public:
 
-	MODULE_API UScWPawnExtensionComponent(const FObjectInitializer& ObjectInitializer);
+	MODULE_API UScWPawnExtensionComponent(const FObjectInitializer& InObjectInitializer);
 
 	/** The name of this overall feature, this one depends on the other named component features */
 	static MODULE_API const FName NAME_ActorFeatureName;

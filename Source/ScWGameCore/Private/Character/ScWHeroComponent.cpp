@@ -42,8 +42,8 @@ namespace ScWHero
 const FName UScWHeroComponent::NAME_BindInputsNow("BindInputsNow");
 const FName UScWHeroComponent::NAME_ActorFeatureName("Hero");
 
-UScWHeroComponent::UScWHeroComponent(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UScWHeroComponent::UScWHeroComponent(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 	//AbilityCameraMode = nullptr;
 	bReadyToBindInputs = false;
@@ -234,7 +234,6 @@ void UScWHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompon
 	{
 		return;
 	}
-
 	const APlayerController* PC = GetController<APlayerController>();
 	check(PC);
 
@@ -262,7 +261,6 @@ void UScWHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompon
 							{
 								Settings->RegisterInputMappingContext(IMC);
 							}
-							
 							FModifyContextOptions Options = {};
 							Options.bIgnoreAllPressedKeysUntilRelease = false;
 							// Actually add the config to the local player							

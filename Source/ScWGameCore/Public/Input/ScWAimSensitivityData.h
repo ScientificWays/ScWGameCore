@@ -36,7 +36,7 @@ class UScWAimSensitivityData : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	MODULE_API UScWAimSensitivityData(const FObjectInitializer& ObjectInitializer);
+	MODULE_API UScWAimSensitivityData(const FObjectInitializer& InObjectInitializer);
 	
 	MODULE_API const float SensitivtyEnumToFloat(const EScWGamepadSensitivity InSensitivity) const;
 	

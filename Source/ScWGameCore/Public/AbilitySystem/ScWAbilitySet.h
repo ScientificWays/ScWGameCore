@@ -138,7 +138,7 @@ class UScWAbilitySet : public UPrimaryDataAsset
 
 public:
 
-	UScWAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UScWAbilitySet(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
 #if WITH_EDITOR
 	virtual EDataValidationResult IsDataValid(FDataValidationContext& InContext) const override; // UObject

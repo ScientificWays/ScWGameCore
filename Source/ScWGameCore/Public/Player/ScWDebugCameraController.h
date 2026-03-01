@@ -20,7 +20,7 @@ class AScWDebugCameraController : public ADebugCameraController
 	GENERATED_BODY()
 
 public:
-	AScWDebugCameraController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	AScWDebugCameraController(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 protected:
 	virtual void AddCheats(bool bForce) override;
 };

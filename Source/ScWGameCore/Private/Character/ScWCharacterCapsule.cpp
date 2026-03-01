@@ -53,7 +53,7 @@ void UScWCharacterCapsule::UpdateCollisionProfileFromTags()
 	{
 		if (InitASC->HasMatchingGameplayTag(SampleTagProfile.Key))
 		{
-			SetCollisionProfileName(SampleTagProfile.Value);
+			SetCollisionProfileName(SampleTagProfile.Value.Name);
 			return;
 		}
 	}

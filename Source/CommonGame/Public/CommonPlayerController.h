@@ -17,7 +17,7 @@ class ACommonPlayerController : public AModularPlayerController
 	GENERATED_BODY()
 
 public:
-	MODULE_API ACommonPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	MODULE_API ACommonPlayerController(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
 	MODULE_API virtual void ReceivedPlayer() override;	
 	MODULE_API virtual void SetPawn(APawn* InPawn) override;

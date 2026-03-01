@@ -17,8 +17,8 @@ class UUserWidget;
 
 static const FName InputFilterReason_Template = FName(TEXT("CreatingWidgetAsync"));
 
-UAsyncAction_CreateWidgetAsync::UAsyncAction_CreateWidgetAsync(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UAsyncAction_CreateWidgetAsync::UAsyncAction_CreateWidgetAsync(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 	, bSuspendInputUntilComplete(true)
 {
 }

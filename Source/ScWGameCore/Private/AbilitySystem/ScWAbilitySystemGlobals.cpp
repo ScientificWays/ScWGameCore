@@ -9,8 +9,8 @@
 
 struct FGameplayEffectContext;
 
-UScWAbilitySystemGlobals::UScWAbilitySystemGlobals(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UScWAbilitySystemGlobals::UScWAbilitySystemGlobals(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 	
 }

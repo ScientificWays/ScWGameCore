@@ -110,6 +110,8 @@ namespace FScWCoreTags
 
 	// Messages
 	//MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayMessage_Pawn_Ready);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayMessage_Ability_ActivateFail_PlayMontage);
+	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayMessage_Ability_ActivateFail_UserFacingSimple);
 	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayMessage_Damage);
 	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayMessage_Damage_Ignored);
 	MODULE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayMessage_Damage_Blocked);

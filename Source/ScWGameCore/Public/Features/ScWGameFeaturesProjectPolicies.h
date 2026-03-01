@@ -25,7 +25,7 @@ class UScWGameFeaturesProjectPolicies : public UDefaultGameFeaturesProjectPolici
 public:
 	MODULE_API static UScWGameFeaturesProjectPolicies& Get();
 
-	UScWGameFeaturesProjectPolicies(const FObjectInitializer& ObjectInitializer);
+	UScWGameFeaturesProjectPolicies(const FObjectInitializer& InObjectInitializer);
 
 	//~UGameFeaturesProjectPolicies interface
 	virtual void InitGameFeatureManager() override;

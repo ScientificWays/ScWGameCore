@@ -17,7 +17,7 @@ class AModularGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-	MODULE_API AModularGameModeBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	MODULE_API AModularGameModeBase(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 };
 
 /** Pair this with a ModularGameState */
@@ -27,7 +27,7 @@ class AModularGameMode : public AGameMode
 	GENERATED_BODY()
 
 public:
-	MODULE_API AModularGameMode(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	MODULE_API AModularGameMode(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 };
 
 #undef MODULE_API

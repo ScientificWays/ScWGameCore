@@ -6,8 +6,8 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ScWDebugCameraController)
 
-AScWDebugCameraController::AScWDebugCameraController(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+AScWDebugCameraController::AScWDebugCameraController(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 	// Use the same cheat class as ScWPlayerController to allow toggling the debug camera through cheats.
 	CheatClass = UScWCheatManager::StaticClass();

@@ -8,8 +8,8 @@
 
 class APawn;
 
-ACommonPlayerController::ACommonPlayerController(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+ACommonPlayerController::ACommonPlayerController(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 }
 

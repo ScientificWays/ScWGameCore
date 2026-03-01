@@ -35,7 +35,7 @@ class UScWHeroComponent : public UPawnComponent, public IGameFrameworkInitStateI
 
 public:
 
-	MODULE_API UScWHeroComponent(const FObjectInitializer& ObjectInitializer);
+	MODULE_API UScWHeroComponent(const FObjectInitializer& InObjectInitializer);
 
 	/** Returns the hero component if one exists on the specified actor. */
 	UFUNCTION(BlueprintPure, Category = "ScW | Hero")

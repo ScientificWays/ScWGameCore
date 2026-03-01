@@ -25,7 +25,7 @@ class UGameSettingDetailView : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	MODULE_API UGameSettingDetailView(const FObjectInitializer& ObjectInitializer);
+	MODULE_API UGameSettingDetailView(const FObjectInitializer& InObjectInitializer);
 
 	MODULE_API void FillSettingDetails(UGameSetting* InSetting);
 

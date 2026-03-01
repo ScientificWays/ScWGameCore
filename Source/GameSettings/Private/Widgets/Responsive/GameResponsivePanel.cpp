@@ -11,8 +11,8 @@
 /////////////////////////////////////////////////////
 // UGameResponsivePanel
 
-UGameResponsivePanel::UGameResponsivePanel(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UGameResponsivePanel::UGameResponsivePanel(const FObjectInitializer& InObjectInitializer)
+	: Super(InObjectInitializer)
 {
 	bIsVariable = false;
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);

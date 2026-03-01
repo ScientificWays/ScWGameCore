@@ -10,7 +10,7 @@
 
 class UScWInputConfig;
 
-UScWInputComponent::UScWInputComponent(const FObjectInitializer& ObjectInitializer)
+UScWInputComponent::UScWInputComponent(const FObjectInitializer& InObjectInitializer)
 {
 }
 
