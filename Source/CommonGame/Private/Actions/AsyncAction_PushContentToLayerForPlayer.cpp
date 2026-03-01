@@ -37,17 +37,6 @@ UAsyncAction_PushContentToLayerForPlayer* UAsyncAction_PushContentToLayerForPlay
 	return nullptr;
 }
 
-void UAsyncAction_PushContentToLayerForPlayer::Cancel()
-{
-	Super::Cancel();
-
-	if (StreamingHandle.IsValid())
-	{
-		StreamingHandle->CancelHandle();
-		StreamingHandle.Reset();
-	}
-}
-
 void UAsyncAction_PushContentToLayerForPlayer::Activate()
 {
 	if (UPrimaryGameLayout* RootLayout = UPrimaryGameLayout::GetPrimaryGameLayout(OwningPlayerPtr.Get()))
@@ -79,3 +68,13 @@ void UAsyncAction_PushContentToLayerForPlayer::Activate()
 	}
 }
 
+void UAsyncAction_PushContentToLayerForPlayer::Cancel()
+{
+	Super::Cancel();
+
+	if (StreamingHandle.IsValid())
+	{
+		StreamingHandle->CancelHandle();
+		StreamingHandle.Reset();
+	}
+}
