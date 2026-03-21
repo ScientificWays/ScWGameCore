@@ -66,6 +66,7 @@ void UScWLogsFunctionLibrary::Log_##InCategory(const UObject* InContext, const F
 }
 
 LOG_BP_TEMPLATE(GameMode, "GameMode")
+LOG_BP_TEMPLATE(Experience, "Experience")
 LOG_BP_TEMPLATE(AbilitySystem, "AbilitySystem")
 LOG_BP_TEMPLATE(World, "World")
 LOG_BP_TEMPLATE(Character, "Character")

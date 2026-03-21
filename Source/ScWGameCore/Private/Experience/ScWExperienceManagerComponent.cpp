@@ -2,27 +2,30 @@
 
 #include "Experience/ScWExperienceManagerComponent.h"
 
+#include "Experience/ScWExperience.h"
+#include "Experience/ScWExperienceActionSet.h"
+#include "Experience/ScWExperienceSubsystem.h"
+
+#include "Development/ScWLogsFunctionLibrary.h"
+
+#include "Settings/ScWSettingsLocal.h"
+
+#include "TimerManager.h"
+#include "GameFeatureAction.h"
+#include "GameFeaturesSubsystem.h"
+#include "GameFeaturesSubsystemSettings.h"
+
 #include "Engine/World.h"
 #include "Engine/AssetManager.h"
 
 #include "Net/UnrealNetwork.h"
-#include "Experience/ScWExperience.h"
-#include "Experience/ScWExperienceActionSet.h"
-#include "Experience/ScWExperienceSubsystem.h"
-#include "GameFeaturesSubsystem.h"
-#include "GameFeatureAction.h"
-#include "GameFeaturesSubsystemSettings.h"
-#include "TimerManager.h"
-//#include "Settings/ScWSettingsLocal.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ScWExperienceManagerComponent)
 
 //@TODO: Async load the experience definition itself
 //@TODO: Handle failures explicitly (go into a 'completed but failed' state rather than check()-ing)
 //@TODO: Do the action phases at the appropriate times instead of all at once
-//@TODO: Support deactivating an experience and do the unloading actions
 //@TODO: Think about what deactivation/cleanup means for preloaded assets
-//@TODO: Handle deactivating game features, right now we 'leak' them enabled
 // (for a client moving from experience to experience we actually want to diff the requirements and only unload some, not unload everything for them to just be immediately reloaded)
 //@TODO: Handle both built-in and URL-based plugins (search for colon?)
 
@@ -45,6 +48,34 @@ namespace ScWConsoleVariables
 	float GetExperienceLoadDelayDuration()
 	{
 		return FMath::Max(0.0f, ExperienceLoadRandomDelayMin + FMath::FRand() * ExperienceLoadRandomDelayRange);
+	}
+}
+
+namespace
+{
+	const TCHAR* ExperienceLoadStateToString(const EScWExperienceLoadState InLoadState)
+	{
+		switch (InLoadState)
+		{
+			case EScWExperienceLoadState::Unloaded: return TEXT("Unloaded");
+			case EScWExperienceLoadState::Loading: return TEXT("Loading");
+			case EScWExperienceLoadState::LoadingGameFeatures: return TEXT("LoadingGameFeatures");
+			case EScWExperienceLoadState::LoadingChaosTestingDelay: return TEXT("LoadingChaosTestingDelay");
+			case EScWExperienceLoadState::ExecutingActions: return TEXT("ExecutingActions");
+			case EScWExperienceLoadState::Loaded: return TEXT("Loaded");
+			case EScWExperienceLoadState::Deactivating: return TEXT("Deactivating");
+		}
+		return TEXT("Unknown");
+	}
+
+	FString GetExperienceIdString(const UScWExperience* InExperience)
+	{
+		return InExperience ? InExperience->GetPrimaryAssetId().ToString() : TEXT("None");
+	}
+
+	void LogExperienceManagerLifecycle(const UObject* InContext, const FString& InMessage)
+	{
+		UScWLogsFunctionLibrary::Log_Experience(InContext, InMessage, EBlueprintLogVerbosity::Log, true, false);
 	}
 }
 
@@ -71,6 +102,13 @@ void UScWExperienceManagerComponent::SetCurrentExperience(FPrimaryAssetId Experi
 	check(CurrentExperience == nullptr);
 	CurrentExperience = Experience;
 	StartExperienceLoad();*/
+
+	ensureReturn(LoadState == EScWExperienceLoadState::Unloaded);
+	ensureReturn(CurrentExperience == nullptr);
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.SetCurrentExperience: RequestedExperience=%s, LoadState=%s, Context=%s"),
+		*ExperienceId.ToString(),
+		ExperienceLoadStateToString(LoadState),
+		*GetClientServerContextString(this)));
 
 	// Sync load
 	const auto AssetPath = UAssetManager::Get().GetPrimaryAssetPath(ExperienceId);
@@ -142,19 +180,26 @@ bool UScWExperienceManagerComponent::IsExperienceLoaded() const
 
 void UScWExperienceManagerComponent::OnRep_CurrentExperience()
 {
+	ensureReturn(CurrentExperience);
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.OnRep_CurrentExperience: Experience=%s, LoadState=%s, Context=%s"),
+		*GetExperienceIdString(CurrentExperience),
+		ExperienceLoadStateToString(LoadState),
+		*GetClientServerContextString(this)));
 	StartExperienceLoad();
 }
 
 void UScWExperienceManagerComponent::StartExperienceLoad()
 {
-	check(CurrentExperience != nullptr);
-	check(LoadState == EScWExperienceLoadState::Unloaded);
-
-	UE_LOG(LogScWGameCore, Log, TEXT("EXPERIENCE: StartExperienceLoad(CurrentExperience = %s, %s)"),
-		*CurrentExperience->GetPrimaryAssetId().ToString(),
-		*GetClientServerContextString(this));
+	ensureReturn(CurrentExperience);
+	ensureReturn(LoadState == EScWExperienceLoadState::Unloaded);
+	ensure(ActivatedActions.IsEmpty());
+	ensure(NumGameFeaturePluginsDeactivating == 0);
 
 	LoadState = EScWExperienceLoadState::Loading;
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.StartExperienceLoad: Experience=%s, LoadState=%s, Context=%s"),
+		*GetExperienceIdString(CurrentExperience),
+		ExperienceLoadStateToString(LoadState),
+		*GetClientServerContextString(this)));
 
 	UAssetManager& AssetManager = UAssetManager::Get();
 
@@ -238,12 +283,10 @@ void UScWExperienceManagerComponent::StartExperienceLoad()
 
 void UScWExperienceManagerComponent::OnExperienceLoadComplete()
 {
-	check(LoadState == EScWExperienceLoadState::Loading);
-	check(CurrentExperience != nullptr);
-
-	UE_LOG(LogScWGameCore, Log, TEXT("EXPERIENCE: OnExperienceLoadComplete(CurrentExperience = %s, %s)"),
-		*CurrentExperience->GetPrimaryAssetId().ToString(),
-		*GetClientServerContextString(this));
+	if ((LoadState != EScWExperienceLoadState::Loading) || (CurrentExperience == nullptr))
+	{
+		return;
+	}
 
 	// find the URLs for our GameFeaturePlugins - filtering out dupes and ones that don't have a valid mapping
 	GameFeaturePluginURLs.Reset();
@@ -285,6 +328,10 @@ void UScWExperienceManagerComponent::OnExperienceLoadComplete()
 
 	// Load and activate the features	
 	NumGameFeaturePluginsLoading = GameFeaturePluginURLs.Num();
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.OnExperienceLoadComplete: Experience=%s, PluginsToLoad=%d, Context=%s"),
+		*GetExperienceIdString(CurrentExperience),
+		NumGameFeaturePluginsLoading,
+		*GetClientServerContextString(this)));
 	if (NumGameFeaturePluginsLoading > 0)
 	{
 		LoadState = EScWExperienceLoadState::LoadingGameFeatures;
@@ -302,8 +349,20 @@ void UScWExperienceManagerComponent::OnExperienceLoadComplete()
 
 void UScWExperienceManagerComponent::OnGameFeaturePluginLoadComplete(const UE::GameFeatures::FResult& Result)
 {
+	static_cast<void>(Result);
+
+	if (LoadState != EScWExperienceLoadState::LoadingGameFeatures)
+	{
+		return;
+	}
+
+	ensureReturn(NumGameFeaturePluginsLoading > 0);
+
 	// decrement the number of plugins that are loading
 	NumGameFeaturePluginsLoading--;
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.OnGameFeaturePluginLoadComplete: RemainingPlugins=%d, Context=%s"),
+		NumGameFeaturePluginsLoading,
+		*GetClientServerContextString(this)));
 
 	if (NumGameFeaturePluginsLoading == 0)
 	{
@@ -311,28 +370,31 @@ void UScWExperienceManagerComponent::OnGameFeaturePluginLoadComplete(const UE::G
 	}
 }
 
-void UScWExperienceManagerComponent::OnExperienceFullLoadCompleted()
+void UScWExperienceManagerComponent::ActivateExperienceActions()
 {
-	check(LoadState != EScWExperienceLoadState::Loaded);
+	ensureReturn(CurrentExperience);
 
-	// Insert a random delay for testing (if configured)
-	if (LoadState != EScWExperienceLoadState::LoadingChaosTestingDelay)
+	if (!ensure(ActivatedActions.IsEmpty()))
 	{
-		const float DelaySecs = ScWConsoleVariables::GetExperienceLoadDelayDuration();
-		if (DelaySecs > 0.0f)
+		ActivatedActions.Reset();
+	}
+
+	int32 NumActionsToActivate = CurrentExperience->Actions.Num();
+	for (const TObjectPtr<UScWExperienceActionSet>& ActionSet : CurrentExperience->ActionSets)
+	{
+		if (ActionSet != nullptr)
 		{
-			FTimerHandle DummyHandle;
-
-			LoadState = EScWExperienceLoadState::LoadingChaosTestingDelay;
-			GetWorld()->GetTimerManager().SetTimer(DummyHandle, this, &ThisClass::OnExperienceFullLoadCompleted, DelaySecs, /*bLooping=*/ false);
-
-			return;
+			NumActionsToActivate += ActionSet->Actions.Num();
 		}
 	}
 
-	LoadState = EScWExperienceLoadState::ExecutingActions;
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.ActivateExperienceActions: Experience=%s, Actions=%d, Context=%s"),
+		*GetExperienceIdString(CurrentExperience),
+		NumActionsToActivate,
+		*GetClientServerContextString(this)));
 
-	// Execute the actions
+	ActivatedActions.Reserve(NumActionsToActivate);
+
 	FGameFeatureActivatingContext Context;
 
 	// Only apply to our specific world context if set
@@ -342,7 +404,7 @@ void UScWExperienceManagerComponent::OnExperienceFullLoadCompleted()
 		Context.SetRequiredWorldContextHandle(ExistingWorldContext->ContextHandle);
 	}
 
-	auto ActivateListOfActions = [&Context](const TArray<UGameFeatureAction*>& ActionList)
+	auto ActivateListOfActions = [this, &Context](const TArray<TObjectPtr<UGameFeatureAction>>& ActionList)
 	{
 		for (UGameFeatureAction* Action : ActionList)
 		{
@@ -354,6 +416,7 @@ void UScWExperienceManagerComponent::OnExperienceFullLoadCompleted()
 				Action->OnGameFeatureRegistering();
 				Action->OnGameFeatureLoading();
 				Action->OnGameFeatureActivating(Context);
+				ActivatedActions.Add(Action);
 			}
 		}
 	};
@@ -366,8 +429,145 @@ void UScWExperienceManagerComponent::OnExperienceFullLoadCompleted()
 			ActivateListOfActions(ActionSet->Actions);
 		}
 	}
+}
+
+void UScWExperienceManagerComponent::DeactivateExperienceActions(FGameFeatureDeactivatingContext& Context)
+{
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.DeactivateExperienceActions: ActivatedActions=%d, Context=%s"),
+		ActivatedActions.Num(),
+		*GetClientServerContextString(this)));
+
+	for (int32 ActionIndex = ActivatedActions.Num() - 1; ActionIndex >= 0; --ActionIndex)
+	{
+		if (UGameFeatureAction* Action = ActivatedActions[ActionIndex])
+		{
+			Action->OnGameFeatureDeactivating(Context);
+			Action->OnGameFeatureUnregistering();
+		}
+	}
+
+	ActivatedActions.Reset();
+}
+
+void UScWExperienceManagerComponent::DeactivateGameFeaturePlugins()
+{
+	TArray<FString> PluginsToDeactivate;
+	PluginsToDeactivate.Reserve(GameFeaturePluginURLs.Num());
+
+	for (int32 PluginIndex = GameFeaturePluginURLs.Num() - 1; PluginIndex >= 0; --PluginIndex)
+	{
+		const FString& PluginURL = GameFeaturePluginURLs[PluginIndex];
+		if (UScWExperienceSubsystem::RequestToDeactivatePlugin(PluginURL))
+		{
+			PluginsToDeactivate.Add(PluginURL);
+		}
+	}
+
+	GameFeaturePluginURLs.Reset();
+	NumGameFeaturePluginsLoading = 0;
+	NumGameFeaturePluginsDeactivating = PluginsToDeactivate.Num();
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.DeactivateGameFeaturePlugins: PluginsToDeactivate=%d, Context=%s"),
+		NumGameFeaturePluginsDeactivating,
+		*GetClientServerContextString(this)));
+
+	if (NumGameFeaturePluginsDeactivating == 0)
+	{
+		FinalizeExperienceUnload();
+		return;
+	}
+
+	for (const FString& PluginURL : PluginsToDeactivate)
+	{
+		UGameFeaturesSubsystem::Get().DeactivateGameFeaturePlugin(PluginURL, FGameFeaturePluginDeactivateComplete::CreateUObject(this, &ThisClass::OnGameFeaturePluginDeactivateComplete));
+	}
+}
+
+void UScWExperienceManagerComponent::OnGameFeaturePluginDeactivateComplete(const UE::GameFeatures::FResult& Result)
+{
+	static_cast<void>(Result);
+
+	if (NumGameFeaturePluginsDeactivating <= 0)
+	{
+		return;
+	}
+
+	--NumGameFeaturePluginsDeactivating;
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.OnGameFeaturePluginDeactivateComplete: RemainingPlugins=%d, Context=%s"),
+		NumGameFeaturePluginsDeactivating,
+		*GetClientServerContextString(this)));
+
+	if (NumGameFeaturePluginsDeactivating == 0)
+	{
+		FinalizeExperienceUnload();
+	}
+}
+
+void UScWExperienceManagerComponent::FinalizeExperienceUnload()
+{
+	if (LoadState == EScWExperienceLoadState::Unloaded)
+	{
+		return;
+	}
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.FinalizeExperienceUnload: PreviousState=%s, Context=%s"),
+		ExperienceLoadStateToString(LoadState),
+		*GetClientServerContextString(this)));
+
+	NumGameFeaturePluginsLoading = 0;
+	NumGameFeaturePluginsDeactivating = 0;
+	NumObservedPausers = 0;
+	NumExpectedPausers = 0;
+	ActivatedActions.Reset();
+	GameFeaturePluginURLs.Reset();
+	OnExperienceLoaded_HighPriority.Clear();
+	OnExperienceLoaded.Clear();
+	OnExperienceLoaded_LowPriority.Clear();
+
+	LoadState = EScWExperienceLoadState::Unloaded;
+	CurrentExperience = nullptr;
+}
+
+void UScWExperienceManagerComponent::OnExperienceFullLoadCompleted()
+{
+	const bool bValidLoadState =
+		(LoadState == EScWExperienceLoadState::Loading)
+		|| (LoadState == EScWExperienceLoadState::LoadingGameFeatures)
+		|| (LoadState == EScWExperienceLoadState::LoadingChaosTestingDelay);
+	if (!bValidLoadState || (CurrentExperience == nullptr))
+	{
+		return;
+	}
+
+	// Insert a random delay for testing (if configured)
+	if (LoadState != EScWExperienceLoadState::LoadingChaosTestingDelay)
+	{
+		const float DelaySecs = ScWConsoleVariables::GetExperienceLoadDelayDuration();
+		if (DelaySecs > 0.0f)
+		{
+			FTimerHandle DummyHandle;
+
+			LoadState = EScWExperienceLoadState::LoadingChaosTestingDelay;
+			LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.OnExperienceFullLoadCompleted: EnteringDelay=%.2fs, Context=%s"),
+				DelaySecs,
+				*GetClientServerContextString(this)));
+			GetWorld()->GetTimerManager().SetTimer(DummyHandle, this, &ThisClass::OnExperienceFullLoadCompleted, DelaySecs, /*bLooping=*/ false);
+
+			return;
+		}
+	}
+
+	LoadState = EScWExperienceLoadState::ExecutingActions;
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.OnExperienceFullLoadCompleted: LoadState=%s, Experience=%s, Context=%s"),
+		ExperienceLoadStateToString(LoadState),
+		*GetExperienceIdString(CurrentExperience),
+		*GetClientServerContextString(this)));
+
+	ActivateExperienceActions();
 
 	LoadState = EScWExperienceLoadState::Loaded;
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.OnExperienceFullLoadCompleted: LoadState=%s, Experience=%s, Context=%s"),
+		ExperienceLoadStateToString(LoadState),
+		*GetExperienceIdString(CurrentExperience),
+		*GetClientServerContextString(this)));
 
 	OnExperienceLoaded_HighPriority.Broadcast(CurrentExperience);
 	OnExperienceLoaded_HighPriority.Clear();
@@ -380,14 +580,23 @@ void UScWExperienceManagerComponent::OnExperienceFullLoadCompleted()
 
 	// Apply any necessary scalability settings
 #if !UE_SERVER
-	//UScWSettingsLocal::Get()->OnExperienceLoaded();
+	UScWSettingsLocal::Get()->OnExperienceLoaded();
 #endif
 }
 
 void UScWExperienceManagerComponent::OnActionDeactivationCompleted()
 {
+	if (LoadState != EScWExperienceLoadState::Deactivating)
+	{
+		return;
+	}
+
 	check(IsInGameThread());
 	++NumObservedPausers;
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.OnActionDeactivationCompleted: ObservedPausers=%d, ExpectedPausers=%d, Context=%s"),
+		NumObservedPausers,
+		NumExpectedPausers,
+		*GetClientServerContextString(this)));
 
 	if (NumObservedPausers == NumExpectedPausers)
 	{
@@ -406,21 +615,20 @@ void UScWExperienceManagerComponent::EndPlay(const EEndPlayReason::Type EndPlayR
 {
 	Super::EndPlay(EndPlayReason);
 
-	// deactivate any features this experience loaded
-	//@TODO: This should be handled FILO as well
-	for (const FString& PluginURL : GameFeaturePluginURLs)
+	if ((LoadState == EScWExperienceLoadState::Unloaded) || (LoadState == EScWExperienceLoadState::Deactivating))
 	{
-		if (UScWExperienceSubsystem::RequestToDeactivatePlugin(PluginURL))
-		{
-			UGameFeaturesSubsystem::Get().DeactivateGameFeaturePlugin(PluginURL);
-		}
+		return;
 	}
 
-	//@TODO: Ensure proper handling of a partially-loaded state too
-	if (LoadState == EScWExperienceLoadState::Loaded)
-	{
-		LoadState = EScWExperienceLoadState::Deactivating;
+	const EScWExperienceLoadState PreviousLoadState = LoadState;
+	LoadState = EScWExperienceLoadState::Deactivating;
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.EndPlay: PreviousState=%s, NewState=%s, Context=%s"),
+		ExperienceLoadStateToString(PreviousLoadState),
+		ExperienceLoadStateToString(LoadState),
+		*GetClientServerContextString(this)));
 
+	if (PreviousLoadState == EScWExperienceLoadState::Loaded)
+	{
 		// Make sure we won't complete the transition prematurely if someone registers as a pauser but fires immediately
 		NumExpectedPausers = INDEX_NONE;
 		NumObservedPausers = 0;
@@ -434,38 +642,18 @@ void UScWExperienceManagerComponent::EndPlay(const EEndPlayReason::Type EndPlayR
 			Context.SetRequiredWorldContextHandle(ExistingWorldContext->ContextHandle);
 		}
 
-		auto DeactivateListOfActions = [&Context](const TArray<UGameFeatureAction*>& ActionList)
-		{
-			for (UGameFeatureAction* Action : ActionList)
-			{
-				if (Action)
-				{
-					Action->OnGameFeatureDeactivating(Context);
-					Action->OnGameFeatureUnregistering();
-				}
-			}
-		};
-
-		DeactivateListOfActions(CurrentExperience->Actions);
-		for (const TObjectPtr<UScWExperienceActionSet>& ActionSet : CurrentExperience->ActionSets)
-		{
-			if (ActionSet != nullptr)
-			{
-				DeactivateListOfActions(ActionSet->Actions);
-			}
-		}
+		DeactivateExperienceActions(Context);
 
 		NumExpectedPausers = Context.GetNumPausers();
-
-		if (NumExpectedPausers > 0)
-		{
-			UE_LOG(LogScWGameCore, Error, TEXT("Actions that have asynchronous deactivation aren't fully supported yet in ScW experiences"));
-		}
 
 		if (NumExpectedPausers == NumObservedPausers)
 		{
 			OnAllActionsDeactivated();
 		}
+	}
+	else
+	{
+		OnAllActionsDeactivated();
 	}
 }
 
@@ -484,9 +672,16 @@ bool UScWExperienceManagerComponent::ShouldShowLoadingScreen(FString& OutReason)
 
 void UScWExperienceManagerComponent::OnAllActionsDeactivated()
 {
-	//@TODO: We actually only deactivated and didn't fully unload...
-	LoadState = EScWExperienceLoadState::Unloaded;
-	CurrentExperience = nullptr;
+	if ((LoadState == EScWExperienceLoadState::Unloaded) || (LoadState == EScWExperienceLoadState::Deactivating && (NumGameFeaturePluginsDeactivating > 0)))
+	{
+		return;
+	}
+	LogExperienceManagerLifecycle(this, FString::Printf(TEXT("ExperienceManager.OnAllActionsDeactivated: RemainingPluginDeactivations=%d, Context=%s"),
+		NumGameFeaturePluginsDeactivating,
+		*GetClientServerContextString(this)));
+
+	ActivatedActions.Reset();
+	DeactivateGameFeaturePlugins();
 	//@TODO:	GEngine->ForceGarbageCollection(true);
 }
 

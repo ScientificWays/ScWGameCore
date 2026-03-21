@@ -14,6 +14,8 @@
 namespace UE::GameFeatures { struct FResult; }
 
 class UScWExperience;
+class UGameFeatureAction;
+struct FGameFeatureDeactivatingContext;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnScWExperienceLoaded, const UScWExperience* /*Experience*/);
 
@@ -77,6 +79,12 @@ private:
 	void OnGameFeaturePluginLoadComplete(const UE::GameFeatures::FResult& Result);
 	void OnExperienceFullLoadCompleted();
 
+	void ActivateExperienceActions();
+	void DeactivateExperienceActions(FGameFeatureDeactivatingContext& Context);
+	void DeactivateGameFeaturePlugins();
+	void OnGameFeaturePluginDeactivateComplete(const UE::GameFeatures::FResult& Result);
+	void FinalizeExperienceUnload();
+
 	void OnActionDeactivationCompleted();
 	void OnAllActionsDeactivated();
 
@@ -87,7 +95,11 @@ private:
 	EScWExperienceLoadState LoadState = EScWExperienceLoadState::Unloaded;
 
 	int32 NumGameFeaturePluginsLoading = 0;
+	int32 NumGameFeaturePluginsDeactivating = 0;
 	TArray<FString> GameFeaturePluginURLs;
+
+	UPROPERTY(Transient)
+	TArray<TObjectPtr<UGameFeatureAction>> ActivatedActions;
 
 	int32 NumObservedPausers = 0;
 	int32 NumExpectedPausers = 0;
