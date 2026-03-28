@@ -249,7 +249,7 @@ void UScWHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompon
 	{
 		if (const UScWPawnData* PawnData = PawnExtComp->GetPawnData<UScWPawnData>())
 		{
-			if ensure(PrimaryInputConfig)
+			if (ensure(PrimaryInputConfig))
 			{
 				for (const FInputMappingContextAndPriority& Mapping : DefaultInputMappings)
 				{

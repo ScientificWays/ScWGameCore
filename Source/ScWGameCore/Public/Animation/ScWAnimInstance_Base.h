@@ -9,7 +9,8 @@
 #include "ScWAnimInstance_Base.generated.h"
 
 /**
- * 
+ *	Abstract base animation instance that provides common gameplay state tracking, holster/alternative
+ *	pose toggling, idle animation control, and automatic gameplay tag to blueprint property mapping.
  */
 UCLASS(MinimalAPI, Abstract)
 class UScWAnimInstance_Base : public UAnimInstance

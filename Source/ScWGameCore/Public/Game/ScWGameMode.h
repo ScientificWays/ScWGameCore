@@ -17,7 +17,8 @@
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnScWGameModePlayerInitialized, AGameModeBase* /*GameMode*/, AController* /*NewPlayer*/);
 
 /**
- * 
+ *	Game mode coordinating pawn spawning, experience loading, and player initialization.
+ *	Handles match assignment logic and delegates to the experience system for gameplay setup.
  */
 UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] Game Mode"))
 class AScWGameMode : public AModularGameModeBase

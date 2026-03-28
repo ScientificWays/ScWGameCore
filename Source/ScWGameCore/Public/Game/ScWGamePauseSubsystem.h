@@ -11,7 +11,8 @@
 #define MODULE_API SCWGAMECORE_API
 
 /**
- *
+ *	World subsystem that manages game pause state through a voting system of source objects and provides
+ *	time dilation-based slowdown with curve-driven interpolation.
  */
 UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] Game Pause Subsystem"))
 class UScWGamePauseSubsystem : public UWorldSubsystem

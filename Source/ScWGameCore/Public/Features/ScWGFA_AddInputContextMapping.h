@@ -12,6 +12,9 @@ class UPlayer;
 class APlayerController;
 struct FComponentRequestHandle;
 
+/**
+ *	Pairs an Enhanced Input mapping context with its priority and registration settings.
+ */
 USTRUCT()
 struct FInputMappingContextAndPriority
 {

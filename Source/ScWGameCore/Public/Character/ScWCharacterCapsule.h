@@ -9,7 +9,8 @@
 #include "ScWCharacterCapsule.generated.h"
 
 /**
- *
+ *	Custom capsule component for ScW characters that switches collision profiles based on gameplay tags
+ *	and initializes from the ability system.
  */
 UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] Character Capsule (Component)"))
 class UScWCharacterCapsule : public UCapsuleComponent, public IScWASC_InitInterface

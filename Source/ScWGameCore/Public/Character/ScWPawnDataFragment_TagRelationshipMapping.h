@@ -13,7 +13,8 @@
 class UScWAbilityTagRelationshipMapping;
 
 /**
- *
+ *	Pawn data fragment that applies an ability tag relationship mapping to the pawn's ability system
+ *	component during initialization.
  */
 UCLASS(MinimalAPI, Blueprintable, BlueprintType, meta = (DisplayName = "[ScW] Pawn Data Fragment (Tag Relationship Mapping)"))
 class UScWPawnDataFragment_TagRelationshipMapping : public UScWPawnDataFragment

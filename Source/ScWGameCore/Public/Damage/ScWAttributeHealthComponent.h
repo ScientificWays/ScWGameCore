@@ -10,6 +10,9 @@
 
 #define MODULE_API SCWGAMECORE_API
 
+/**
+ *	Data describing a received damage event, including hit result, damage type, source actor, and instigating controller.
+ */
 USTRUCT(BlueprintType)
 struct FReceivedDamageData
 {
@@ -34,6 +37,9 @@ struct FReceivedDamageData
 	FString ToAnalyticsString() const;
 };
 
+/**
+ *	Gameplay message payload broadcast when damage is applied to a health component.
+ */
 USTRUCT(BlueprintType)
 struct FGameplayMessage_Damage
 {
@@ -46,6 +52,9 @@ struct FGameplayMessage_Damage
 	FReceivedDamageData DamageData;
 };
 
+/**
+ *	Gameplay message payload broadcast when an actor dies.
+ */
 USTRUCT(BlueprintType)
 struct FGameplayMessage_Died
 {
@@ -60,7 +69,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAccumulatedDamageResolveEventSignat
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputEventSignature, int32, InInputID);
 
 /**
- * 
+ *	Health component that bridges gameplay attribute changes to damage processing and death events.
+ *	Listens to GAS attribute modifications, filters incoming damage (ignore/block/evade), and broadcasts
+ *	damage-applied and death delegates.
  */
 UCLASS(MinimalAPI, Blueprintable, HideCategories = (Object, LOD, Lighting, Transform, Sockets, TextureStreaming), meta = (DisplayName = "[ScW] Attribute Health Component", BlueprintSpawnableComponent))
 class UScWAttributeHealthComponent : public UActorComponent

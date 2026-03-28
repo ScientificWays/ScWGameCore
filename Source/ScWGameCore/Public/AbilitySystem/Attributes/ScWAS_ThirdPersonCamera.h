@@ -7,7 +7,9 @@
 #include "ScWAS_ThirdPersonCamera.generated.h"
 
 /**
- * 
+ *	Attribute set for third-person camera parameters including rotation (pitch, yaw, roll),
+ *	spring arm length, and field of view. All attributes are replicated and can be modified
+ *	through gameplay effects.
  */
 UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] Third Person Camera Attributes"))
 class UScWAS_ThirdPersonCamera : public UAttributeSet

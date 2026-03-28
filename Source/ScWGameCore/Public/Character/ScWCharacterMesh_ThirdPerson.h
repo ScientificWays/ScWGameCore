@@ -15,9 +15,10 @@ class UScWAbilitySystemComponent;
 class UScWAnimInstance_ThirdPerson;
 
 /**
- *
+ *	Third-person skeletal mesh component that holds default static animation data, responds to camera mode
+ *	changes, listens to mass attribute updates, and handles ragdoll activation and death behavior.
  */
-UCLASS(ClassGroup = ("Character"), meta = (DisplayName = "[ScW] ThirdPerson Character Mesh (Component)", BlueprintSpawnableComponent))
+UCLASS(MinimalAPI, ClassGroup = ("Character"), meta = (DisplayName = "[ScW] ThirdPerson Character Mesh (Component)", BlueprintSpawnableComponent))
 class UScWCharacterMesh_ThirdPerson : public UScWCharacterMesh_Base
 {
 	GENERATED_BODY()

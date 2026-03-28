@@ -11,7 +11,7 @@
 #define MODULE_API SCWGAMECORE_API
 
 /**
- * 
+ *	Blueprint function library exposing ScWGameCore module log categories for use in Blueprints.
  */
 UCLASS(MinimalAPI)
 class UScWLogsFunctionLibrary : public UBlueprintFunctionLibrary

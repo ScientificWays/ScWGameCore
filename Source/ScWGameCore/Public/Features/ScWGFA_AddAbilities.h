@@ -15,6 +15,9 @@ class UDataTable;
 struct FComponentRequestHandle;
 class UScWAbilitySet;
 
+/**
+ *	Describes a single gameplay ability to grant, optionally bound to an input action.
+ */
 USTRUCT(BlueprintType)
 struct FScWAbilityGrant
 {
@@ -29,6 +32,9 @@ struct FScWAbilityGrant
 // 	TSoftObjectPtr<UInputAction> InputAction;
 };
 
+/**
+ *	Describes an attribute set to grant, with an optional data table for initial values.
+ */
 USTRUCT(BlueprintType)
 struct FScWAttributeSetGrant
 {
@@ -43,6 +49,9 @@ struct FScWAttributeSetGrant
 	TSoftObjectPtr<UDataTable> InitializationData;
 };
 
+/**
+ *	Maps an actor class to the abilities, attribute sets, and ability sets that should be granted to it.
+ */
 USTRUCT()
 struct FGameFeatureAbilitiesEntry
 {

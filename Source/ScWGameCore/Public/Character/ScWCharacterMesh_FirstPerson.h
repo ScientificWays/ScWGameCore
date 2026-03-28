@@ -15,9 +15,9 @@ class UScWAbilitySystemComponent;
 class UScWAnimInstance_FirstPerson;
 
 /**
- * 
+ *	First-person skeletal mesh component that holds default static animation data and camera-relative rendering.
  */
-UCLASS(ClassGroup = ("Character"), meta = (DisplayName = "[ScW] FirstPerson Character Mesh (Component)", BlueprintSpawnableComponent))
+UCLASS(MinimalAPI, ClassGroup = ("Character"), meta = (DisplayName = "[ScW] FirstPerson Character Mesh (Component)", BlueprintSpawnableComponent))
 class UScWCharacterMesh_FirstPerson : public UScWCharacterMesh_Base
 {
 	GENERATED_BODY()

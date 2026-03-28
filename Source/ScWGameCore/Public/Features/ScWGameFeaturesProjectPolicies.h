@@ -53,6 +53,9 @@ public:
 	virtual void OnGameFeatureLoading(const UGameFeatureData* GameFeatureData, const FString& PluginURL) override;
 }; */
 
+/**
+ *	Observer that automatically registers gameplay cue notify paths when a game feature plugin is registered.
+ */
 // checked
 UCLASS()
 class UScWGameFeature_AddGameplayCuePaths : public UObject, public IGameFeatureStateChangeObserver

@@ -17,10 +17,10 @@ void UScWAT_WaitForPawnReady::Activate() // UBlueprintAsyncActionBase
 {
 	Super::Activate();
 
-	if ensure(WatchedPawn)
+	if (ensure(WatchedPawn))
 	{
 		UScWPawnExtensionComponent* PawnExtComponent = UScWPawnExtensionComponent::GetPawnExtensionComponent(WatchedPawn);
-		if ensure(PawnExtComponent)
+		if (ensure(PawnExtComponent))
 		{
 			WatchedPawn->OnEndPlay.AddDynamic(this, &ThisClass::OnWatchedPawnEndPlay);
 			PawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall(FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::OnWatchedPawnAbilitySystemInitialized));

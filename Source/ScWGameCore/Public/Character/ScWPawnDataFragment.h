@@ -11,7 +11,8 @@
 class UScWPawnExtensionComponent;
 
 /**
- *
+ *	Abstract base class for composable pawn data fragments that initialize and uninitialize pawn
+ *	behavior through the PawnExtensionComponent.
  */
 UCLASS(MinimalAPI, Const, Abstract, Blueprintable, BlueprintType, DefaultToInstanced, EditInlineNew, meta = (DisplayName = "[ScW] Pawn Data Fragment Base"))
 class UScWPawnDataFragment : public UObject

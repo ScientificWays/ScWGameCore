@@ -7,7 +7,9 @@
 #include "ScWAS_CharacterMovement.generated.h"
 
 /**
- * 
+ *	Attribute set that defines character movement parameters such as walk speed, acceleration,
+ *	gravity scale, air control, mass, and rotation rate. Values are replicated and automatically
+ *	applied to the owning character's movement component on change.
  */
 UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] Character Movement Attributes"))
 class UScWAS_CharacterMovement : public UAttributeSet

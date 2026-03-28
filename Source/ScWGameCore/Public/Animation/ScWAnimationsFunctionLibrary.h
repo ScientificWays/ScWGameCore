@@ -9,7 +9,9 @@
 #define MODULE_API SCWGAMECORE_API
 
 /**
- * 
+ *	Static blueprint function library providing helpers for querying animation instances,
+ *	calculating montage and section durations, playing character montage data, and toggling
+ *	static animation data such as holster poses and idle animations.
  */
 UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] Animations Function Library"))
 class UScWAnimationsFunctionLibrary : public UBlueprintFunctionLibrary

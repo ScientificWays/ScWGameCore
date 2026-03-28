@@ -11,7 +11,8 @@
 #define MODULE_API SCWGAMECORE_API
 
 /**
- *
+ *	Custom character movement component whose parameters (walk speed, acceleration, gravity, etc.) are
+ *	driven by gameplay attributes and whose movement mode and flags are controlled via gameplay tags.
  */
 UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] Character Movement (Component)"))
 class UScWCharacterMovement : public UCharacterMovementComponent, public IScWASC_InitInterface

@@ -14,7 +14,8 @@
 #define MODULE_API SCWGAMECORE_API
 
 /**
- *
+ *	Main modular character class with integrated ability system, team agent support, gameplay tags,
+ *	gameplay cues, and first/third-person camera handling.
  */
 UCLASS(MinimalAPI, Abstract, Blueprintable, meta = (DisplayName = "[ScW] Character"))
 class AScWCharacter : public AModularCharacter, public IScWTeamAgentInterface, public IAbilitySystemInterface, public IGameplayTagAssetInterface, public IGameplayCueInterface

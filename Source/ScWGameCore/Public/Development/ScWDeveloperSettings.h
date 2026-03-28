@@ -13,6 +13,9 @@ struct FPropertyChangedEvent;
 
 class UScWExperience;
 
+/**
+ *	Determines when an auto-run cheat command is executed during Play in Editor.
+ */
 UENUM()
 enum class ECheatExecutionTime
 {
@@ -23,6 +26,9 @@ enum class ECheatExecutionTime
 	OnPlayerPawnPossession
 };
 
+/**
+ *	Pairs a cheat console command with the phase at which it should be auto-executed during PIE.
+ */
 USTRUCT()
 struct FScWCheatToRun
 {

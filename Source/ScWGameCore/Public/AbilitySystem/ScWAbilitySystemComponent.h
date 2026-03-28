@@ -13,7 +13,9 @@
 #define MODULE_API SCWGAMECORE_API
 
 /**
- * 
+ *	Custom Ability System Component that extends the default ASC with input-driven ability activation,
+ *	activation group management (independent, exclusive-replaceable, exclusive-blocking), tag relationship
+ *	mapping, and dynamic gameplay tag effects.
  */
 UCLASS(MinimalAPI, Blueprintable, meta = (DisplayName = "[ScW] ASC Base", BlueprintSpawnableComponent))
 class UScWAbilitySystemComponent : public UAbilitySystemComponent

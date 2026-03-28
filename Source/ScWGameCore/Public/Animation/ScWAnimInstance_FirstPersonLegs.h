@@ -9,7 +9,8 @@
 #include "ScWAnimInstance_FirstPersonLegs.generated.h"
 
 /**
- * 
+ *	Animation instance for the first-person leg mesh. Tracks incapacitated state
+ *	to drive leg-specific animations independently from the upper body.
  */
 UCLASS(MinimalAPI, Abstract)
 class UScWAnimInstance_FirstPersonLegs : public UScWAnimInstance_Base

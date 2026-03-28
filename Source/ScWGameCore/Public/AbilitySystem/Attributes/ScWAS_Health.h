@@ -7,7 +7,8 @@
 #include "ScWAS_Health.generated.h"
 
 /**
- * 
+ *	Attribute set that manages character health and maximum health values.
+ *	Health is clamped between zero and HealthMax, and both attributes are replicated.
  */
 UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] Health Attributes"))
 class UScWAS_Health : public UAttributeSet

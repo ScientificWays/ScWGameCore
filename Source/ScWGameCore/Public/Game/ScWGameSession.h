@@ -9,7 +9,7 @@
 #define MODULE_API SCWGAMECORE_API
 
 /**
- * 
+ *	Game session handling player spawn location selection and session management.
  */
 UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] Game Session"))
 class AScWGameSession : public AGameSession

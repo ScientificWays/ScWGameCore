@@ -11,7 +11,8 @@
 #define MODULE_API SCWGAMECORE_API
 
 /**
- * 
+ *	First-person animation instance that holds weapon and hand static animation data.
+ *	Supports swapping between current and default data sets for equipment transitions.
  */
 UCLASS(MinimalAPI, Abstract, meta = (DisplayName = "[ScW] Anim Instance (First Person)"))
 class UScWAnimInstance_FirstPerson : public UScWAnimInstance_Base

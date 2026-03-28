@@ -42,7 +42,7 @@ class UScWInputConfig : public UDataAsset
 
 public:
 
-	UScWInputConfig(const FObjectInitializer& InObjectInitializer);
+	UScWInputConfig(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
 	UFUNCTION(BlueprintCallable, Category = "Input Config")
 	MODULE_API const UInputAction* FindNativeInputActionForTag(const FGameplayTag& InputTag, bool bInLogIfNotFound = true) const;

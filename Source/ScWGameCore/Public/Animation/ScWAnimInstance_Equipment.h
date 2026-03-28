@@ -11,7 +11,8 @@
 #define MODULE_API SCWGAMECORE_API
 
 /**
- * 
+ *	Animation instance for equipment animation layers. Manages current and default static
+ *	animation data that can be swapped when equipment changes.
  */
 UCLASS(MinimalAPI, Abstract, meta = (DisplayName = "[ScW] Anim Instance (Equipment)"))
 class UScWAnimInstance_Equipment : public UScWAnimInstance_Base

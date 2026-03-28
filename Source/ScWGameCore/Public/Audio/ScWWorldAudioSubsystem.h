@@ -11,7 +11,8 @@
 #define MODULE_API SCWGAMECORE_API
 
 /**
- *
+ *	World subsystem that manages layered 2D audio playback,
+ *	allowing sounds to be played, stopped, and auto-removed per named audio layer.
  */
 UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] World Audio Subsystem", KeyWords = "ScWSound"))
 class UScWWorldAudioSubsystem : public UTickableWorldSubsystem

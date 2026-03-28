@@ -51,7 +51,7 @@ public:
 	TObjectPtr<UTexture2D> TileIcon;
 
 	/** The loading screen widget to show when loading into (or back out of) a given experience */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=LoadingScreen)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "LoadingScreen")
 	TSoftClassPtr<UUserWidget> LoadingScreenWidget;
 
 	/** If true, this is a default experience that should be used for quick play and given priority in the UI */

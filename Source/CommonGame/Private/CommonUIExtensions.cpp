@@ -85,13 +85,13 @@ UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(cons
 		return nullptr;
 	}
 	UGameUIManagerSubsystem* UIManager = InLocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>();
-	if ensure(UIManager)
+	if (ensure(UIManager))
 	{
 		UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy();
-		if ensure(Policy)
+		if (ensure(Policy))
 		{
 			UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(InLocalPlayer));
-			if ensure(RootLayout)
+			if (ensure(RootLayout))
 			{
 				return RootLayout->PushWidgetToLayerStack<UCommonActivatableWidget>(InLayerTag, InWidgetClass);
 			}

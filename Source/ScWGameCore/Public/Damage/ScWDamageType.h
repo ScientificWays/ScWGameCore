@@ -9,9 +9,10 @@
 #define MODULE_API SCWGAMECORE_API
 
 /**
- *
+ *	Damage type that defines display info, a gameplay effect to apply on damage, and configurable
+ *	impact impulse properties for both character movement and physics bodies.
  */
-UCLASS(Const, Blueprintable, BlueprintType, meta = (DisplayName = "[ScW] Damage Type"))
+UCLASS(MinimalAPI, Const, Blueprintable, BlueprintType, meta = (DisplayName = "[ScW] Damage Type"))
 class UScWDamageType : public UDamageType
 {
 	GENERATED_BODY()

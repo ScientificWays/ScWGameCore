@@ -13,7 +13,8 @@
 #define MODULE_API SCWGAMECORE_API
 
 /**
- *
+ *	Pawn data fragment that grants a configured list of ability sets to a pawn on initialization
+ *	and revokes them on uninitialization.
  */
 UCLASS(MinimalAPI, Blueprintable, BlueprintType, meta = (DisplayName = "[ScW] Pawn Data Fragment (Ability Sets)"))
 class UScWPawnDataFragment_AbilitySets : public UScWPawnDataFragment

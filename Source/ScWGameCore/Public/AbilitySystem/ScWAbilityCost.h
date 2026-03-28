@@ -53,6 +53,6 @@ public:
 
 protected:
 	/** If true, this cost should only be applied if this ability hits successfully */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Costs)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Costs")
 	bool bOnlyApplyCostOnHit = false;
 };

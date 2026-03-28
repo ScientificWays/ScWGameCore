@@ -80,7 +80,7 @@ public:
 	// UserFacingDeviceProfileOptions unless there is only one for the current platform
 	//
 	// Note that this will usually be set from platform-specific ini files, not via the UI
-	UPROPERTY(EditAnywhere, Config, Category=DeviceProfiles)
+	UPROPERTY(EditAnywhere, Config, Category = "DeviceProfiles")
 	FString DefaultDeviceProfileSuffix;
 
 	// The list of device profile variations to allow users to choose from in settings
@@ -90,25 +90,25 @@ public:
 	//   previous entries until we find one that works
 	//
 	// Note that this will usually be set from platform-specific ini files, not via the UI
-	UPROPERTY(EditAnywhere, Config, Category=DeviceProfiles)
+	UPROPERTY(EditAnywhere, Config, Category = "DeviceProfiles")
 	TArray<FScWQualityDeviceProfileVariant> UserFacingDeviceProfileOptions;
 
 	// Does the platform support granular video quality settings?
-	UPROPERTY(EditAnywhere, Config, Category=VideoSettings)
+	UPROPERTY(EditAnywhere, Config, Category = "VideoSettings")
 	bool bSupportsGranularVideoQualitySettings = true;
 
 	// Does the platform support running the automatic quality benchmark (typically this should only be true if bSupportsGranularVideoQualitySettings is also true)
-	UPROPERTY(EditAnywhere, Config, Category=VideoSettings)
+	UPROPERTY(EditAnywhere, Config, Category = "VideoSettings")
 	bool bSupportsAutomaticVideoQualityBenchmark = true;
 
 	// How is frame pacing controlled
-	UPROPERTY(EditAnywhere, Config, Category=VideoSettings)
+	UPROPERTY(EditAnywhere, Config, Category = "VideoSettings")
 	EScWFramePacingMode FramePacingMode = EScWFramePacingMode::DesktopStyle;
 
 	// Potential frame rates to display for mobile
 	// Note: This is further limited by ScW.DeviceProfile.Mobile.MaxFrameRate from the
 	// platform-specific device profile and what the platform frame pacer reports as supported
-	UPROPERTY(EditAnywhere, Config, Category=VideoSettings, meta = (EditCondition="FramePacingMode==EScWFramePacingMode::MobileStyle", ForceUnits=Hz))
+	UPROPERTY(EditAnywhere, Config, Category = "VideoSettings", meta = (EditCondition="FramePacingMode==EScWFramePacingMode::MobileStyle", ForceUnits=Hz))
 	TArray<int32> MobileFrameRateLimits;
 };
 
@@ -134,10 +134,10 @@ private:
 public:
 	// The list of frame rates to allow users to choose from in the various
 	// "frame rate limit" video settings on desktop platforms
-	UPROPERTY(EditAnywhere, Config, Category=Performance, meta = (ForceUnits=Hz))
+	UPROPERTY(EditAnywhere, Config, Category = "Performance", meta = (ForceUnits=Hz))
 	TArray<int32> DesktopFrameRateLimits;
 
 	// The list of performance stats that can be enabled in Options by the user
-	UPROPERTY(EditAnywhere, Config, Category=Stats)
+	UPROPERTY(EditAnywhere, Config, Category = "Stats")
 	TArray<FScWPerformanceStatGroup> UserFacingPerformanceStats;
 };
