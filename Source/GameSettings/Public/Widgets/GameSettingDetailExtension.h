@@ -28,10 +28,10 @@ protected:
 	MODULE_API virtual void NativeSettingAssigned(UGameSetting* InSetting);
 	MODULE_API virtual void NativeSettingValueChanged(UGameSetting* InSetting, EGameSettingChangeReason Reason);
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Settings")
 	MODULE_API void OnSettingAssigned(UGameSetting* InSetting);
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Settings")
 	MODULE_API void OnSettingValueChanged(UGameSetting* InSetting);
 
 protected:

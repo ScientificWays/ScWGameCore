@@ -78,13 +78,13 @@ struct FGameplayMessage_Ability_ActivateFail_UserFacingSimple
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Category = "Ability", BlueprintReadWrite)
 	TObjectPtr<APlayerController> PlayerController = nullptr;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Category = "Ability", BlueprintReadWrite)
 	FGameplayTagContainer FailureTags;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Category = "Ability", BlueprintReadWrite)
 	FText UserFacingReason;
 };
 
@@ -96,18 +96,18 @@ struct FGameplayMessage_Ability_ActivateFail_PlayMontage
 
 public:
 	// Player controller that failed to activate the ability, if the AbilitySystemComponent was player owned
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Category = "Ability", BlueprintReadWrite)
 	TObjectPtr<APlayerController> PlayerController = nullptr;
 
 	// Avatar actor that failed to activate the ability
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Category = "Ability", BlueprintReadWrite)
 	TObjectPtr<AActor> AvatarActor = nullptr;
 
 	// All the reasons why this ability has failed
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Category = "Ability", BlueprintReadWrite)
 	FGameplayTagContainer FailureTags;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Category = "Ability", BlueprintReadWrite)
 	TObjectPtr<UAnimMontage> FailureMontage = nullptr;
 };
 
@@ -125,31 +125,31 @@ class UScWGameplayAbility : public UGameplayAbility
 public:
 	MODULE_API UScWGameplayAbility(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
-	UFUNCTION(BlueprintCallable, Category = "Tags")
+	UFUNCTION(Category = "Tags", BlueprintCallable)
 	const FGameplayTagContainer& GetCancelAbilitiesWithTag() const { return CancelAbilitiesWithTag; }
 
-	UFUNCTION(BlueprintCallable, Category = "Tags")
+	UFUNCTION(Category = "Tags", BlueprintCallable)
 	const FGameplayTagContainer& GetBlockAbilitiesWithTag() const { return BlockAbilitiesWithTag; }
 
-	UFUNCTION(BlueprintCallable, Category = "Tags")
+	UFUNCTION(Category = "Tags", BlueprintCallable)
 	const FGameplayTagContainer& GetActivationOwnedTags() const { return ActivationOwnedTags; }
 
-	UFUNCTION(BlueprintCallable, Category = "Tags")
+	UFUNCTION(Category = "Tags", BlueprintCallable)
 	const FGameplayTagContainer& GetActivationRequiredTags() const { return ActivationRequiredTags; }
 
-	UFUNCTION(BlueprintCallable, Category = "Tags")
+	UFUNCTION(Category = "Tags", BlueprintCallable)
 	const FGameplayTagContainer& GetActivationBlockedTags() const { return ActivationBlockedTags; }
 
-	UFUNCTION(BlueprintCallable, Category = "Actor Info")
+	UFUNCTION(Category = "Actor Info", BlueprintCallable)
 	MODULE_API UScWAbilitySystemComponent* GetScWAbilitySystemComponentFromActorInfo() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Actor Info")
+	UFUNCTION(Category = "Actor Info", BlueprintCallable)
 	MODULE_API APlayerController* GetPlayerControllerFromActorInfo() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Actor Info")
+	UFUNCTION(Category = "Actor Info", BlueprintCallable)
 	MODULE_API AController* GetControllerFromActorInfo() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Actor Info")
+	UFUNCTION(Category = "Actor Info", BlueprintCallable)
 	MODULE_API ACharacter* GetCharacterFromActorInfo() const;
 
 	EScWAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
@@ -158,11 +158,11 @@ public:
 	MODULE_API void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
 
 	// Returns true if the requested activation group is a valid transition.
-	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Ability Activation", Meta = (ExpandBoolAsExecs = "ReturnValue"))
+	UFUNCTION(Category = "Ability Activation", BlueprintCallable, BlueprintPure = false, Meta = (ExpandBoolAsExecs = "ReturnValue"))
 	MODULE_API bool CanChangeActivationGroup(EScWAbilityActivationGroup NewGroup) const;
 
 	// Tries to change the activation group.  Returns true if it successfully changed.
-	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Ability Activation", Meta = (ExpandBoolAsExecs = "ReturnValue"))
+	UFUNCTION(Category = "Ability Activation", BlueprintCallable, BlueprintPure = false, Meta = (ExpandBoolAsExecs = "ReturnValue"))
 	MODULE_API bool ChangeActivationGroup(EScWAbilityActivationGroup NewGroup);
 
 	void OnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const
@@ -177,7 +177,7 @@ protected:
 	MODULE_API virtual void NativeOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const;
 
 	// Called when the ability fails to activate
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Ability")
 	MODULE_API void ScriptOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const;
 
 	//~UGameplayAbility interface
@@ -200,15 +200,15 @@ protected:
 	//MODULE_API virtual void GetAbilitySource(FGameplayAbilitySpecHandle InHandle, const FGameplayAbilityActorInfo* ActorInfo, float& OutSourceLevel, const IScWAbilitySourceInterface*& OutAbilitySource, AActor*& OutEffectCauser) const;
 
 	/** Called when this ability is granted to the ability system component. */
-	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityAdded")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Ability", DisplayName = "OnAbilityAdded")
 	MODULE_API void BP_OnAbilityAdded();
 
 	/** Called when this ability is removed from the ability system component. */
-	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnAbilityRemoved")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Ability", DisplayName = "OnAbilityRemoved")
 	MODULE_API void BP_OnAbilityRemoved();
 
 	/** Called when the ability system is initialized with a pawn avatar. */
-	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnPawnAvatarSet")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Ability", DisplayName = "OnPawnAvatarSet")
 	MODULE_API void BP_OnPawnAvatarSet();
 	
 	UFUNCTION(Category = "Input", BlueprintCallable, meta = (KeyWords = "IsInputPressed"))
@@ -217,36 +217,36 @@ protected:
 protected:
 
 	// Defines how this ability is meant to activate.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Activation")
+	UPROPERTY(Category = "Ability Activation", EditDefaultsOnly, BlueprintReadOnly)
 	EScWAbilityActivationPolicy ActivationPolicy;
 
 	// Defines the relationship between this ability activating and other abilities activating.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Activation")
+	UPROPERTY(Category = "Ability Activation", EditDefaultsOnly, BlueprintReadOnly)
 	EScWAbilityActivationGroup ActivationGroup;
 
 	// Additional costs that must be paid to activate this ability
-	UPROPERTY(EditDefaultsOnly, Instanced, Category = Costs)
+	UPROPERTY(Category = "Costs", EditDefaultsOnly, Instanced)
 	TArray<TObjectPtr<UScWAbilityCost>> AdditionalCosts;
 
 	// Map of failure tags to simple error messages
-	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
+	UPROPERTY(Category = "Advanced", EditDefaultsOnly)
 	TMap<FGameplayTag, FText> FailureTagToUserFacingMessages;
 
 	// Map of failure tags to anim montages that should be played with them
-	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
+	UPROPERTY(Category = "Advanced", EditDefaultsOnly)
 	TMap<FGameplayTag, TObjectPtr<UAnimMontage>> FailureTagToAnimMontage;
 
 	// If true, extra information should be logged when this ability is canceled. This is temporary, used for tracking a bug.
-	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
+	UPROPERTY(Category = "Advanced", EditDefaultsOnly)
 	bool bLogCancelation;
 
 //~ Begin Events
 public:
 
 	UFUNCTION(Category = "Events", BlueprintCallable, BlueprintPure = "false", meta = (AutoCreateRefTerm = "InEventTag"))
-	void SendAbilityEvent(const FGameplayTag& InEventTag) const;
+	MODULE_API void SendAbilityEvent(const FGameplayTag& InEventTag) const;
 
-	UFUNCTION(Category = "Events", BlueprintNativeEvent, meta = (AutoCreateRefTerm = "InEventTag", DisplayName = "Make Ability Event Data"))
+	UFUNCTION(BlueprintNativeEvent, Category = "Events", meta = (AutoCreateRefTerm = "InEventTag", DisplayName = "Make Ability Event Data"))
 	MODULE_API FGameplayEventData BP_MakeAbilityEventData(const FGameplayTag& InEventTag) const;
 //~ End Events
 };

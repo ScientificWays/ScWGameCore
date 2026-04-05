@@ -34,7 +34,7 @@ public:
 	 * @param PayloadType		The kind of message structure to use (this must match the same type that the sender is broadcasting)
 	 * @param MatchType			The rule used for matching the channel with broadcasted messages
 	 */
-	UFUNCTION(BlueprintCallable, Category = Messaging, meta = (WorldContext = "WorldContextObject", BlueprintInternalUseOnly = "true", Categories = "GameplayMessage"))
+	UFUNCTION(Category = "Messaging", BlueprintCallable, meta = (WorldContext = "WorldContextObject", BlueprintInternalUseOnly = "true", Categories = "GameplayMessage"))
 	static MODULE_API UAsyncAction_ListenForGameplayMessage* ListenForGameplayMessages(UObject* WorldContextObject, FGameplayTag Channel, UScriptStruct* PayloadType, EGameplayMessageMatch MatchType = EGameplayMessageMatch::ExactMatch);
 
 	/**
@@ -44,7 +44,7 @@ public:
 	 * @param OutPayload	The wildcard reference the payload should be copied into
 	 * @return				If the copy was a success
 	 */
-	UFUNCTION(BlueprintCallable, CustomThunk, Category = "Messaging", meta = (CustomStructureParam = "OutPayload"))
+	UFUNCTION(Category = "Messaging", BlueprintCallable, CustomThunk, meta = (CustomStructureParam = "OutPayload"))
 	MODULE_API bool GetPayload(UPARAM(ref) int32& OutPayload);
 
 	DECLARE_FUNCTION(execGetPayload);

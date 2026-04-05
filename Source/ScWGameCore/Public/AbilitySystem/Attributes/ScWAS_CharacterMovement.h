@@ -6,6 +6,8 @@
 
 #include "ScWAS_CharacterMovement.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 /**
  *	Attribute set that defines character movement parameters such as walk speed, acceleration,
  *	gravity scale, air control, mass, and rotation rate. Values are replicated and automatically
@@ -102,3 +104,5 @@ protected:
 	virtual void OnRep_RotationRateYaw(const FGameplayAttributeData& InPrevValue);
 //~ End Replication
 };
+
+#undef MODULE_API

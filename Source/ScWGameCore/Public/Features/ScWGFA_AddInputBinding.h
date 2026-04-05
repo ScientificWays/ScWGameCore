@@ -9,6 +9,8 @@
 
 #include "ScWGFA_AddInputBinding.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 class AActor;
 class UInputMappingContext;
 class UPlayer;
@@ -37,7 +39,7 @@ public:
 #endif
 	//~ End UObject interface
 
-	UPROPERTY(EditAnywhere, Category="Input", meta = (AssetBundles="Client,Server"))
+	UPROPERTY(Category = "Input", EditAnywhere, meta = (AssetBundles = "Client, Server"))
 	TArray<TSoftObjectPtr<const UScWInputConfig>> InputConfigs;
 
 private:
@@ -60,3 +62,5 @@ private:
 
 
 };
+
+#undef MODULE_API

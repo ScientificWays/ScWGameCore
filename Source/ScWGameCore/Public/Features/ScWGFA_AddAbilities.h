@@ -8,6 +8,8 @@
 
 #include "ScWGFA_AddAbilities.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 struct FWorldContext;
 class UInputAction;
 class UAttributeSet;
@@ -24,7 +26,7 @@ struct FScWAbilityGrant
 	GENERATED_BODY()
 
 	// Type of ability to grant
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AssetBundles="Client,Server"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AssetBundles = "Client, Server"))
 	TSoftClassPtr<UGameplayAbility> AbilityType;
 
 	// Input action to bind the ability to, if any (can be left unset)
@@ -41,11 +43,11 @@ struct FScWAttributeSetGrant
 	GENERATED_BODY()
 
 	// Ability set to grant
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AssetBundles="Client,Server"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AssetBundles = "Client, Server"))
 	TSoftClassPtr<UAttributeSet> AttributeSetType;
 
 	// Data table referent to initialize the attributes with, if any (can be left unset)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AssetBundles="Client,Server"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AssetBundles = "Client, Server"))
 	TSoftObjectPtr<UDataTable> InitializationData;
 };
 
@@ -58,19 +60,19 @@ struct FGameFeatureAbilitiesEntry
 	GENERATED_BODY()
 
 	// The base actor class to add to
-	UPROPERTY(EditAnywhere, Category="Abilities")
+	UPROPERTY(Category = "Abilities", EditAnywhere)
 	TSoftClassPtr<AActor> ActorClass;
 
 	// List of abilities to grant to actors of the specified class
-	UPROPERTY(EditAnywhere, Category="Abilities")
+	UPROPERTY(Category = "Abilities", EditAnywhere)
 	TArray<FScWAbilityGrant> GrantedAbilities;
 
-	// List of attribute sets to grant to actors of the specified class 
-	UPROPERTY(EditAnywhere, Category="Attributes")
+	// List of attribute sets to grant to actors of the specified class
+	UPROPERTY(Category = "Attributes", EditAnywhere)
 	TArray<FScWAttributeSetGrant> GrantedAttributes;
 
 	// List of ability sets to grant to actors of the specified class
-	UPROPERTY(EditAnywhere, Category="Attributes", meta = (AssetBundles="Client,Server"))
+	UPROPERTY(Category = "Attributes", EditAnywhere, meta = (AssetBundles = "Client, Server"))
 	TArray<TSoftObjectPtr<const UScWAbilitySet>> GrantedAbilitySets;
 };
 
@@ -98,7 +100,7 @@ public:
 	//~ End UObject interface
 
 	/**  */
-	UPROPERTY(EditAnywhere, Category="Abilities", meta = (TitleProperty="ActorClass", ShowOnlyInnerProperties))
+	UPROPERTY(Category = "Abilities", EditAnywhere, meta = (TitleProperty="ActorClass", ShowOnlyInnerProperties))
 	TArray<FGameFeatureAbilitiesEntry> AbilitiesList;
 
 private:
@@ -134,3 +136,5 @@ private:
 	}
 	UActorComponent* FindOrAddComponentForActor(UClass* ComponentType, AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry, FPerContextData& ActiveData);
 };
+
+#undef MODULE_API

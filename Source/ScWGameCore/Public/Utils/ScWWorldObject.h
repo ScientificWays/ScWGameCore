@@ -6,10 +6,12 @@
 
 #include "ScWWorldObject.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 /**
 * 
 */
-UCLASS(Blueprintable, meta = (DisplayName = "[ScW] World Object"))
+UCLASS(MinimalAPI, Blueprintable, meta = (DisplayName = "[ScW] World Object"))
 class UScWWorldObject : public UObject
 {
 	GENERATED_BODY()
@@ -29,3 +31,5 @@ protected:
 	//FWeakObjectPtr CurrentWCO;
 //~ End World
 };
+
+#undef MODULE_API

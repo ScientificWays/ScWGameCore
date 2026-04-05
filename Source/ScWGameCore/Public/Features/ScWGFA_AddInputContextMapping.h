@@ -6,6 +6,8 @@
 #include "UObject/SoftObjectPtr.h"
 #include "ScWGFA_AddInputContextMapping.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 class AActor;
 class UInputMappingContext;
 class UPlayer;
@@ -15,20 +17,20 @@ struct FComponentRequestHandle;
 /**
  *	Pairs an Enhanced Input mapping context with its priority and registration settings.
  */
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FInputMappingContextAndPriority
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Category="Input", meta = (AssetBundles="Client,Server"))
+	UPROPERTY(Category = "Input", EditAnywhere, meta = (AssetBundles = "Client, Server"))
 	TSoftObjectPtr<UInputMappingContext> InputMapping;
 
 	// Higher priority input mappings will be prioritized over mappings with a lower priority.
-	UPROPERTY(EditAnywhere, Category="Input")
+	UPROPERTY(Category = "Input", EditAnywhere)
 	int32 Priority = 0;
-	
+
 	/** If true, then this mapping context will be registered with the settings when this game feature action is registered. */
-	UPROPERTY(EditAnywhere, Category="Input")
+	UPROPERTY(Category = "Input", EditAnywhere)
 	bool bRegisterWithSettings = true;
 };
 
@@ -55,7 +57,7 @@ public:
 #endif
 	//~End of UObject interface
 
-	UPROPERTY(EditAnywhere, Category="Input")
+	UPROPERTY(Category = "Input", EditAnywhere)
 	TArray<FInputMappingContextAndPriority> InputMappings;
 
 private:
@@ -97,3 +99,5 @@ private:
 	void AddInputMappingForPlayer(UPlayer* Player, FPerContextData& ActiveData);
 	void RemoveInputMapping(APlayerController* PlayerController, FPerContextData& ActiveData);
 };
+
+#undef MODULE_API

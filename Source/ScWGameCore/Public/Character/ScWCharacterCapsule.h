@@ -8,6 +8,8 @@
 
 #include "ScWCharacterCapsule.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 /**
  *	Custom capsule component for ScW characters that switches collision profiles based on gameplay tags
  *	and initializes from the ability system.
@@ -44,3 +46,5 @@ protected:
 	void UpdateCollisionProfileFromTags();
 //~ End Tags
 };
+
+#undef MODULE_API

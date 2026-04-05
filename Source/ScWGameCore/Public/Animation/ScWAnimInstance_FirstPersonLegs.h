@@ -8,6 +8,8 @@
 
 #include "ScWAnimInstance_FirstPersonLegs.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 /**
  *	Animation instance for the first-person leg mesh. Tracks incapacitated state
  *	to drive leg-specific animations independently from the upper body.
@@ -36,3 +38,5 @@ protected:
 	bool bIncapped;
 //~ End Static
 };
+
+#undef MODULE_API

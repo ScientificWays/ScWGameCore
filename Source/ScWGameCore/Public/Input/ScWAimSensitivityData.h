@@ -42,7 +42,7 @@ public:
 	
 protected:
 	/** Map of SensitivityMap settings to their corresponding float */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Sensitivity", EditAnywhere, BlueprintReadWrite)
 	TMap<EScWGamepadSensitivity, float> SensitivityMap;
 };
 

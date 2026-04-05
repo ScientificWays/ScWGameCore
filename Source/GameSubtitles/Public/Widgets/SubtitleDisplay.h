@@ -20,25 +20,25 @@ class USubtitleDisplay : public UWidget
 	GENERATED_UCLASS_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Display Info")
+	UPROPERTY(Category = "Display Info", EditAnywhere)
 	FSubtitleFormat Format;
 
-	UPROPERTY(EditAnywhere, Category = "Display Info")
+	UPROPERTY(Category = "Display Info", EditAnywhere)
 	TObjectPtr<USubtitleDisplayOptions> Options;
 
 	// Whether text wraps onto a new line when it's length exceeds this width; if this value is zero or negative, no wrapping occurs.
-	UPROPERTY(EditAnywhere, Category="Display Info")
+	UPROPERTY(Category = "Display Info", EditAnywhere)
 	float WrapTextAt;
 	
-	UFUNCTION(BlueprintCallable, Category = Subtitles, Meta = (Tooltip = "True if there are subtitles currently.  False if the subtitle text is empty."))
+	UFUNCTION(Category = "Subtitles", BlueprintCallable, Meta = (Tooltip = "True if there are subtitles currently.  False if the subtitle text is empty."))
 	MODULE_API bool HasSubtitles() const;
 
 	/** Preview text to be displayed when designing the widget */
-	UPROPERTY(EditAnywhere, Category="Preview")
+	UPROPERTY(Category = "Preview", EditAnywhere)
 	bool bPreviewMode;
 
 	/** Preview text to be displayed when designing the widget */
-	UPROPERTY(EditAnywhere, Category="Preview")
+	UPROPERTY(Category = "Preview", EditAnywhere)
 	FText PreviewText;
 
 public:

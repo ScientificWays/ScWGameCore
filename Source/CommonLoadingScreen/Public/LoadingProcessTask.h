@@ -17,16 +17,16 @@ class ULoadingProcessTask : public UObject, public ILoadingProcessInterface
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"))
+	UFUNCTION(Category = "Loading", BlueprintCallable, meta = (WorldContext = "WorldContextObject"))
 	static MODULE_API ULoadingProcessTask* CreateLoadingScreenProcessTask(UObject* WorldContextObject, const FString& ShowLoadingScreenReason);
 
 public:
 	ULoadingProcessTask() { }
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Loading", BlueprintCallable)
 	MODULE_API void Unregister();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Loading", BlueprintCallable)
 	MODULE_API void SetShowLoadingScreenReason(const FString& InReason);
 
 	MODULE_API virtual bool ShouldShowLoadingScreen(FString& OutReason) const override;

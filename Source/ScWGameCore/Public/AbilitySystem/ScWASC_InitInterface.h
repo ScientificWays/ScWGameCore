@@ -6,6 +6,8 @@
 
 #include "ScWASC_InitInterface.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI, BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
 class UScWASC_InitInterface : public UInterface
@@ -35,3 +37,5 @@ private:
 	TObjectPtr<class UScWAbilitySystemComponent> PrivateASC;
 //~ End Components | AbilitySystem
 };
+
+#undef MODULE_API

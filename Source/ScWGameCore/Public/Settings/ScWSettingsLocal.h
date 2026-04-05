@@ -315,15 +315,15 @@ public:
 
 public:
 	/** Returns true if this platform can run the auto benchmark */
-	UFUNCTION(BlueprintCallable, Category = Settings)
+	UFUNCTION(Category = "Settings", BlueprintCallable)
 	MODULE_API bool CanRunAutoBenchmark() const;
 
 	/** Returns true if this user should run the auto benchmark as it has never been run */
-	UFUNCTION(BlueprintCallable, Category = Settings)
+	UFUNCTION(Category = "Settings", BlueprintCallable)
 	MODULE_API bool ShouldRunAutoBenchmarkAtStartup() const;
 
 	/** Run the auto benchmark, optionally saving right away */
-	UFUNCTION(BlueprintCallable, Category = Settings)
+	UFUNCTION(Category = "Settings", BlueprintCallable)
 	MODULE_API void RunAutoBenchmark(bool bSaveImmediately);
 
 	/** Apply just the quality scalability settings */

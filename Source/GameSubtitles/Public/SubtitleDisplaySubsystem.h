@@ -28,16 +28,16 @@ public:
 	}
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Display Info")
+	UPROPERTY(Category = "Display Info", EditAnywhere)
 	ESubtitleDisplayTextSize SubtitleTextSize;
 
-	UPROPERTY(EditAnywhere, Category = "Display Info")
+	UPROPERTY(Category = "Display Info", EditAnywhere)
 	ESubtitleDisplayTextColor SubtitleTextColor;
 
-	UPROPERTY(EditAnywhere, Category = "Display Info")
+	UPROPERTY(Category = "Display Info", EditAnywhere)
 	ESubtitleDisplayTextBorder SubtitleTextBorder;
 
-	UPROPERTY(EditAnywhere, Category = "Display Info")
+	UPROPERTY(Category = "Display Info", EditAnywhere)
 	ESubtitleDisplayBackgroundOpacity SubtitleBackgroundOpacity;
 };
 

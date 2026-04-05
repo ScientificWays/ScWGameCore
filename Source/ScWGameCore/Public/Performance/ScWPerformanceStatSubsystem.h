@@ -11,6 +11,8 @@
 
 #include "ScWPerformanceStatSubsystem.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 enum class EScWDisplayablePerformanceStat : uint8;
 
 class FSubsystemCollectionBase;
@@ -161,13 +163,13 @@ protected:
 //////////////////////////////////////////////////////////////////////
 
 // Subsystem to allow access to performance stats for display purposes
-UCLASS(BlueprintType)
+UCLASS(MinimalAPI, BlueprintType, meta = (DisplayName = "[ScW] Performance Stat Subsystem"))
 class UScWPerformanceStatSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Performance", BlueprintCallable)
 	double GetCachedStat(EScWDisplayablePerformanceStat Stat) const;
 
 	const FSampledStatCache* GetCachedStatData(const EScWDisplayablePerformanceStat Stat) const;
@@ -181,3 +183,5 @@ protected:
 	
 	TSharedPtr<FScWPerformanceStatCache> Tracker;
 };
+
+#undef MODULE_API

@@ -107,7 +107,7 @@ private:	// Bound Widgets
 
 private:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnExecuteNamedActionBP, UGameSetting*, Setting, FGameplayTag, Action);
-	UPROPERTY(BlueprintAssignable, Category = Events, meta = (DisplayName = "On Execute Named Action"))
+	UPROPERTY(Category = "Events", BlueprintAssignable, meta = (DisplayName = "On Execute Named Action"))
 	FOnExecuteNamedActionBP BP_OnExecuteNamedAction;
 
 private:

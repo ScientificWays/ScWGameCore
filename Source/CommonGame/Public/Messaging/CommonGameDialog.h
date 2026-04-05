@@ -16,11 +16,11 @@ struct FConfirmationDialogAction
 
 public:
 	/** Required: The dialog option to provide. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Dialog", EditAnywhere, BlueprintReadWrite)
 	ECommonMessagingResult Result = ECommonMessagingResult::Unknown;
 
 	/** Optional: Display Text to use instead of the action name associated with the result. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Dialog", EditAnywhere, BlueprintReadWrite)
 	FText OptionalDisplayText;
 
 	bool operator==(const FConfirmationDialogAction& Other) const
@@ -43,15 +43,15 @@ public:
 
 public:
 	/** The header of the message to display */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Dialog", EditAnywhere, BlueprintReadWrite)
 	FText Header;
-	
+
 	/** The body of the message to display */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Dialog", EditAnywhere, BlueprintReadWrite)
 	FText Body;
 
 	/** The confirm button's input action to use. */
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Category = "Dialog", BlueprintReadWrite)
 	TArray<FConfirmationDialogAction> ButtonActions;
 };
 

@@ -6,6 +6,8 @@
 
 #include "ScWAS_ThirdPersonCamera.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 /**
  *	Attribute set for third-person camera parameters including rotation (pitch, yaw, roll),
  *	spring arm length, and field of view. All attributes are replicated and can be modified
@@ -74,3 +76,5 @@ protected:
 	virtual void OnRep_FieldOfView(const FGameplayAttributeData& InPrevValue);
 //~ End Replication
 };
+
+#undef MODULE_API

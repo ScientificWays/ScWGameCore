@@ -58,55 +58,55 @@ public:
 	MODULE_API UCommonPlayerInputKey(const FObjectInitializer& InObjectInitializer);
 
 	/** Update the key and associated display based on our current Boundaction */
-	UFUNCTION(BlueprintCallable, Category = "Keybind Widget")
+	UFUNCTION(Category = "Keybind Widget", BlueprintCallable)
 	MODULE_API void UpdateKeybindWidget();
 
 	/** Set the bound key for our keybind */
-	UFUNCTION(BlueprintCallable, Category = "Keybind Widget")
+	UFUNCTION(Category = "Keybind Widget", BlueprintCallable)
 	MODULE_API void SetBoundKey(FKey NewBoundAction);
 
 	/** Set the bound action for our keybind */
-	UFUNCTION(BlueprintCallable, Category = "Keybind Widget")
+	UFUNCTION(Category = "Keybind Widget", BlueprintCallable)
 	MODULE_API void SetBoundAction(FName NewBoundAction);
 
 	/** Force this keybind to be a hold keybind */
-	UFUNCTION(BlueprintCallable, Category = "Keybind Widget")
+	UFUNCTION(Category = "Keybind Widget", BlueprintCallable)
 	MODULE_API void SetForcedHoldKeybindStatus(ECommonKeybindForcedHoldStatus InForcedHoldKeybindStatus);
 
 	/** Force this keybind to be a hold keybind */
-	UFUNCTION(BlueprintCallable, Category = "Keybind Widget")
+	UFUNCTION(Category = "Keybind Widget", BlueprintCallable)
 	MODULE_API void SetShowProgressCountDown(bool bShow);
 
 	/** Set the axis scale value for this keybind */
-	UFUNCTION(BlueprintCallable, Category = "Keybind Widget")
+	UFUNCTION(Category = "Keybind Widget", BlueprintCallable)
 	void SetAxisScale(const float NewValue) { AxisScale = NewValue; }
 
 	/** Set the preset name override value for this keybind. */
-	UFUNCTION(BlueprintCallable, Category = "Keybind Widget")
+	UFUNCTION(Category = "Keybind Widget", BlueprintCallable)
 	void SetPresetNameOverride(const FName NewValue) { PresetNameOverride = NewValue; }
 
 	/** Our current BoundAction */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Keybind Widget")
+	UPROPERTY(Category = "Keybind Widget", EditAnywhere, BlueprintReadOnly)
 	FName BoundAction;
 
 	/** Scale to read when using an axis Mapping */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Keybind Widget")
+	UPROPERTY(Category = "Keybind Widget", EditAnywhere, BlueprintReadOnly)
 	float AxisScale;
 
 	/** Key this widget is bound to set directly in blueprint. Used when we want to reference a specific key instead of an action. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Keybind Widget")
+	UPROPERTY(Category = "Keybind Widget", EditAnywhere, BlueprintReadOnly)
 	FKey BoundKeyFallback;
 
 	/** Allows us to set the input type explicitly for the keybind widget. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Keybind Widget")
+	UPROPERTY(Category = "Keybind Widget", EditAnywhere, BlueprintReadWrite)
 	ECommonInputType InputTypeOverride;
 
 	/** Allows us to set the preset name explicitly for the keybind widget. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Keybind Widget")
+	UPROPERTY(Category = "Keybind Widget", EditAnywhere, BlueprintReadWrite)
 	FName PresetNameOverride;
 
 	/** Setting that can show this keybind as a hold or never show it as a hold (even if it is) */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Keybind Widget")
+	UPROPERTY(Category = "Keybind Widget", EditAnywhere, BlueprintReadOnly)
 	ECommonKeybindForcedHoldStatus ForcedHoldKeybindStatus;
 
 	/** Called through a delegate when we start hold progress */
@@ -118,7 +118,7 @@ public:
 	MODULE_API void StopHoldProgress(FName HoldActionName, bool bCompletedSuccessfully);
 
 	/** Get whether this keybind is a hold action. */
-	UFUNCTION(BlueprintCallable, Category = "Keybind Widget")
+	UFUNCTION(Category = "Keybind Widget", BlueprintCallable)
 	bool IsHoldKeybind() const { return bIsHoldKeybind; }
 
 	UFUNCTION()
@@ -134,7 +134,7 @@ protected:
 	MODULE_API virtual void NativeDestruct() override;
 
 	/** Whether or not this keybind widget is currently set to be a hold keybind */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Keybind Widget", meta = (ScriptName = "IsHoldKeybindValue"))
+	UPROPERTY(Category = "Keybind Widget", EditDefaultsOnly, BlueprintReadOnly, meta = (ScriptName = "IsHoldKeybindValue"))
 	bool bIsHoldKeybind;
 
 	/**  */
@@ -144,31 +144,31 @@ protected:
 	UPROPERTY(Transient)
 	FVector2D FrameSize;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Keybind Widget")
+	UPROPERTY(Category = "Keybind Widget", BlueprintReadOnly)
 	bool bShowTimeCountDown;
 
 	/** Derived Key this widget is bound to */
-	UPROPERTY(BlueprintReadOnly, Category = "Keybind Widget")
+	UPROPERTY(Category = "Keybind Widget", BlueprintReadOnly)
 	FKey BoundKey;
 
 	/** Material for showing Progress */
-	UPROPERTY(EditDefaultsOnly, Category = "Keybind Widget")
+	UPROPERTY(Category = "Keybind Widget", EditDefaultsOnly)
 	FSlateBrush HoldProgressBrush;
 
 	/** The key bind text border. */
-	UPROPERTY(EditDefaultsOnly, Category = "Keybind Widget")
+	UPROPERTY(Category = "Keybind Widget", EditDefaultsOnly)
 	FSlateBrush KeyBindTextBorder;
 
 	/** Should this keybinding widget display information that it is currently unbound? */
-	UPROPERTY(EditAnywhere, Category = "Keybind Widget")
+	UPROPERTY(Category = "Keybind Widget", EditAnywhere)
 	bool bShowUnboundStatus = false;
 
 	/** The font to apply at each size */
-	UPROPERTY(EditDefaultsOnly, Category = "Font")
+	UPROPERTY(Category = "Font", EditDefaultsOnly)
 	FSlateFontInfo KeyBindTextFont;
 
 	/** The font to apply at each size */
-	UPROPERTY(EditDefaultsOnly, Category = "Font")
+	UPROPERTY(Category = "Font", EditDefaultsOnly)
 	FSlateFontInfo CountdownTextFont;
 
 	UPROPERTY(Transient)
@@ -184,7 +184,7 @@ protected:
 	FVector2D KeybindFrameMinimumSize;
 
 	/** The material parameter name for hold percentage in the HoldKeybindImage */
-	UPROPERTY(EditDefaultsOnly, Category = "Keybind Widget")
+	UPROPERTY(Category = "Keybind Widget", EditDefaultsOnly)
 	FName PercentageMaterialParameterName;	
 
 	/** MID for the progress percentage */

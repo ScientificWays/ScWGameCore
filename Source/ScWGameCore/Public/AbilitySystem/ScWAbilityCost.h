@@ -7,6 +7,8 @@
 #include "Abilities/GameplayAbility.h"
 #include "ScWAbilityCost.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 class UScWGameplayAbility;
 
 /**
@@ -53,6 +55,8 @@ public:
 
 protected:
 	/** If true, this cost should only be applied if this ability hits successfully */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Costs")
+	UPROPERTY(Category = "Costs", EditAnywhere, BlueprintReadOnly)
 	bool bOnlyApplyCostOnHit = false;
 };
+
+#undef MODULE_API

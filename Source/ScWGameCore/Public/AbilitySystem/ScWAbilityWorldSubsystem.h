@@ -51,16 +51,16 @@ class UScWAbilityWorldSubsystem : public UWorldSubsystem
 public:
 	UScWAbilityWorldSubsystem();
 
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="ScW")
+	UFUNCTION(Category = "ScW", BlueprintCallable, BlueprintAuthorityOnly)
 	void ApplyAbilityToAll(TSubclassOf<UGameplayAbility> Ability);
 
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="ScW")
+	UFUNCTION(Category = "ScW", BlueprintCallable, BlueprintAuthorityOnly)
 	void ApplyEffectToAll(TSubclassOf<UGameplayEffect> Effect);
 
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "ScW")
+	UFUNCTION(Category = "ScW", BlueprintCallable, BlueprintAuthorityOnly)
 	void RemoveAbilityFromAll(TSubclassOf<UGameplayAbility> Ability);
 
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "ScW")
+	UFUNCTION(Category = "ScW", BlueprintCallable, BlueprintAuthorityOnly)
 	void RemoveEffectFromAll(TSubclassOf<UGameplayEffect> Effect);
 
 	/** Register an ASC with global system and apply any active global effects/abilities. */

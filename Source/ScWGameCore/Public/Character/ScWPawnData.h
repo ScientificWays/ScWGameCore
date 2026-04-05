@@ -44,7 +44,7 @@ public:
 public:
 
 	// Class to instantiate for this pawn (should usually derive from AScWPawn or AScWCharacter).
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pawn Data")
+	UPROPERTY(Category = "Pawn Data", EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<APawn> PawnClass;
 
 	UFUNCTION(Category = "Pawn Data", BlueprintCallable, meta = (DeterminesOutputType = "InTypeClass"))

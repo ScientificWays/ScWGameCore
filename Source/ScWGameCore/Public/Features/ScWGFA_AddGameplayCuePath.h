@@ -6,6 +6,8 @@
 #include "UObject/SoftObjectPath.h"
 #include "ScWGFA_AddGameplayCuePath.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 /**
  * GameFeatureAction responsible for adding gameplay cue paths to the gameplay cue manager.
  *
@@ -30,6 +32,8 @@ public:
 
 private:
 	/** List of paths to register to the gameplay cue manager. These are relative tot he game content directory */
-	UPROPERTY(EditAnywhere, Category = "Game Feature | Gameplay Cues", meta = (RelativeToGameContentDir, LongPackageName))
+	UPROPERTY(Category = "Game Feature | Gameplay Cues", EditAnywhere, meta = (RelativeToGameContentDir, LongPackageName))
 	TArray<FDirectoryPath> DirectoryPathsToAdd;
 };
+
+#undef MODULE_API

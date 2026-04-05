@@ -34,42 +34,42 @@ public:
 	UFUNCTION(Category = "Global UI Extensions", BlueprintCallable, meta = (CallableWithoutWorldContext, DefaultToSelf = "InPlayerContext"))
 	static MODULE_API const ULocalPlayer* GetLocalPlayerFromContext(const UObject* InPlayerContext);
 
-	UFUNCTION(BlueprintPure, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext, DefaultToSelf = "InPlayerContext"))
+	UFUNCTION(Category = "Global UI Extensions", BlueprintPure, BlueprintCosmetic, meta = (CallableWithoutWorldContext, DefaultToSelf = "InPlayerContext"))
 	static MODULE_API ECommonInputType GetOwningPlayerInputType(const UObject* InPlayerContext);
 
 	UFUNCTION(Category = "Global UI Extensions", BlueprintCallable, meta = (CallableWithoutWorldContext, DefaultToSelf = "InPlayerContext", ExpandEnumAsExecs = "ReturnValue"))
 	static MODULE_API ECommonInputType SwitchOnPlayerInputType(const UObject* InPlayerContext);
 
-	UFUNCTION(BlueprintPure, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext, DefaultToSelf = "InPlayerContext"))
+	UFUNCTION(Category = "Global UI Extensions", BlueprintPure, BlueprintCosmetic, meta = (CallableWithoutWorldContext, DefaultToSelf = "InPlayerContext"))
 	static MODULE_API bool IsOwningPlayerUsingTouch(const UObject* InPlayerContext);
 
-	UFUNCTION(BlueprintPure, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext, DefaultToSelf = "InPlayerContext"))
+	UFUNCTION(Category = "Global UI Extensions", BlueprintPure, BlueprintCosmetic, meta = (CallableWithoutWorldContext, DefaultToSelf = "InPlayerContext"))
 	static MODULE_API bool IsOwningPlayerUsingGamepad(const UObject* InPlayerContext);
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext, DeterminesOutputType = InWidgetClass))
+	UFUNCTION(Category = "Global UI Extensions", BlueprintCallable, BlueprintCosmetic, meta = (CallableWithoutWorldContext, DeterminesOutputType = InWidgetClass))
 	static MODULE_API UCommonActivatableWidget* PushContentToLayer_ForPlayer(const ULocalPlayer* InLocalPlayer, UPARAM(meta = (Categories = "UI.Layer")) FGameplayTag InLayerTag, UPARAM(meta = (AllowAbstract = false)) TSubclassOf<UCommonActivatableWidget> InWidgetClass);
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions", meta = (WorldContext = "InWCO", DeterminesOutputType = InWidgetClass))
+	UFUNCTION(Category = "Global UI Extensions", BlueprintCallable, BlueprintCosmetic, meta = (WorldContext = "InWCO", DeterminesOutputType = InWidgetClass))
 	static MODULE_API UCommonActivatableWidget* PushContentToLayer_ForPlayerByIndex(UObject* InWCO, int32 InIndex, UPARAM(meta = (Categories = "UI.Layer")) FGameplayTag InLayerTag, UPARAM(meta = (AllowAbstract = false)) TSubclassOf<UCommonActivatableWidget> InWidgetClass);
 
-	//UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext, DeterminesOutputType = InWidgetClass))
+	//UFUNCTION(Category = "Global UI Extensions", BlueprintCallable, BlueprintCosmetic, meta = (CallableWithoutWorldContext, DeterminesOutputType = InWidgetClass))
 	//static MODULE_API UCommonActivatableWidget* PushContentToLayerAndInit_ForPlayer(const ULocalPlayer* InLocalPlayer, UPARAM(meta = (Categories = "UI.Layer")) FGameplayTag InLayerTag, UPARAM(meta = (AllowAbstract = false)) TSubclassOf<UCommonActivatableWidget> InWidgetClass, FCommonUIInitInstanceSignature InInitInstanceFunc);
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext))
+	UFUNCTION(Category = "Global UI Extensions", BlueprintCallable, BlueprintCosmetic, meta = (CallableWithoutWorldContext))
 	static MODULE_API void PushStreamedContentToLayer_ForPlayer(const ULocalPlayer* InLocalPlayer, UPARAM(meta = (Categories = "UI.Layer")) FGameplayTag InLayerTag, UPARAM(meta = (AllowAbstract = false)) TSoftClassPtr<UCommonActivatableWidget> InWidgetClass);
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext, DefaultToSelf = "InActivatableWidget"))
+	UFUNCTION(Category = "Global UI Extensions", BlueprintCallable, BlueprintCosmetic, meta = (CallableWithoutWorldContext, DefaultToSelf = "InActivatableWidget"))
 	static MODULE_API void PopContentFromLayer(UCommonActivatableWidget* InActivatableWidget);
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext))
+	UFUNCTION(Category = "Global UI Extensions", BlueprintCallable, BlueprintCosmetic, meta = (CallableWithoutWorldContext))
 	static MODULE_API ULocalPlayer* GetLocalPlayerFromController(APlayerController* PlayerController);
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext))
+	UFUNCTION(Category = "Global UI Extensions", BlueprintCallable, BlueprintCosmetic, meta = (CallableWithoutWorldContext))
 	static MODULE_API FName SuspendInputForPlayer(APlayerController* PlayerController, FName SuspendReason);
 
 	static MODULE_API FName SuspendInputForPlayer(ULocalPlayer* InLocalPlayer, FName SuspendReason);
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Global UI Extensions", meta = (CallableWithoutWorldContext))
+	UFUNCTION(Category = "Global UI Extensions", BlueprintCallable, BlueprintCosmetic, meta = (CallableWithoutWorldContext))
 	static MODULE_API void ResumeInputForPlayer(APlayerController* PlayerController, FName SuspendToken);
 
 	static MODULE_API void ResumeInputForPlayer(ULocalPlayer* InLocalPlayer, FName SuspendToken);

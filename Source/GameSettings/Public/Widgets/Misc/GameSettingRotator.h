@@ -24,7 +24,7 @@ public:
 	MODULE_API void SetDefaultOption(int32 DefaultOptionIndex);
 
 protected:
-	UFUNCTION(BlueprintImplementableEvent, Category = Events, meta = (DisplayName = "On Default Option Specified"))
+	UFUNCTION(BlueprintImplementableEvent, Category = "Events", meta = (DisplayName = "On Default Option Specified"))
 	MODULE_API void BP_OnDefaultOptionSpecified(int32 DefaultOptionIndex);
 };
 

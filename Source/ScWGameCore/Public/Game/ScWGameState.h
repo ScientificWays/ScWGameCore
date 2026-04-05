@@ -73,7 +73,7 @@ private:
 	TObjectPtr<class UScWExperienceManagerComponent> ExperienceManagerComponent;
 
 	// The ability system component subobject for game-wide things (primarily gameplay cues)
-	UPROPERTY(VisibleAnywhere, Category = "ScW | GameState")
+	UPROPERTY(Category = "ScW | GameState", VisibleAnywhere)
 	TObjectPtr<class UScWAbilitySystemComponent> AbilitySystemComponent;
 
 protected:

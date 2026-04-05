@@ -19,7 +19,7 @@ class UGameResponsivePanel : public UPanelWidget
 	GENERATED_UCLASS_BODY()
 
 	/**  */
-	UFUNCTION(BlueprintCallable, Category="Widget")
+	UFUNCTION(Category = "Widget", BlueprintCallable)
 	UGameResponsivePanelSlot* AddChildToGameResponsivePanel(UWidget* Content);
 
 #if WITH_EDITOR
@@ -30,7 +30,7 @@ class UGameResponsivePanel : public UPanelWidget
 
 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Behavior")
+	UPROPERTY(Category = "Behavior", EditAnywhere, BlueprintReadOnly)
 	bool bCanStackVertically = true;
 
 protected:

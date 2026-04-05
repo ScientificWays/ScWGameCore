@@ -22,14 +22,14 @@ public:
 	/** UGameSettingValueDiscrete */
 	MODULE_API virtual void SetDiscreteOptionByIndex(int32 Index) PURE_VIRTUAL(,);
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Settings", BlueprintCallable)
 	MODULE_API virtual int32 GetDiscreteOptionIndex() const PURE_VIRTUAL(,return INDEX_NONE;);
 
 	/** Optional */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Settings", BlueprintCallable)
 	virtual int32 GetDiscreteOptionDefaultIndex() const { return INDEX_NONE; }
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Settings", BlueprintCallable)
 	MODULE_API virtual TArray<FText> GetDiscreteOptions() const PURE_VIRTUAL(,return TArray<FText>(););
 
 	MODULE_API virtual FString GetAnalyticsValue() const;

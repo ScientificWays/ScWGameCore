@@ -10,6 +10,8 @@
 
 #include "SubtitleDisplayOptions.generated.h"
 
+#define MODULE_API GAMESUBTITLES_API
+
 UENUM()
 enum class ESubtitleDisplayTextSize : uint8
 {
@@ -61,21 +63,23 @@ public:
 	USubtitleDisplayOptions() { }
 
 public:
-	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
+	UPROPERTY(Category = "Display Info", EditDefaultsOnly)
 	FSlateFontInfo Font;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
+	UPROPERTY(Category = "Display Info", EditDefaultsOnly)
 	int32 DisplayTextSizes[(int32)ESubtitleDisplayTextSize::ESubtitleDisplayTextSize_MAX];
 
-	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
+	UPROPERTY(Category = "Display Info", EditDefaultsOnly)
 	FLinearColor DisplayTextColors[(int32)ESubtitleDisplayTextColor::ESubtitleDisplayTextColor_MAX];
 
-	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
+	UPROPERTY(Category = "Display Info", EditDefaultsOnly)
 	float DisplayBorderSize[(int32)ESubtitleDisplayTextBorder::ESubtitleDisplayTextBorder_MAX];
 
-	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
+	UPROPERTY(Category = "Display Info", EditDefaultsOnly)
 	float DisplayBackgroundOpacity[(int32)ESubtitleDisplayBackgroundOpacity::ESubtitleDisplayBackgroundOpacity_MAX];
 
-	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
+	UPROPERTY(Category = "Display Info", EditDefaultsOnly)
 	FSlateBrush BackgroundBrush;
 };
+
+#undef MODULE_API

@@ -151,19 +151,19 @@ public:
 protected:
 
 	// Loose gameplay tags to grant when this ability set is given.
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Tags")
+	UPROPERTY(Category = "Gameplay Tags", EditDefaultsOnly)
 	FGameplayTagContainer GrantedLooseGameplayTags;
 
 	// Gameplay abilities to grant when this ability set is given.
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta = (TitleProperty=Ability))
+	UPROPERTY(Category = "Gameplay Abilities", EditDefaultsOnly, meta = (TitleProperty=Ability))
 	TArray<FScWAbilitySet_GameplayAbility> GrantedGameplayAbilities;
 
 	// Gameplay effects to grant when this ability set is given.
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta = (TitleProperty=GameplayEffect))
+	UPROPERTY(Category = "Gameplay Effects", EditDefaultsOnly, meta = (TitleProperty=GameplayEffect))
 	TArray<FScWAbilitySet_GameplayEffect> GrantedGameplayEffects;
 
 	// Attribute sets to grant when this ability set is given.
-	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta = (TitleProperty=AttributeSet))
+	UPROPERTY(Category = "Attribute Sets", EditDefaultsOnly, meta = (TitleProperty=AttributeSet))
 	TArray<FScWAbilitySet_AttributeSet> GrantedAttributes;
 };
 

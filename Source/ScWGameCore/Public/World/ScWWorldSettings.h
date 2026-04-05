@@ -11,7 +11,7 @@
 /**
  * The default world settings object, used primarily to set the default experience to use when playing on this map
  */
-UCLASS(MinimalAPI)
+UCLASS(MinimalAPI, meta = (DisplayName = "[ScW] World Settings"))
 class AScWWorldSettings : public AWorldSettings
 {
 	GENERATED_BODY()

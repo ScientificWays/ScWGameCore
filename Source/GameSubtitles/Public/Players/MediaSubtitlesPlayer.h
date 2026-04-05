@@ -29,7 +29,7 @@ class UMediaSubtitlesPlayer
 public:
 
 	/** The subtitles to use for this player. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Subtitles Source")
+	UPROPERTY(Category = "Subtitles Source", EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UOverlays> SourceSubtitles;
 
 public:
@@ -37,19 +37,19 @@ public:
 	MODULE_API virtual void BeginDestroy() override;
 
 	/** Begins playing the currently set subtitles. */
-	UFUNCTION(BlueprintCallable, Category="Game Subtitles|Subtitles Player")
+	UFUNCTION(Category = "Game Subtitles|Subtitles Player", BlueprintCallable)
 	MODULE_API void Play();
 
 	/** Stops the subtitle player. */
-	UFUNCTION(BlueprintCallable, Category="Game Subtitles|Subtitles Player")
+	UFUNCTION(Category = "Game Subtitles|Subtitles Player", BlueprintCallable)
 	MODULE_API void Stop();
 
 	/** Sets the source with the new subtitles set. */
-	UFUNCTION(BlueprintCallable, Category="Game Subtitles|Subtitles Player")
+	UFUNCTION(Category = "Game Subtitles|Subtitles Player", BlueprintCallable)
 	MODULE_API void SetSubtitles(UOverlays* Subtitles);
 
 	/** Binds the subtitle playback to the tick of a media player. */
-	UFUNCTION(BlueprintCallable, Category="Game Subtitles|Subtitles Player")
+	UFUNCTION(Category = "Game Subtitles|Subtitles Player", BlueprintCallable)
 	MODULE_API void BindToMediaPlayer(UMediaPlayer* InMediaPlayer);
 
 public:

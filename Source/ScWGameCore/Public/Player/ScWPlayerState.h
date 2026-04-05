@@ -55,10 +55,10 @@ public:
 
 	AScWPlayerState(const FObjectInitializer& InObjectInitializer);
 
-	UFUNCTION(BlueprintCallable, Category = "ScW|PlayerState")
+	UFUNCTION(Category = "ScW|PlayerState", BlueprintCallable)
 	MODULE_API AScWPlayerController* GetScWPlayerController() const;
 
-	UFUNCTION(BlueprintCallable, Category = "ScW|PlayerState")
+	UFUNCTION(Category = "ScW|PlayerState", BlueprintCallable)
 	UScWAbilitySystemComponent* GetScWAbilitySystemComponent() const { return AbilitySystemComponent; }
 	MODULE_API virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
@@ -104,7 +104,7 @@ protected:
 	EScWPlayerConnectionType GetPlayerConnectionType() const { return MyPlayerConnectionType; }
 
 	/** Returns the Squad ID of the squad the player belongs to. */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "ScW|PlayerState", BlueprintCallable)
 	int32 GetSquadId() const
 	{
 		return MySquadID;
@@ -113,19 +113,19 @@ protected:
 	MODULE_API void SetSquadID(int32 NewSquadID);
 
 	// Adds a specified number of stacks to the tag (does nothing if StackCount is below 1)
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Stats")
+	UFUNCTION(Category = "Stats", BlueprintCallable, BlueprintAuthorityOnly)
 	MODULE_API void AddStatTagStack(FGameplayTag Tag, int32 StackCount);
 
 	// Removes a specified number of stacks from the tag (does nothing if StackCount is below 1)
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Stats")
+	UFUNCTION(Category = "Stats", BlueprintCallable, BlueprintAuthorityOnly)
 	MODULE_API void RemoveStatTagStack(FGameplayTag Tag, int32 StackCount);
 
 	// Returns the stack count of the specified tag (or 0 if the tag is not present)
-	UFUNCTION(BlueprintCallable, Category = "Stats")
+	UFUNCTION(Category = "Stats", BlueprintCallable)
 	MODULE_API int32 GetStatTagStackCount(FGameplayTag Tag) const;
 
 	// Returns true if there is at least one stack of the specified tag
-	UFUNCTION(BlueprintCallable, Category = "Stats")
+	UFUNCTION(Category = "Stats", BlueprintCallable)
 	MODULE_API bool HasStatTag(FGameplayTag Tag) const;
 
 	// Send a message to just this player
@@ -155,7 +155,7 @@ protected:
 private:
 
 	// The ability system component sub-object used by player characters.
-	UPROPERTY(VisibleAnywhere, Category = "ScW|PlayerState")
+	UPROPERTY(Category = "ScW|PlayerState", VisibleAnywhere)
 	TObjectPtr<UScWAbilitySystemComponent> AbilitySystemComponent;
 
 	// Health attribute set used by this actor.

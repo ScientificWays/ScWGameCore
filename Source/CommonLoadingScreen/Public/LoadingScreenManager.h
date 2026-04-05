@@ -44,7 +44,7 @@ public:
 	MODULE_API virtual UWorld* GetTickableGameObjectWorld() const override;
 	//~End of FTickableObjectBase interface
 
-	UFUNCTION(BlueprintCallable, Category=LoadingScreen)
+	UFUNCTION(Category = "LoadingScreen", BlueprintCallable)
 	FString GetDebugReasonForShowingOrHidingLoadingScreen() const
 	{
 		return DebugReasonForShowingOrHidingLoadingScreen;

@@ -18,16 +18,16 @@ struct FReceivedDamageData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Damage", EditAnywhere, BlueprintReadWrite)
 	FHitResult HitResult = FHitResult();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Damage", EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<const class UScWDamageType> DamageType = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Damage", EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<AActor> Source = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Damage", EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<AController> Instigator = nullptr;
 
 	FReceivedDamageData(const FHitResult& InHitResult = FHitResult(), const class UScWDamageType* InDamageType = nullptr, AActor* InSource = nullptr, AController* InInstigator = nullptr)
@@ -45,10 +45,10 @@ struct FGameplayMessage_Damage
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Damage", EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UScWAttributeHealthComponent> HealthComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Damage", EditAnywhere, BlueprintReadWrite)
 	FReceivedDamageData DamageData;
 };
 
@@ -60,7 +60,7 @@ struct FGameplayMessage_Died
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Death", EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UScWAttributeHealthComponent> HealthComponent;
 };
 

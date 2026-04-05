@@ -16,23 +16,23 @@ struct FScWAbilityTagRelationship
 	GENERATED_BODY()
 
 	/** The tag that this container relationship is about. Single tag, but abilities can have multiple of these */
-	UPROPERTY(EditAnywhere, Category = Ability, meta = (Categories = "Gameplay.Action"))
+	UPROPERTY(Category = "Ability", EditAnywhere, meta = (Categories = "Gameplay.Action"))
 	FGameplayTag AbilityTag;
 
 	/** The other ability tags that will be blocked by any ability using this tag */
-	UPROPERTY(EditAnywhere, Category = Ability)
+	UPROPERTY(Category = "Ability", EditAnywhere)
 	FGameplayTagContainer AbilityTagsToBlock;
 
 	/** The other ability tags that will be canceled by any ability using this tag */
-	UPROPERTY(EditAnywhere, Category = Ability)
+	UPROPERTY(Category = "Ability", EditAnywhere)
 	FGameplayTagContainer AbilityTagsToCancel;
 
 	/** If an ability has the tag, this is implicitly added to the activation required tags of the ability */
-	UPROPERTY(EditAnywhere, Category = Ability)
+	UPROPERTY(Category = "Ability", EditAnywhere)
 	FGameplayTagContainer ActivationRequiredTags;
 
 	/** If an ability has the tag, this is implicitly added to the activation blocked tags of the ability */
-	UPROPERTY(EditAnywhere, Category = Ability)
+	UPROPERTY(Category = "Ability", EditAnywhere)
 	FGameplayTagContainer ActivationBlockedTags;
 };
 
@@ -45,7 +45,7 @@ class UScWAbilityTagRelationshipMapping : public UDataAsset
 
 private:
 	/** The list of relationships between different gameplay tags (which ones block or cancel others) */
-	UPROPERTY(EditAnywhere, Category = Ability, meta = (TitleProperty="AbilityTag"))
+	UPROPERTY(Category = "Ability", EditAnywhere, meta = (TitleProperty = "AbilityTag"))
 	TArray<FScWAbilityTagRelationship> AbilityTagRelationships;
 
 public:

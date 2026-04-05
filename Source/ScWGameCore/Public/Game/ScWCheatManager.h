@@ -6,6 +6,8 @@
 
 #include "ScWCheatManager.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 class UScWAbilitySystemComponent;
 
 #ifndef USING_CHEAT_MANAGER
@@ -105,3 +107,5 @@ protected:
 
 	UScWAbilitySystemComponent* GetPlayerAbilitySystemComponent() const;
 };
+
+#undef MODULE_API

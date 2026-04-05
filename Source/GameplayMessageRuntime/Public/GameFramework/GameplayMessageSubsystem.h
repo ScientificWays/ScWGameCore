@@ -207,7 +207,7 @@ protected:
 	 * @param Channel			The message channel to broadcast on
 	 * @param Message			The message to send (must be the same type of UScriptStruct expected by the listeners for this channel, otherwise an error will be logged)
 	 */
-	UFUNCTION(BlueprintCallable, CustomThunk, Category=Messaging, meta = (CustomStructureParam="Message", AllowAbstract="false", DisplayName="Broadcast Message"))
+	UFUNCTION(Category = "Messaging", BlueprintCallable, CustomThunk, meta = (CustomStructureParam="Message", AllowAbstract="false", DisplayName="Broadcast Message"))
 	MODULE_API void K2_BroadcastMessage(FGameplayTag Channel, const int32& Message);
 
 	DECLARE_FUNCTION(execK2_BroadcastMessage);

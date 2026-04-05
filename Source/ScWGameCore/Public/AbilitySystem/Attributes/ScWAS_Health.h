@@ -6,6 +6,8 @@
 
 #include "ScWAS_Health.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 /**
  *	Attribute set that manages character health and maximum health values.
  *	Health is clamped between zero and HealthMax, and both attributes are replicated.
@@ -52,3 +54,5 @@ protected:
 	virtual void OnRep_HealthMax(const FGameplayAttributeData& InPrevValue);
 //~ End Replication
 };
+
+#undef MODULE_API

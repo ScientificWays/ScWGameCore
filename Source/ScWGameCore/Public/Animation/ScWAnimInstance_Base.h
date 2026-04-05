@@ -8,6 +8,8 @@
 
 #include "ScWAnimInstance_Base.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 /**
  *	Abstract base animation instance that provides common gameplay state tracking, holster/alternative
  *	pose toggling, idle animation control, and automatic gameplay tag to blueprint property mapping.
@@ -94,7 +96,9 @@ public:
 
 	// Gameplay tags that can be mapped to blueprint variables. The variables will automatically update as the tags are added or removed.
 	// These should be used instead of manually querying for the gameplay tags.
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Tags")
+	UPROPERTY(Category = "Gameplay Tags", EditDefaultsOnly)
 	FGameplayTagBlueprintPropertyMap GameplayTagPropertyMap;
 //~ End Gameplay Tags
 };
+
+#undef MODULE_API

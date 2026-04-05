@@ -29,10 +29,10 @@ public:
 
 	AScWGameMode(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
-	UFUNCTION(BlueprintCallable, Category = "ScW | Pawn")
+	UFUNCTION(Category = "ScW | Pawn", BlueprintCallable)
 	MODULE_API const class UScWPawnData* GetPawnDataForController(const AController* InController) const;
 
-//~AGameModeBase interface
+//~ AGameModeBase interface
 	MODULE_API virtual void InitGame(const FString& InMapName, const FString& InOptions, FString& InErrorMessage) override; // AGameModeBase
 	MODULE_API virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override; // AGameModeBase
 	MODULE_API virtual APawn* SpawnDefaultPawnAtTransform_Implementation(AController* InNewPlayer, const FTransform& InSpawnTransform) override; // AGameModeBase
@@ -46,7 +46,7 @@ public:
 	MODULE_API virtual void GenericPlayerInitialization(AController* NewPlayer) override; // AGameModeBase
 	MODULE_API virtual void FailedToRestartPlayer(AController* NewPlayer) override; // AGameModeBase
 	MODULE_API virtual void StartToLeaveMap() override; // AGameModeBase
-//~End of AGameModeBase interface
+//~ End of AGameModeBase interface
 
 	UFUNCTION(Category = "Initialize", BlueprintImplementableEvent, meta = (DisplayName = "Post Init Game"))
 	void BP_PostInitGame(const FString& InMapName, const FString& InOptions, const FString& InErrorMessage);
@@ -56,7 +56,7 @@ public:
 
 	// Restart (respawn) the specified player or bot next frame
 	// - If bForceReset is true, the controller will be reset this frame (abandoning the currently possessed pawn, if any)
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "ScW | Pawn", BlueprintCallable)
 	MODULE_API void RequestPlayerRestartNextFrame(AController* InController, bool bForceReset = false);
 
 	// Agnostic version of PlayerCanRestart that can be used for both player bots and players

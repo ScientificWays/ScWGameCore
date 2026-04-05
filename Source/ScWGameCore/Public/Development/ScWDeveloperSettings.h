@@ -58,35 +58,35 @@ public:
 
 public:
 	// The experience override to use for Play in Editor (if not set, the default for the world settings of the open map will be used)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Config, Category = "ScW", meta = (AllowedTypes="ScWExperience"))
+	UPROPERTY(Category = "ScW", EditDefaultsOnly, BlueprintReadOnly, Config, meta = (AllowedTypes="ScWExperience"))
 	FPrimaryAssetId ExperienceOverride;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Config, Category = "ScWBots", meta = (InlineEditConditionToggle))
+	UPROPERTY(Category = "ScWBots", EditDefaultsOnly, BlueprintReadOnly, Config, meta = (InlineEditConditionToggle))
 	bool bOverrideBotCount = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Config, Category = "ScWBots", meta = (EditCondition=bOverrideBotCount))
+	UPROPERTY(Category = "ScWBots", EditDefaultsOnly, BlueprintReadOnly, Config, meta = (EditCondition=bOverrideBotCount))
 	int32 OverrideNumPlayerBotsToSpawn = 0;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Config, Category = "ScWBots")
+	UPROPERTY(Category = "ScWBots", EditDefaultsOnly, BlueprintReadOnly, Config)
 	bool bAllowPlayerBotsToAttack = true;
 
 	// Do the full game flow when playing in the editor, or skip 'waiting for player' / etc... game phases?
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Config, Category = "ScW")
+	UPROPERTY(Category = "ScW", EditDefaultsOnly, BlueprintReadOnly, Config)
 	bool bTestFullGameFlowInPIE = false;
 
 	/**
 	* Should force feedback effects be played, even if the last input device was not a gamepad?
 	* The default behavior in ScW is to only play force feedback if the most recent input device was a gamepad.
 	*/
-	UPROPERTY(config, EditAnywhere, Category = "ScW", meta = (ConsoleVariable = "ScWPC.ShouldAlwaysPlayForceFeedback"))
+	UPROPERTY(Category = "ScW", config, EditAnywhere, meta = (ConsoleVariable = "ScWPC.ShouldAlwaysPlayForceFeedback"))
 	bool bShouldAlwaysPlayForceFeedback = false;
 
 	// Should game logic load cosmetic backgrounds in the editor or skip them for iteration speed?
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Config, Category = "ScW")
+	UPROPERTY(Category = "ScW", EditDefaultsOnly, BlueprintReadOnly, Config)
 	bool bSkipLoadingCosmeticBackgroundsInPIE = false;
 
 	// List of cheats to auto-run during 'play in editor'
-	UPROPERTY(config, EditAnywhere, Category = "ScW")
+	UPROPERTY(Category = "ScW", config, EditAnywhere)
 	TArray<FScWCheatToRun> CheatsToRun;
 	
 	// Should messages broadcast through the gameplay message subsystem be logged?
@@ -95,7 +95,7 @@ public:
 
 #if WITH_EDITORONLY_DATA
 	/** A list of common maps that will be accessible via the editor detoolbar */
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Maps", meta = (AllowedClasses = "/Script/Engine.World"))
+	UPROPERTY(Category = "Maps", config, EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "/Script/Engine.World"))
 	TArray<FSoftObjectPath> CommonEditorMaps;
 #endif
 	

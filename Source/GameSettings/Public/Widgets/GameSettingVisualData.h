@@ -20,7 +20,7 @@ struct FGameSettingClassExtensions
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = Extensions)
+	UPROPERTY(Category = "Extensions", EditAnywhere)
 	TArray<TSoftClassPtr<UGameSettingDetailExtension>> Extensions;
 };
 
@@ -30,10 +30,10 @@ struct FGameSettingNameExtensions
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = Extensions)
+	UPROPERTY(Category = "Extensions", EditAnywhere)
 	bool bIncludeClassDefaultExtensions = false;
 
-	UPROPERTY(EditAnywhere, Category = Extensions)
+	UPROPERTY(Category = "Extensions", EditAnywhere)
 	TArray<TSoftClassPtr<UGameSettingDetailExtension>> Extensions;
 };
 
@@ -54,16 +54,16 @@ protected:
 	MODULE_API virtual TSubclassOf<UGameSettingListEntryBase> GetCustomEntryForSetting(UGameSetting* InSetting);
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = ListEntries, meta = (AllowAbstract))
+	UPROPERTY(Category = "ListEntries", EditDefaultsOnly, meta = (AllowAbstract))
 	TMap<TSubclassOf<UGameSetting>, TSubclassOf<UGameSettingListEntryBase>> EntryWidgetForClass;
 
-	UPROPERTY(EditDefaultsOnly, Category = ListEntries, meta = (AllowAbstract))
+	UPROPERTY(Category = "ListEntries", EditDefaultsOnly, meta = (AllowAbstract))
 	TMap<FName, TSubclassOf<UGameSettingListEntryBase>> EntryWidgetForName;
 
-	UPROPERTY(EditDefaultsOnly, Category = Extensions, meta = (AllowAbstract))
+	UPROPERTY(Category = "Extensions", EditDefaultsOnly, meta = (AllowAbstract))
 	TMap<TSubclassOf<UGameSetting>, FGameSettingClassExtensions> ExtensionsForClasses;
 
-	UPROPERTY(EditDefaultsOnly, Category = Extensions)
+	UPROPERTY(Category = "Extensions", EditDefaultsOnly)
 	TMap<FName, FGameSettingNameExtensions> ExtensionsForName;
 };
 

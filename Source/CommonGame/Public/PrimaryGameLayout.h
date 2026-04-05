@@ -119,7 +119,7 @@ public:
 protected:
 
 	/** Register a layer that widgets can be pushed onto. */
-	UFUNCTION(BlueprintCallable, Category="Layer")
+	UFUNCTION(Category = "Layer", BlueprintCallable)
 	MODULE_API void RegisterLayer(UPARAM(meta = (Categories = "UI.Layer")) FGameplayTag LayerTag, UCommonActivatableWidgetContainerBase* LayerWidget);
 	
 	MODULE_API virtual void OnIsDormantChanged();

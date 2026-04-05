@@ -60,7 +60,7 @@ public:
 	MODULE_API void SetPawnData(const UScWPawnData* InPawnData);
 
 	/** Gets the current ability system component, which may be owned by a different actor */
-	UFUNCTION(BlueprintPure, Category = "ScW | Pawn")
+	UFUNCTION(Category = "ScW | Pawn", BlueprintPure)
 	UScWAbilitySystemComponent* GetScWAbilitySystemComponent() const { return AbilitySystemComponent; }
 
 	/** Should be called by the owning pawn to become the avatar of the ability system. */

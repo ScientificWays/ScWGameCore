@@ -7,6 +7,8 @@
 #include "UObject/UnrealType.h"
 #include "ScWInputModifiers.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 struct FInputActionValue;
 
 class FProperty;
@@ -25,23 +27,23 @@ class UScWSettingBasedScalar : public UInputModifier
 public:
 
 	// Name of the property that will be used to clamp the X Axis of this value
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
+	UPROPERTY(Category = "Settings", EditInstanceOnly, BlueprintReadWrite)
 	FName XAxisScalarSettingName = NAME_None;
 
 	// Name of the property that will be used to clamp the Y Axis of this value
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
+	UPROPERTY(Category = "Settings", EditInstanceOnly, BlueprintReadWrite)
 	FName YAxisScalarSettingName = NAME_None;
 
 	// Name of the property that will be used to clamp the Z Axis of this value
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
+	UPROPERTY(Category = "Settings", EditInstanceOnly, BlueprintReadWrite)
 	FName ZAxisScalarSettingName = NAME_None;
 	
 	// Set the maximium value of this setting on each axis
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
+	UPROPERTY(Category = "Settings", EditInstanceOnly, BlueprintReadWrite)
 	FVector MaxValueClamp = FVector(10.0, 10.0, 10.0);
 	
 	// Set the minimum value of this setting on each axis
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
+	UPROPERTY(Category = "Settings", EditInstanceOnly, BlueprintReadWrite)
 	FVector MinValueClamp = FVector::ZeroVector;
 
 protected:
@@ -72,15 +74,15 @@ class UScWInputModifierDeadZone : public UInputModifier
 
 public:
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings, Config)
+	UPROPERTY(Category = "Settings", EditInstanceOnly, BlueprintReadWrite, Config)
 	EDeadZoneType Type = EDeadZoneType::Radial;
 	
 	// Threshold above which input is clamped to 1
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings, Config)
+	UPROPERTY(Category = "Settings", EditInstanceOnly, BlueprintReadWrite, Config)
 	float UpperThreshold = 1.0f;
 
 	/** Which stick this deadzone is for. This controls which setting will be used when calculating the deadzone */
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings, Config)
+	UPROPERTY(Category = "Settings", EditInstanceOnly, BlueprintReadWrite, Config)
 	EDeadzoneStick DeadzoneStick = EDeadzoneStick::MoveStick;
 
 protected:
@@ -110,11 +112,11 @@ class UScWInputModifierGamepadSensitivity : public UInputModifier
 public:
 	
 	/** The type of targeting to use for this Sensitivity */
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings, Config)
+	UPROPERTY(Category = "Settings", EditInstanceOnly, BlueprintReadWrite, Config)
 	EScWTargetingType TargetingType = EScWTargetingType::Normal;
 
 	/** Asset that gives us access to the float scalar value being used for sensitivty */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AssetBundles="Client,Server"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AssetBundles = "Client, Server"))
 	TObjectPtr<const UScWAimSensitivityData> SensitivityLevelTable;
 
 protected:
@@ -128,5 +130,7 @@ class UScWInputModifierAimInversion : public UInputModifier
 	GENERATED_BODY()
 	
 protected:
-	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput, FInputActionValue CurrentValue, float DeltaTime) override;	
+	virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput, FInputActionValue CurrentValue, float DeltaTime) override;
 };
+
+#undef MODULE_API

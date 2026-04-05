@@ -8,6 +8,8 @@
 
 #include "ScWCharacterMesh_Base.generated.h"
 
+#define MODULE_API SCWGAMECORE_API
+
 /**
  * 
  */
@@ -28,3 +30,5 @@ public:
 	virtual void InitFromASC(class UScWAbilitySystemComponent* InInitASC, AActor* InOwnerActor, AActor* InAvatarActor) override; // IScWASC_InitInterface
 //~ End Initialize
 };
+
+#undef MODULE_API

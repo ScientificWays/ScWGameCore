@@ -34,20 +34,20 @@ protected:
 	MODULE_API virtual void NativeOnDeactivated() override;
 	MODULE_API virtual UWidget* NativeGetDesiredFocusTarget() const override;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Settings", BlueprintCallable)
 	MODULE_API void NavigateToSetting(FName SettingDevName);
-	
-	UFUNCTION(BlueprintCallable)
+
+	UFUNCTION(Category = "Settings", BlueprintCallable)
 	MODULE_API void NavigateToSettings(const TArray<FName>& SettingDevNames);
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(Category = "Settings", BlueprintNativeEvent)
 	MODULE_API void OnSettingsDirtyStateChanged(bool bSettingsDirty);
 	virtual void OnSettingsDirtyStateChanged_Implementation(bool bSettingsDirty) { }
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Settings", BlueprintCallable)
 	MODULE_API bool AttemptToPopNavigation();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Settings", BlueprintCallable)
 	MODULE_API UGameSettingCollection* GetSettingCollection(FName SettingDevName, bool& HasAnySettings); 
 
 protected:
@@ -56,13 +56,13 @@ protected:
 	template <typename GameSettingRegistryT = UGameSettingRegistry>
 	GameSettingRegistryT* GetRegistry() const { return Cast<GameSettingRegistryT>(const_cast<UGameSettingScreen*>(this)->GetOrCreateRegistry()); }
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Settings", BlueprintCallable)
 	MODULE_API virtual void CancelChanges();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Settings", BlueprintCallable)
 	MODULE_API virtual void ApplyChanges();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Settings", BlueprintCallable)
 	bool HaveSettingsBeenChanged() const { return ChangeTracker.HaveSettingsBeenChanged(); }
 
 	MODULE_API void ClearDirtyState();
@@ -75,7 +75,7 @@ private:
 	MODULE_API UGameSettingRegistry* GetOrCreateRegistry();
 
 private:	// Bound Widgets
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget, BlueprintProtected = true, AllowPrivateAccess = true))
+	UPROPERTY(Category = "Settings", BlueprintReadOnly, meta = (BindWidget, BlueprintProtected = true, AllowPrivateAccess = true))
 	TObjectPtr<UGameSettingPanel> Settings_Panel;
 
 	UPROPERTY(Transient)

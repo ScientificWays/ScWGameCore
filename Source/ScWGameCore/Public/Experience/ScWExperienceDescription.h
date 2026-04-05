@@ -23,51 +23,51 @@ class UScWExperienceDescription : public UPrimaryDataAsset
 
 public:
 	/** The specific map to load */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Experience, meta = (AllowedTypes="Map"))
+	UPROPERTY(Category = "Experience", BlueprintReadWrite, EditAnywhere, meta = (AllowedTypes = "Map"))
 	FPrimaryAssetId MapID;
 
 	/** The gameplay experience to load */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Experience, meta = (AllowedTypes="ScWExperience"))
+	UPROPERTY(Category = "Experience", BlueprintReadWrite, EditAnywhere, meta = (AllowedTypes = "ScWExperience"))
 	FPrimaryAssetId ExperienceID;
 
 	/** Extra arguments passed as URL options to the game */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Experience)
+	UPROPERTY(Category = "Experience", BlueprintReadWrite, EditAnywhere)
 	TMap<FString, FString> ExtraArgs;
 
 	/** Primary title in the UI */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Experience)
+	UPROPERTY(Category = "Experience", BlueprintReadWrite, EditAnywhere)
 	FText TileTitle;
 
 	/** Secondary title */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Experience)
+	UPROPERTY(Category = "Experience", BlueprintReadWrite, EditAnywhere)
 	FText TileSubTitle;
 
 	/** Full description */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Experience)
+	UPROPERTY(Category = "Experience", BlueprintReadWrite, EditAnywhere)
 	FText TileDescription;
 
 	/** Icon used in the UI */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Experience)
+	UPROPERTY(Category = "Experience", BlueprintReadWrite, EditAnywhere)
 	TObjectPtr<UTexture2D> TileIcon;
 
 	/** The loading screen widget to show when loading into (or back out of) a given experience */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "LoadingScreen")
+	UPROPERTY(Category = "LoadingScreen", BlueprintReadWrite, EditAnywhere)
 	TSoftClassPtr<UUserWidget> LoadingScreenWidget;
 
 	/** If true, this is a default experience that should be used for quick play and given priority in the UI */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Experience)
+	UPROPERTY(Category = "Experience", BlueprintReadWrite, EditAnywhere)
 	bool bIsDefaultExperience = false;
 
 	/** If true, this will show up in the experiences list in the front-end */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Experience)
+	UPROPERTY(Category = "Experience", BlueprintReadWrite, EditAnywhere)
 	bool bShowInFrontEnd = true;
 
 	/** If true, a replay will be recorded of the game */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Experience)
+	UPROPERTY(Category = "Experience", BlueprintReadWrite, EditAnywhere)
 	bool bRecordReplay = false;
 
 	/** Max number of players for this session */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Experience)
+	UPROPERTY(Category = "Experience", BlueprintReadWrite, EditAnywhere)
 	int32 MaxPlayerCount = 16;
 
 public:

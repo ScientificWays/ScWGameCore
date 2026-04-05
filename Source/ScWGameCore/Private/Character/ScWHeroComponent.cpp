@@ -49,7 +49,7 @@ UScWHeroComponent::UScWHeroComponent(const FObjectInitializer& InObjectInitializ
 	bReadyToBindInputs = false;
 }
 
-void UScWHeroComponent::OnRegister()
+void UScWHeroComponent::OnRegister() // AActorComponent
 {
 	Super::OnRegister();
 
@@ -78,7 +78,26 @@ void UScWHeroComponent::OnRegister()
 	}
 }
 
-bool UScWHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) const
+void UScWHeroComponent::BeginPlay() // AActorComponent
+{
+	Super::BeginPlay();
+
+	// Listen for when the pawn extension component changes init state
+	BindOnActorInitStateChanged(UScWPawnExtensionComponent::NAME_ActorFeatureName, FGameplayTag(), false);
+
+	// Notifies that we are done spawning, then try the rest of initialization
+	ensure(TryToChangeInitState(FScWCoreTags::InitState_Spawned));
+	CheckDefaultInitialization();
+}
+
+void UScWHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason) // AActorComponent
+{
+	UnregisterInitStateFeature();
+
+	Super::EndPlay(EndPlayReason);
+}
+
+bool UScWHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) const // IGameFrameworkInitStateInterface
 {
 	check(Manager);
 
@@ -147,7 +166,7 @@ bool UScWHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manag
 	return false;
 }
 
-void UScWHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState)
+void UScWHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) // IGameFrameworkInitStateInterface
 {
 	if (CurrentState == FScWCoreTags::InitState_DataAvailable && DesiredState == FScWCoreTags::InitState_DataInitialized)
 	{
@@ -186,7 +205,7 @@ void UScWHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Ma
 	}
 }
 
-void UScWHeroComponent::OnActorInitStateChanged(const FActorInitStateChangedParams& Params)
+void UScWHeroComponent::OnActorInitStateChanged(const FActorInitStateChangedParams& Params) // IGameFrameworkInitStateInterface
 {
 	if (Params.FeatureName == UScWPawnExtensionComponent::NAME_ActorFeatureName)
 	{
@@ -198,31 +217,12 @@ void UScWHeroComponent::OnActorInitStateChanged(const FActorInitStateChangedPara
 	}
 }
 
-void UScWHeroComponent::CheckDefaultInitialization()
+void UScWHeroComponent::CheckDefaultInitialization() // IGameFrameworkInitStateInterface
 {
 	static const TArray<FGameplayTag> StateChain = { FScWCoreTags::InitState_Spawned, FScWCoreTags::InitState_DataAvailable, FScWCoreTags::InitState_DataInitialized, FScWCoreTags::InitState_GameplayReady };
 
 	// This will try to progress from spawned (which is only set in BeginPlay) through the data initialization stages until it gets to gameplay ready
 	ContinueInitStateChain(StateChain);
-}
-
-void UScWHeroComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// Listen for when the pawn extension component changes init state
-	BindOnActorInitStateChanged(UScWPawnExtensionComponent::NAME_ActorFeatureName, FGameplayTag(), false);
-
-	// Notifies that we are done spawning, then try the rest of initialization
-	ensure(TryToChangeInitState(FScWCoreTags::InitState_Spawned));
-	CheckDefaultInitialization();
-}
-
-void UScWHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	UnregisterInitStateFeature();
-
-	Super::EndPlay(EndPlayReason);
 }
 
 void UScWHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent)

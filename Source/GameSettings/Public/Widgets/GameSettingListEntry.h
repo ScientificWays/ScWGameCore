@@ -52,7 +52,7 @@ protected:
 	// Focus transitioning to subwidgets for the gamepad
 	MODULE_API virtual FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Settings")
 	MODULE_API UWidget* GetPrimaryGamepadFocusWidget();
 
 protected:
@@ -155,10 +155,10 @@ protected:
 	UFUNCTION()
 	MODULE_API void HandleSliderCaptureEnded();
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Settings")
 	MODULE_API void OnValueChanged(float Value);
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Settings")
 	MODULE_API void OnDefaultValueChanged(float DefaultValue);
 
 	MODULE_API virtual void RefreshEditableState(const FGameSettingEditableState& InEditableState) override;
@@ -198,7 +198,7 @@ protected:
 
 	MODULE_API void HandleActionButtonClicked();
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Settings")
 	MODULE_API void OnSettingAssigned(const FText& ActionText);
 
 protected:
@@ -230,7 +230,7 @@ protected:
 
 	MODULE_API void HandleNavigationButtonClicked();
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Settings")
 	MODULE_API void OnSettingAssigned(const FText& ActionText);
 
 protected:

@@ -192,7 +192,7 @@ public:
 //~ Begin Viewport
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "Viewport")
+	UFUNCTION(Category = "Viewport", BlueprintCallable)
 	MODULE_API bool GetHitResultUnderScreenCenter(ETraceTypeQuery InTraceChannel, bool bInTraceComplex, FHitResult& OutHitResult) const;
 //~ End Viewport
 };
