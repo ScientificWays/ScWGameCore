@@ -84,18 +84,30 @@ EDataValidationResult UScWAbilitySet::IsDataValid(FDataValidationContext& InCont
 	// Attribute Sets
 	for (const auto& SampleEntry : GrantedAttributes)
 	{
-		// Invalid attribute set object
+		// Validate attribute set object
 		if (!IsValid(SampleEntry.AttributeSet))
 		{
 			OutResult = CombineDataValidationResults(OutResult, EDataValidationResult::Invalid);
 			InContext.AddError(FText::FromString("Invalid attribute set"));
 			continue;
 		}
-		// Invalid attribute set data
-		const auto AttributeSetResult = SampleEntry.AttributeSet->IsDataValid(InContext);
-		OutResult = CombineDataValidationResults(OutResult, AttributeSetResult);
+		// Validate attribute set data
+		if (IsValid(SampleEntry.AttributeSet))
+		{
+			const auto AttributeSetResult = SampleEntry.AttributeSet->IsDataValid(InContext);
+			OutResult = CombineDataValidationResults(OutResult, AttributeSetResult);
 
-		// Invalid init data
+			if (AttributeSetResult == EDataValidationResult::Invalid)
+			{
+				InContext.AddError(FText::FromString("Invalid attribute set"));
+			}
+		}
+		else
+		{
+			OutResult = CombineDataValidationResults(OutResult, EDataValidationResult::Invalid);
+			InContext.AddError(FText::FromString("Invalid attribute set"));
+		}
+		// Validate init data
 		for (const auto& AttributeOverride : SampleEntry.InitData)
 		{
 			const auto AttributeKey = AttributeOverride.Key;

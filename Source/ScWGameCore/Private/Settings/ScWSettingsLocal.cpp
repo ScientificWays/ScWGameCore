@@ -2,8 +2,6 @@
 
 #include "Settings/ScWSettingsLocal.h"
 
-#include "Player/ScWLocalPlayer.h"
-
 #include "Performance/LatencyMarkerModule.h"
 #include "Performance/ScWPerformanceStatTypes.h"
 #include "Performance/ScWPerformanceSettings.h"

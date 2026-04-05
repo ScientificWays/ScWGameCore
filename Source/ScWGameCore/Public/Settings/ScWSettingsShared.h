@@ -39,11 +39,10 @@ enum class EScWAllowBackgroundAudioSetting : uint8
 class UScWLocalPlayer;
 
 /**
- * UScWSettingsShared - The "Shared" settings are stored as part of the USaveGame system, these settings are not machine
- * specific like the local settings, and are safe to store in the cloud - and 'share' them.  Using the save game system
- * we can also store settings per player, so things like controller keybind preferences should go here, because if those
- * are stored in the local settings all users would get them.
- *
+ *	UScWSettingsShared - The "Shared" settings are stored as part of the USaveGame system, these settings are not machine
+ *	specific like the local settings, and are safe to store in the cloud - and 'share' them. Using the save game system
+ *	we can also store settings per player, so things like controller keybind preferences should go here, because if those
+ *	are stored in the local settings all users would get them.
  */
 UCLASS()
 class UScWSettingsShared : public ULocalPlayerSaveGame

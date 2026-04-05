@@ -38,7 +38,7 @@ public:
 	MODULE_API UAudioComponent* PlaySound2D_AtLayer(const FName& InLayer, USoundBase* InSoundAsset, float InFadeInDuration = 0.0f, float InVolumeMultiplier = 1.0f, float InPitchMultiplier = 1.0f, float InStartTime = 0.0f, USoundConcurrency* InConcurrencySettings = nullptr, bool bInAutoDestroy = true);
 
 	UFUNCTION(Category = "Audio Layers", BlueprintCallable, meta = (AutoCreateRefTerm = "InLayer", InLayer = "Default"))
-	MODULE_API bool StopSound2D_AtLayer(const FName& InLayer, float InFadeOutDuration = 1.0);
+	MODULE_API bool StopSound2D_AtLayer(const FName& InLayer, float InFadeOutDuration = 1.0f);
 
 protected:
 	void OnAudioComponentFinishedAudio(UAudioComponent* InAudioComponent);

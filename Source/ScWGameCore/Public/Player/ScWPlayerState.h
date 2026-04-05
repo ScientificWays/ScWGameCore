@@ -143,6 +143,7 @@ private:
 	MODULE_API void OnExperienceLoaded(const UScWExperience* CurrentExperience);
 
 protected:
+
 	UFUNCTION()
 	MODULE_API void OnRep_PawnData();
 
